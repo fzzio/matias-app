@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "matias-frontend",
-    "slug": "matias-frontend",
+    "name": "Misión Catequética",
+    "slug": "matias-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

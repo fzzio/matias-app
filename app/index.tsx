@@ -1,12 +1,36 @@
 import * as React from 'react';
 import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { Button, Chip, List, Searchbar, Text } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import LottieView from "lottie-react-native";
+import { SearchPeople } from '@/components/SearchPeople';
 
+interface Person {
+  id: string;
+  name: string;
+  lastName: string;
+}
+
+const dummyCatechists: Person[] = [
+  {
+    "id": "6691aa318c164c97840f64d9",
+    "name": "Fabricio",
+    "lastName": "Orrala"
+  },
+  {
+    "id": "5581bb427d275d86951f75e8",
+    "name": "Maria",
+    "lastName": "Gonzalez"
+  },
+  {
+    "id": "4471cc536e386e75062f86f7",
+    "name": "Juan",
+    "lastName": "Perez"
+  }
+];
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
 
   return (
     <View style={styles.container}>
@@ -20,30 +44,21 @@ export default function Home() {
         <Text variant="headlineLarge">Misión Catequética {(new Date().getFullYear())}</Text>
         <Text variant="headlineSmall">Fecha: {(new Date().toISOString().split('T')[0])}</Text>
       </View>
-      <View style={styles.peopleContainer}>
-        <Searchbar
+      <View style={styles.searchContainer}>
+        <SearchPeople
           placeholder="Buscar catequistas"
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-          style={styles.searchBar}
+          people={dummyCatechists}
+          onSelectionChange={setSelectedCatechists}
         />
-        <View style={styles.peopleList}>
-          <List.Section>
-            <List.Item
-              title="Catequista 1"
-            />
-            <List.Item
-              title="Catequista 2"
-            />
-          </List.Section>
-        </View>
-        <View style={styles.peopleChips}>
-          <Chip onClose={() => console.log('Closed')}>Catequista 1</Chip>
-          <Chip onClose={() => console.log('Closed')}>Catequista 2</Chip>
-        </View>
       </View>
       <Link href="/step1" asChild>
-        <Button mode="contained" style={styles.button}>Empezar</Button>
+        <Button
+          mode="contained"
+          style={styles.button}
+          disabled={selectedCatechists.length === 0}
+        >
+          Empezar
+        </Button>
       </Link>
     </View>
   );
@@ -58,23 +73,14 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 20
+  },
+  searchContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20
   },
   button: {
     marginTop: 20,
   },
-  peopleContainer: {
-    flexDirection: "column",
-    flexWrap: 'wrap',
-  },
-  peopleList: {
-    flexDirection: "column",
-    flexWrap: 'wrap',
-  },
-  peopleChips: {
-    flexDirection: "row",
-    flexWrap: 'wrap',
-    gap: 8
-  },
-  searchBar: {}
 });
