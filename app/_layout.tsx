@@ -4,7 +4,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { PaperProvider } from 'react-native-paper';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
+const client = new ApolloClient({
+  uri: 'https://matias-backend-fzzio-fabricio-orralas-projects.vercel.app',
+  cache: new InMemoryCache()
+});
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -25,14 +30,16 @@ export default function RootLayout() {
   }
 
   return (
-    <PaperProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="step1" options={{ headerShown: false }} />
-        <Stack.Screen name="step2" options={{ headerShown: false }} />
-        <Stack.Screen name="step3" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </PaperProvider>
+    <ApolloProvider client={client}>
+      <PaperProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="step1" options={{ headerShown: false }} />
+          <Stack.Screen name="step2" options={{ headerShown: false }} />
+          <Stack.Screen name="step3" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </PaperProvider>
+    </ApolloProvider>
   );
 }

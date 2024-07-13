@@ -3,6 +3,9 @@ import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import LottieView from "lottie-react-native";
+import { gql, useQuery } from '@apollo/client';
+
+
 import { SearchPeople } from '@/components/SearchPeople';
 
 interface Person {
@@ -11,26 +14,22 @@ interface Person {
   lastName: string;
 }
 
-const dummyCatechists: Person[] = [
-  {
-    "id": "6691aa318c164c97840f64d9",
-    "name": "Fabricio",
-    "lastName": "Orrala"
-  },
-  {
-    "id": "5581bb427d275d86951f75e8",
-    "name": "Maria",
-    "lastName": "Gonzalez"
-  },
-  {
-    "id": "4471cc536e386e75062f86f7",
-    "name": "Juan",
-    "lastName": "Perez"
+const GET_CATECHISTS = gql`
+  query GetCatechists {
+    getCatechists {
+      id
+      name
+      lastName
+    }
   }
-];
+`;
 
 export default function Home() {
+  const { loading, error, data } = useQuery(GET_CATECHISTS);
   const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
+
+  if (loading) return <Text>Cargando...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
 
   return (
     <View style={styles.container}>
@@ -47,7 +46,7 @@ export default function Home() {
       <View style={styles.searchContainer}>
         <SearchPeople
           placeholder="Buscar catequistas"
-          people={dummyCatechists}
+          people={data.getCatechists}
           onSelectionChange={setSelectedCatechists}
         />
       </View>
