@@ -45,7 +45,7 @@ export default function Home() {
       </View>
       <View style={styles.searchContainer}>
         <SearchPeople
-          placeholder="Buscar catequistas"
+          placeholder="Seleccionar catequistas"
           people={data.getCatechists}
           onSelectionChange={setSelectedCatechists}
         />

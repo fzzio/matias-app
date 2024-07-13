@@ -4,12 +4,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { PaperProvider } from 'react-native-paper';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-
-const client = new ApolloClient({
-  uri: 'https://matias-backend-fzzio-fabricio-orralas-projects.vercel.app',
-  cache: new InMemoryCache()
-});
+import { ApolloProvider } from '@apollo/client';
+import client from '@/apollo-client';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
