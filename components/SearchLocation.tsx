@@ -45,18 +45,19 @@ export function SearchLocation({ locations, onLocationSelect, placeholder = "Sea
         style={styles.searchBar}
       />
       {searchQuery.trim() !== '' && (
-        <List.Section>
+        <List.Section style={styles.listContainer}>
           {filteredLocations.map(location => (
             <List.Item
               key={location.id}
               title={location.name}
               onPress={() => handleSelect(location)}
+              style={styles.listItem}
             />
           ))}
         </List.Section>
       )}
       {selectedLocation && (
-        <View style={styles.chipContainer}>
+        <View style={styles.chipsContainer}>
           <Chip
             onClose={handleRemove}
             style={styles.chip}
@@ -74,14 +75,22 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   searchBar: {
-    marginBottom: 10,
+    backgroundColor: "#FFFFFF"
   },
-  chipContainer: {
+  listContainer: {
+    backgroundColor: "#FFFFFF"
+  },
+  listItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#000000"
+  },
+  chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 10,
+    gap: 8
   },
   chip: {
-    margin: 4,
+    backgroundColor: "#FFFFFF"
   },
 });

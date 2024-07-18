@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Link } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Image, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import LottieView from "lottie-react-native";
 import { gql, useQuery } from '@apollo/client';
 
 
@@ -33,32 +32,31 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <LottieView
-        source={require("../assets/lottiefiles/1720857631441.json")}
-        style={{width: "100%", height: "50%"}}
-        autoPlay
-        loop
-      />
       <View style={styles.header}>
-        <Text variant="headlineLarge">Misión Catequética {(new Date().getFullYear())}</Text>
-        <Text variant="headlineSmall">Fecha: {(new Date().toISOString().split('T')[0])}</Text>
+        <Text variant="headlineSmall">Parroquia "San José de Ancón"</Text>
+        <Image source={require('../assets/images/icon.jpg')} style={styles.headerImage}  />
+        <Text variant="headlineLarge">Misión Catequética</Text>
+        <Text variant="headlineMedium">2024</Text>
       </View>
-      <View style={styles.searchContainer}>
+      <View style={styles.body}>
+        <Text variant="labelMedium">Seleccione los catequistas que harán ésta visita:</Text>
         <SearchPeople
-          placeholder="Seleccionar catequistas"
+          placeholder="Buscar"
           people={data.getCatechists}
           onSelectionChange={setSelectedCatechists}
         />
       </View>
-      <Link href="/step1" asChild>
-        <Button
-          mode="contained"
-          style={styles.button}
-          disabled={selectedCatechists.length === 0}
-        >
-          Empezar
-        </Button>
-      </Link>
+      <View style={styles.footer}>
+        <Link href="/step1" asChild>
+          <Button
+            mode="contained"
+            style={styles.button}
+            disabled={selectedCatechists.length === 0}
+          >
+            Empezar
+          </Button>
+        </Link>
+      </View>
     </View>
   );
 }
@@ -68,16 +66,33 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 16,
+    backgroundColor: "#cccccc",
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20
+    flexDirection: "column",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 16
   },
-  searchContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 20
+  headerImage: {
+    height: 200,
+    width: 200,
+    borderRadius: 10,
+    marginBottom: 16
+  },
+  body: {
+    flexDirection: "column",
+    gap: 8,
+    flexWrap: "wrap",
+    width: "100%",
+    marginBottom: 16
+  },
+  footer: {
+    flexDirection: "row",
+    marginBottom: 16,
+    gap: 8
   },
   button: {
     marginTop: 20,

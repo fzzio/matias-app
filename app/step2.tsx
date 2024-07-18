@@ -1,25 +1,45 @@
-import { Link, useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useRouter, Link } from 'expo-router';
 import { Button, Text, TextInput } from 'react-native-paper';
+import { useQuery, gql } from '@apollo/client';
+import LottieView from "lottie-react-native";
 
 import { Pagination } from '@/components/Pagination';
+import { Location, Catechizand } from '@/types';
 
-export default function Step2() {
+
+export default function Step1() {
   const router = useRouter();
+  const handleSubmit = () => {
+    // Handle form submission
+    console.log('Form submitted');
+    router.push('/step3');
+  };
 
   return (
     <View style={styles.container}>
       <Pagination currentStep={2} totalSteps={3} />
-      <Text variant="headlineMedium">Step 2</Text>
-      <TextInput
-        label="Email"
-        style={styles.input}
+      <LottieView
+        source={require("../assets/lottiefiles/1720857631441.json")}
+        style={styles.headerLottieImage}
+        autoPlay
+        loop
       />
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => router.back()}>Back</Button>
-        <Link href="/step3" asChild>
-          <Button mode="contained">Continue</Button>
-        </Link>
+      <View style={styles.header}>
+        <Text variant="headlineMedium">Información por persona</Text>
+      </View>
+      <View style={styles.body}>
+        {/* TODO */}
+      </View>
+      <View style={styles.footer}>
+      <Button onPress={() => router.back()}>Atrás</Button>
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+        >
+          Continuar
+        </Button>
       </View>
     </View>
   );
@@ -28,14 +48,35 @@ export default function Step2() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 18,
     justifyContent: 'center',
   },
-  input: {
-    marginBottom: 20,
+  header: {
+    alignItems: 'center',
+    flexDirection: "column",
+    alignContent: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 16
   },
-  buttonContainer: {
+  headerLottieImage: {
+    width: "100%",
+    height: "20%",
+    marginBottom: 10
+  },
+  body: {
+    flexDirection: "column",
+    gap: 16,
+    flexWrap: "wrap",
+    width: "100%",
+    marginBottom: 16
+  },
+  input: {
+    backgroundColor: "#FFFFFF"
+  },
+  footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 20,
   },
 });
