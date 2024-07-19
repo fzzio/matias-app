@@ -25,6 +25,9 @@ const GET_CATECHIZANDS = gql`
       id
       name
       lastName
+      sacraments {
+        id
+      }
     }
   }
 `;
@@ -46,7 +49,13 @@ export default function Step1() {
   const handleSubmit = () => {
     // Handle form submission
     console.log('Form submitted', { selectedLocation, peopleCount, selectedCatechizands });
-    router.push('/step2');
+    router.push({
+      pathname: '/step2',
+      params: {
+        peopleCount: peopleCount,
+        selectedCatechizands: JSON.stringify(selectedCatechizands)
+      }
+    });
   };
 
   return (

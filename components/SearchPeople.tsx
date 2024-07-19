@@ -2,12 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Searchbar, List, Chip } from 'react-native-paper';
 
-interface Person {
-  id: string;
-  name: string;
-  lastName: string;
-}
-
+import { Person } from '@/types';
 interface SearchPeopleProps {
   people: Person[];
   onSelectionChange: React.Dispatch<React.SetStateAction<Person[]>>;

@@ -1,24 +1,81 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useRouter, Link } from 'expo-router';
-import { Button, Text, TextInput } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { useRouter, Link, useLocalSearchParams } from 'expo-router';
+import { Button, Text, TextInput, Checkbox } from 'react-native-paper';
 import { useQuery, gql } from '@apollo/client';
 import LottieView from "lottie-react-native";
 
 import { Pagination } from '@/components/Pagination';
-import { Location, Catechizand } from '@/types';
+import { Catechizand } from '@/types';
 
+const GET_SACRAMENTS = gql`
+  query GetSacraments {
+    getSacraments {
+      id
+      name
+    }
+  }
+`;
 
-export default function Step1() {
+interface PersonForm {
+  name: string;
+  sacraments: string[];
+}
+
+export default function Step2() {
   const router = useRouter();
+  const { peopleCount, selectedCatechizands } = useLocalSearchParams<{ peopleCount: string, selectedCatechizands: string }>();
+  const [people, setPeople] = useState<PersonForm[]>([]);
+
+  const { loading, error, data } = useQuery(GET_SACRAMENTS);
+
+  useEffect(() => {
+    if (peopleCount && selectedCatechizands) {
+      const count = parseInt(peopleCount);
+      const catechizands: Catechizand[] = JSON.parse(selectedCatechizands);
+
+      const initialPeople: PersonForm[] = Array(count).fill(null).map((_, index) => {
+        if (index < catechizands.length) {
+          return { name: `${catechizands[index].name} ${catechizands[index].lastName}`, sacraments: [] };
+        } else {
+          return { name: `Persona ${index + 1}`, sacraments: [] };
+        }
+      });
+
+      setPeople(initialPeople);
+    }
+  }, [peopleCount, selectedCatechizands]);
+
+  const handleNameChange = (index: number, name: string) => {
+    const newPeople = [...people];
+    newPeople[index].name = name;
+    setPeople(newPeople);
+  };
+
+  const handleSacramentToggle = (personIndex: number, sacramentId: string) => {
+    const newPeople = [...people];
+    const sacraments = newPeople[personIndex].sacraments;
+    const sacramentIndex = sacraments.indexOf(sacramentId);
+
+    if (sacramentIndex > -1) {
+      sacraments.splice(sacramentIndex, 1);
+    } else {
+      sacraments.push(sacramentId);
+    }
+
+    setPeople(newPeople);
+  };
+
   const handleSubmit = () => {
-    // Handle form submission
-    console.log('Form submitted');
+    console.log('Form submitted', people);
     router.push('/step3');
   };
 
+  if (loading) return <Text>Cargando...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Pagination currentStep={2} totalSteps={3} />
       <LottieView
         source={require("../assets/lottiefiles/1720857631441.json")}
@@ -30,10 +87,29 @@ export default function Step1() {
         <Text variant="headlineMedium">Información por persona</Text>
       </View>
       <View style={styles.body}>
-        {/* TODO */}
+        {people.map((person, index) => (
+          <View key={index} style={styles.personForm}>
+            <TextInput
+              label={`Nombre de la persona ${index + 1}`}
+              value={person.name}
+              onChangeText={(text) => handleNameChange(index, text)}
+              style={styles.input}
+            />
+            <Text style={styles.sacramentTitle}>Sacramentos:</Text>
+            {data.getSacraments.map((sacrament: { id: string, name: string }) => (
+              <Checkbox.Item
+                key={sacrament.id}
+                label={sacrament.name}
+                status={person.sacraments.includes(sacrament.id) ? 'checked' : 'unchecked'}
+                onPress={() => handleSacramentToggle(index, sacrament.id)}
+                style={styles.checkbox}
+              />
+            ))}
+          </View>
+        ))}
       </View>
       <View style={styles.footer}>
-      <Button onPress={() => router.back()}>Atrás</Button>
+        <Button onPress={() => router.back()}>Atrás</Button>
         <Button
           mode="contained"
           onPress={handleSubmit}
@@ -41,7 +117,7 @@ export default function Step1() {
           Continuar
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -49,7 +125,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 18,
-    justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
@@ -61,7 +136,7 @@ const styles = StyleSheet.create({
   },
   headerLottieImage: {
     width: "100%",
-    height: "20%",
+    height: 200,
     marginBottom: 10
   },
   body: {
@@ -71,12 +146,28 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 16
   },
+  personForm: {
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    width: "100%"
+  },
   input: {
-    backgroundColor: "#FFFFFF"
+    marginBottom: 10,
+    backgroundColor: "#FFFFFF",
+    width: "100%",
+  },
+  checkbox: {
+    width: "100%",
+  },
+  sacramentTitle: {
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginBottom: 30,
   },
 });

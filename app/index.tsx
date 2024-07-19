@@ -6,12 +6,7 @@ import { gql, useQuery } from '@apollo/client';
 
 
 import { SearchPeople } from '@/components/SearchPeople';
-
-interface Person {
-  id: string;
-  name: string;
-  lastName: string;
-}
+import { Person } from '@/types';
 
 const GET_CATECHISTS = gql`
   query GetCatechists {
@@ -34,7 +29,7 @@ export default function Home() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text variant="headlineSmall">Parroquia "San José de Ancón"</Text>
-        <Image source={require('../assets/images/icon.jpg')} style={styles.headerImage}  />
+        <Image source={require('../assets/images/icon.png')} style={styles.headerImage}  />
         <Text variant="headlineLarge">Misión Catequética</Text>
         <Text variant="headlineMedium">2024</Text>
       </View>
