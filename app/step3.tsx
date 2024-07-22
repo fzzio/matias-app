@@ -5,6 +5,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 
 import { SurveyStore, updateObservations } from "@/store/survey";
 import { Pagination } from '@/components/Pagination';
+import LottieView from 'lottie-react-native';
 
 export default function Step3() {
   const router = useRouter();
@@ -19,6 +20,12 @@ export default function Step3() {
   return (
     <View style={styles.container}>
       <Pagination currentStep={3} totalSteps={3} />
+      <LottieView
+        source={require("../assets/lottiefiles/1720857631441.json")}
+        style={styles.headerLottieImage}
+        autoPlay
+        loop
+      />
       <Text variant="headlineMedium">Observaciones</Text>
       <TextInput
         label="Observaciones"
@@ -40,6 +47,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+  },
+  headerLottieImage: {
+    width: "100%",
+    height: 200,
+    marginBottom: 10
   },
   input: {
     marginBottom: 20,

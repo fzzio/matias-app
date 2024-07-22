@@ -96,9 +96,7 @@ export default function Step1() {
         />
       </View>
       <View style={styles.footer}>
-        <Link href="/" asChild>
-          <Button>Atrás</Button>
-        </Link>
+      <Button onPress={() => router.back()}>Atrás</Button>
         <Button
           mode="contained"
           onPress={handleSubmit}

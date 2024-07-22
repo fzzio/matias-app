@@ -5,7 +5,7 @@ import { Button, Text } from 'react-native-paper';
 
 import { Pagination } from '@/components/Pagination';
 import { PersonForm } from '@/components/PersonForm';
-import { PersonInput, Catechumen, Sacrament } from '@/types';
+import { PersonInput, Sacrament } from '@/types';
 import { SurveyStore, updateCatechumens, updateOtherPeople } from "@/store/survey";
 import { useSacraments } from '@/hooks/useSacraments';
 import LottieView from 'lottie-react-native';
@@ -15,18 +15,33 @@ export default function Step2() {
   const { householdSize, catechumens } = SurveyStore.useState();
   const { loading, error, sacraments } = useSacraments();
   const [people, setPeople] = useState<PersonInput[]>([]);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     const initialPeople: PersonInput[] = Array.from({ length: householdSize }).map((_, index) => {
       if (index < catechumens.length) {
-        const { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray } = catechumens[index];
-        return { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray.map((sacramentId: string) => sacramentId), isVolunteer: false };
+        const { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray, isVolunteer } = catechumens[index];
+        return { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray.map((sacramentId: string) => sacramentId), isVolunteer: isVolunteer !== undefined ? isVolunteer : false };
       } else {
         return { name: "", lastName: "", sacraments: [], isVolunteer: false };
       }
     });
     setPeople(initialPeople);
   }, [householdSize, catechumens]);
+
+  useEffect(() => {
+    validateForm();
+  }, [people]);
+
+  const validateForm = () => {
+    const isValid = people.every(person =>
+      person.name.trim() !== "" &&
+      person.lastName.trim() !== "" &&
+      person.birthDate !== undefined &&
+      person.isVolunteer !== undefined
+    );
+    setIsFormValid(isValid);
+  };
 
   const handleSubmit = () => {
     console.log('Form submitted Step2');
@@ -42,7 +57,6 @@ export default function Step2() {
 
   return (
     <ScrollView style={styles.container}>
-      <Text>householdSize = {householdSize}</Text>
       <Pagination currentStep={2} totalSteps={3} />
       <LottieView
         source={require("../assets/lottiefiles/1720857631441.json")}
@@ -65,6 +79,7 @@ export default function Step2() {
               newPeople[index] = { ...newPeople[index], [field]: value };
               setPeople(newPeople);
             }}
+            style={{ marginBottom: 20 }}
           />
         ))}
       </View>
@@ -73,6 +88,7 @@ export default function Step2() {
         <Button
           mode="contained"
           onPress={handleSubmit}
+          disabled={!isFormValid}
         >
           Continuar
         </Button>
