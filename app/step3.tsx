@@ -14,12 +14,12 @@ export default function Step3() {
   const handleSubmit = () => {
     console.log('Form submitted Step3');
     updateObservations(observations);
-    router.push('/');
+    router.push('/step4');
   };
 
   return (
     <View style={styles.container}>
-      <Pagination currentStep={3} totalSteps={3} />
+      <Pagination currentStep={3} totalSteps={4} />
       <LottieView
         source={require("../assets/lottiefiles/1720857631441.json")}
         style={styles.headerLottieImage}
@@ -36,7 +36,7 @@ export default function Step3() {
       />
       <View style={styles.buttonContainer}>
         <Button onPress={() => router.back()}>Atrás</Button>
-        <Button mode="contained" onPress={handleSubmit}>Finalizar</Button>
+        <Button mode="contained" onPress={handleSubmit}>Revisar</Button>
       </View>
     </View>
   );

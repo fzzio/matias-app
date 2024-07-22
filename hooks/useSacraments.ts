@@ -20,5 +20,10 @@ export const useSacraments = () => {
     }
   }, [data]);
 
-  return { loading, error, sacraments: data?.getSacraments };
+  const getSacramentNameById = (id: string): string => {
+    const sacrament = data?.getSacraments.find((s: any) => s.id === id);
+    return sacrament ? sacrament.name : id;
+  };
+
+  return { loading, error, sacraments: data?.getSacraments, getSacramentNameById };
 };

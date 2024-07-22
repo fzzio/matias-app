@@ -52,3 +52,13 @@ export const updateObservations = (observations: string) => {
 export const updateSacraments = (sacraments: Sacrament[]) => {
   SurveyStore.update(s => { s.sacraments = sacraments; });
 };
+
+export const clearSurvey = () => {
+  updateCatechists([]);
+  updateSelectedLocation(null);
+  updateHouseholdSize(0);
+  updateCatechumens([]);
+  updateOtherPeople([]);
+  updateObservations("");
+  updateSacraments([]);
+};
