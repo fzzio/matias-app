@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { StyleSheet, Image, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { gql, useQuery } from '@apollo/client';
-
+import { updateCatechists } from "@/store/survey";
 
 import { SearchPeople } from '@/components/SearchPeople';
 import { Person } from '@/types';
@@ -19,8 +19,15 @@ const GET_CATECHISTS = gql`
 `;
 
 export default function Home() {
+  const router = useRouter();
   const { loading, error, data } = useQuery(GET_CATECHISTS);
   const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
+
+  const handleSubmit = () => {
+    console.log('Form submitted index', { selectedCatechists });
+    updateCatechists(selectedCatechists);
+    router.push('/step1');
+  };
 
   if (loading) return <Text>Cargando...</Text>;
   if (error) return <Text>Error: {error.message}</Text>;
@@ -45,6 +52,7 @@ export default function Home() {
         <Link href="/step1" asChild>
           <Button
             mode="contained"
+            onPress={handleSubmit}
             style={styles.button}
             disabled={selectedCatechists.length === 0}
           >

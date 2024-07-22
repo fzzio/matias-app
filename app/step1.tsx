@@ -8,7 +8,8 @@ import LottieView from "lottie-react-native";
 import { Pagination } from '@/components/Pagination';
 import { SearchLocation } from '@/components/SearchLocation';
 import { SearchPeople } from '@/components/SearchPeople';
-import { Location, Catechizand } from '@/types';
+import { Location, Catechumen } from '@/types';
+import { SurveyStore, updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
 
 const GET_LOCATIONS = gql`
   query GetLocations {
@@ -19,9 +20,9 @@ const GET_LOCATIONS = gql`
   }
 `;
 
-const GET_CATECHIZANDS = gql`
-  query GetCatechizands($year: String!) {
-    getCatechizands(year: $year) {
+const GET_CATECHUMENS = gql`
+  query GetCatechumens($year: String!) {
+    getCatechumens(year: $year) {
       id
       name
       lastName
@@ -35,28 +36,33 @@ const GET_CATECHIZANDS = gql`
 export default function Step1() {
   const router = useRouter();
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-  const [peopleCount, setPeopleCount] = useState('');
-  const [selectedCatechizands, setSelectedCatechizands] = useState<Catechizand[]>([]);
+  const [householdSize, setHouseholdSize] = useState('');
+  const [selectedCatechumens, setSelectedCatechumens] = useState<Catechumen[]>([]);
 
   const { loading: loadingLocations, error: errorLocations, data: locationsData } = useQuery(GET_LOCATIONS);
-  const { loading: loadingCatechizands, error: errorCatechizands, data: catechizandsData } = useQuery(GET_CATECHIZANDS, {
+  const { loading: loadingCatechumens, error: errorCatechumens, data: catechumensData } = useQuery(GET_CATECHUMENS, {
     variables: { year: "2024" },
   });
 
-  if (loadingLocations || loadingCatechizands) return <Text>Loading...</Text>;
-  if (errorLocations || errorCatechizands) return <Text>Error: {errorLocations?.message || errorCatechizands?.message}</Text>;
-
   const handleSubmit = () => {
-    // Handle form submission
-    console.log('Form submitted', { selectedLocation, peopleCount, selectedCatechizands });
-    router.push({
-      pathname: '/step2',
-      params: {
-        peopleCount: peopleCount,
-        selectedCatechizands: JSON.stringify(selectedCatechizands)
-      }
-    });
+    console.log('Form submitted Step1');
+    const catechumensAsPersonInput = selectedCatechumens.map(({ id, idCard, name, lastName, birthDate, sacraments }) => ({
+      id,
+      idCard,
+      name,
+      lastName,
+      birthDate,
+      sacraments: sacraments.map(sacrament => sacrament.id),
+      isVolunteer: false,
+    }));
+    updateHouseholdSize(parseInt(householdSize));
+    updateCatechumens(catechumensAsPersonInput);
+    router.push('/step2');
   };
+
+
+  if (loadingLocations || loadingCatechumens) return <Text>Cargando...</Text>;
+  if (errorLocations || errorCatechumens) return <Text>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
 
   return (
     <View style={styles.container}>
@@ -78,14 +84,14 @@ export default function Step1() {
         />
         <TextInput
           label="Número de personas viviendo en el hogar"
-          value={peopleCount}
-          onChangeText={setPeopleCount}
+          value={householdSize}
+          onChangeText={setHouseholdSize}
           keyboardType="numeric"
           style={styles.input}
         />
         <SearchPeople
-          people={catechizandsData.getCatechizands}
-          onSelectionChange={setSelectedCatechizands}
+          people={catechumensData.getCatechumens}
+          onSelectionChange={setSelectedCatechumens}
           placeholder="Buscar catequizandos"
         />
       </View>
@@ -96,7 +102,7 @@ export default function Step1() {
         <Button
           mode="contained"
           onPress={handleSubmit}
-          disabled={!selectedLocation || !peopleCount }
+          disabled={!selectedLocation || !householdSize}
         >
           Continuar
         </Button>

@@ -1,73 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { useRouter, Link, useLocalSearchParams } from 'expo-router';
-import { Button, Text, TextInput, Checkbox } from 'react-native-paper';
-import { useQuery, gql } from '@apollo/client';
-import LottieView from "lottie-react-native";
+import { useRouter, Link } from 'expo-router';
+import { Button, Text } from 'react-native-paper';
 
 import { Pagination } from '@/components/Pagination';
-import { Catechizand } from '@/types';
-
-const GET_SACRAMENTS = gql`
-  query GetSacraments {
-    getSacraments {
-      id
-      name
-    }
-  }
-`;
-
-interface PersonForm {
-  name: string;
-  sacraments: string[];
-}
+import { PersonForm } from '@/components/PersonForm';
+import { PersonInput, Catechumen, Sacrament } from '@/types';
+import { SurveyStore, updateCatechumens, updateOtherPeople } from "@/store/survey";
+import { useSacraments } from '@/hooks/useSacraments';
+import LottieView from 'lottie-react-native';
 
 export default function Step2() {
   const router = useRouter();
-  const { peopleCount, selectedCatechizands } = useLocalSearchParams<{ peopleCount: string, selectedCatechizands: string }>();
-  const [people, setPeople] = useState<PersonForm[]>([]);
-
-  const { loading, error, data } = useQuery(GET_SACRAMENTS);
+  const { householdSize, catechumens } = SurveyStore.useState();
+  const { loading, error, sacraments } = useSacraments();
+  const [people, setPeople] = useState<PersonInput[]>([]);
 
   useEffect(() => {
-    if (peopleCount && selectedCatechizands) {
-      const count = parseInt(peopleCount);
-      const catechizands: Catechizand[] = JSON.parse(selectedCatechizands);
-
-      const initialPeople: PersonForm[] = Array(count).fill(null).map((_, index) => {
-        if (index < catechizands.length) {
-          return { name: `${catechizands[index].name} ${catechizands[index].lastName}`, sacraments: [] };
-        } else {
-          return { name: `Persona ${index + 1}`, sacraments: [] };
-        }
-      });
-
-      setPeople(initialPeople);
-    }
-  }, [peopleCount, selectedCatechizands]);
-
-  const handleNameChange = (index: number, name: string) => {
-    const newPeople = [...people];
-    newPeople[index].name = name;
-    setPeople(newPeople);
-  };
-
-  const handleSacramentToggle = (personIndex: number, sacramentId: string) => {
-    const newPeople = [...people];
-    const sacraments = newPeople[personIndex].sacraments;
-    const sacramentIndex = sacraments.indexOf(sacramentId);
-
-    if (sacramentIndex > -1) {
-      sacraments.splice(sacramentIndex, 1);
-    } else {
-      sacraments.push(sacramentId);
-    }
-
-    setPeople(newPeople);
-  };
+    const initialPeople: PersonInput[] = Array.from({ length: householdSize }).map((_, index) => {
+      if (index < catechumens.length) {
+        const { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray } = catechumens[index];
+        return { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray.map((sacramentId: string) => sacramentId), isVolunteer: false };
+      } else {
+        return { name: "", lastName: "", sacraments: [], isVolunteer: false };
+      }
+    });
+    setPeople(initialPeople);
+  }, [householdSize, catechumens]);
 
   const handleSubmit = () => {
-    console.log('Form submitted', people);
+    console.log('Form submitted Step2');
+    const newCatechumens = people.filter(person => person.id !== undefined) as PersonInput[];
+    const newOtherPeople = people.filter(person => person.id === undefined);
+    updateCatechumens(newCatechumens);
+    updateOtherPeople(newOtherPeople);
     router.push('/step3');
   };
 
@@ -76,6 +42,7 @@ export default function Step2() {
 
   return (
     <ScrollView style={styles.container}>
+      <Text>householdSize = {householdSize}</Text>
       <Pagination currentStep={2} totalSteps={3} />
       <LottieView
         source={require("../assets/lottiefiles/1720857631441.json")}
@@ -88,24 +55,17 @@ export default function Step2() {
       </View>
       <View style={styles.body}>
         {people.map((person, index) => (
-          <View key={index} style={styles.personForm}>
-            <TextInput
-              label={`Nombre de la persona ${index + 1}`}
-              value={person.name}
-              onChangeText={(text) => handleNameChange(index, text)}
-              style={styles.input}
-            />
-            <Text style={styles.sacramentTitle}>Sacramentos:</Text>
-            {data.getSacraments.map((sacrament: { id: string, name: string }) => (
-              <Checkbox.Item
-                key={sacrament.id}
-                label={sacrament.name}
-                status={person.sacraments.includes(sacrament.id) ? 'checked' : 'unchecked'}
-                onPress={() => handleSacramentToggle(index, sacrament.id)}
-                style={styles.checkbox}
-              />
-            ))}
-          </View>
+          <PersonForm
+            key={index}
+            person={person}
+            index={index}
+            sacraments={sacraments}
+            updatePerson={(index, field, value) => {
+              const newPeople = [...people];
+              newPeople[index] = { ...newPeople[index], [field]: value };
+              setPeople(newPeople);
+            }}
+          />
         ))}
       </View>
       <View style={styles.footer}>
@@ -145,25 +105,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     width: "100%",
     marginBottom: 16
-  },
-  personForm: {
-    marginBottom: 20,
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-    width: "100%"
-  },
-  input: {
-    marginBottom: 10,
-    backgroundColor: "#FFFFFF",
-    width: "100%",
-  },
-  checkbox: {
-    width: "100%",
-  },
-  sacramentTitle: {
-    fontWeight: 'bold',
-    marginBottom: 5,
   },
   footer: {
     flexDirection: 'row',
