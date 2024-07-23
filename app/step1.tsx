@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useRouter, Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { useQuery, gql } from '@apollo/client';
 import LottieView from "lottie-react-native";
@@ -9,7 +9,7 @@ import { Pagination } from '@/components/Pagination';
 import { SearchLocation } from '@/components/SearchLocation';
 import { SearchPeople } from '@/components/SearchPeople';
 import { Location, Catechumen } from '@/types';
-import { SurveyStore, updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
+import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
 
 const GET_LOCATIONS = gql`
   query GetLocations {
@@ -56,17 +56,17 @@ export default function Step1() {
       isVolunteer: false,
     }));
     updateHouseholdSize(parseInt(householdSize));
+    updateSelectedLocation(selectedLocation);
     updateCatechumens(catechumensAsPersonInput);
     router.push('/step2');
   };
-
 
   if (loadingLocations || loadingCatechumens) return <Text>Cargando...</Text>;
   if (errorLocations || errorCatechumens) return <Text>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
 
   return (
     <View style={styles.container}>
-      <Pagination currentStep={1} totalSteps={3} />
+      <Pagination currentStep={1} totalSteps={4} />
       <LottieView
         source={require("../assets/lottiefiles/1721342873275.json")}
         style={styles.headerLottieImage}
@@ -96,7 +96,7 @@ export default function Step1() {
         />
       </View>
       <View style={styles.footer}>
-      <Button onPress={() => router.back()}>Atrás</Button>
+        <Button onPress={() => router.back()}>Atrás</Button>
         <Button
           mode="contained"
           onPress={handleSubmit}

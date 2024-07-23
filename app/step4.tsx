@@ -10,7 +10,7 @@ import { PersonInput } from '@/types';
 
 export default function Step4() {
   const router = useRouter();
-  const { catechumens, otherPeople, observations } = SurveyStore.useState();
+  const { catechists, selectedLocation, householdSize, catechumens, otherPeople, observations } = SurveyStore.useState();
   const { getSacramentNameById } = useSacraments();
 
   const handleFinish = () => {
@@ -45,17 +45,31 @@ export default function Step4() {
       />
       <Text variant="headlineMedium">Revisión de la Información</Text>
 
-      <Text variant="titleLarge">Catequizandos</Text>
+      <Text variant="titleSmall">Catequistas</Text>
+      {catechists.map((catechist, index) => (
+        <Text key={`${catechist.id}_${index}`}>{catechist.name} {catechist.lastName}</Text>
+      ))}
       <Divider style={styles.divider} />
+
+      <Text variant="titleSmall">Ubicación Seleccionada</Text>
+      <Text>{selectedLocation?.name || 'N/A'}</Text>
+      <Divider style={styles.divider} />
+
+      <Text variant="titleSmall">Tamaño del Hogar</Text>
+      <Text>{householdSize}</Text>
+      <Divider style={styles.divider} />
+
+      <Text variant="titleLarge">Catequizandos</Text>
       {catechumens.map((person, index) => renderPersonInfo(person, index))}
+      <Divider style={styles.divider} />
 
       <Text variant="titleLarge">Otras Personas</Text>
-      <Divider style={styles.divider} />
       {otherPeople.map((person, index) => renderPersonInfo(person, index + catechumens.length))}
+      <Divider style={styles.divider} />
 
       <Text variant="titleLarge">Observaciones</Text>
-      <Divider style={styles.divider} />
       <Text>{observations}</Text>
+      <Divider style={styles.divider} />
 
       <View style={styles.footer}>
         <Button onPress={() => router.back()}>Atrás</Button>
@@ -88,7 +102,8 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   divider: {
-    marginVertical: 10,
+    marginTop: 10,
+    marginBottom: 20,
   },
   footer: {
     flexDirection: 'row',

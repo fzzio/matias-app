@@ -26,7 +26,7 @@ export default function Step3() {
         autoPlay
         loop
       />
-      <Text variant="headlineMedium">Observaciones</Text>
+      <Text variant="headlineSmall">Ingrese sus observaciones</Text>
       <TextInput
         label="Observaciones"
         value={observations}
