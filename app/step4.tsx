@@ -24,8 +24,8 @@ export default function Step4() {
     router.push('/');
   };
 
-  const renderPersonInfo = (person: PersonInput) => (
-    <View key={person.id + '_' + Date.now()} style={styles.personContainer}>
+  const renderPersonInfo = (person: PersonInput, index: number) => (
+    <View key={`${person.id}_${index}`} style={styles.personContainer}>
       <Text variant="titleMedium">{person.name} {person.lastName}</Text>
       <Text>Cédula: {person.idCard || 'N/A'}</Text>
       <Text>Fecha de Nacimiento: {person.birthDate ? person.birthDate.toISOString().split('T')[0] : 'N/A'}</Text>
@@ -36,7 +36,7 @@ export default function Step4() {
 
   return (
     <ScrollView style={styles.container}>
-      <Pagination currentStep={3} totalSteps={4} />
+      <Pagination currentStep={4} totalSteps={4} />
       <LottieView
         source={require("../assets/lottiefiles/1720857631441.json")}
         style={styles.headerLottieImage}
@@ -47,11 +47,11 @@ export default function Step4() {
 
       <Text variant="titleLarge">Catequizandos</Text>
       <Divider style={styles.divider} />
-      {catechumens.map(renderPersonInfo)}
+      {catechumens.map((person, index) => renderPersonInfo(person, index))}
 
       <Text variant="titleLarge">Otras Personas</Text>
       <Divider style={styles.divider} />
-      {otherPeople.map(renderPersonInfo)}
+      {otherPeople.map((person, index) => renderPersonInfo(person, index + catechumens.length))}
 
       <Text variant="titleLarge">Observaciones</Text>
       <Divider style={styles.divider} />
