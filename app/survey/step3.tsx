@@ -14,14 +14,14 @@ export default function Step3() {
   const handleSubmit = () => {
     console.log('Form submitted Step3');
     updateObservations(observations);
-    router.push('/step4');
+    router.push('/survey/step4');
   };
 
   return (
     <View style={styles.container}>
       <Pagination currentStep={3} totalSteps={4} />
       <LottieView
-        source={require("../assets/lottiefiles/1720857631441.json")}
+        source={require("@/assets/lottiefiles/1720857631441.json")}
         style={styles.headerLottieImage}
         autoPlay
         loop

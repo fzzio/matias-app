@@ -1,64 +1,37 @@
-import * as React from 'react';
-import { Link, useRouter } from 'expo-router';
-import { StyleSheet, Image, View } from 'react-native';
+import React from 'react';
+import { View, Image, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { gql, useQuery } from '@apollo/client';
-import { updateCatechists } from "@/store/survey";
-
-import { SearchPeople } from '@/components/SearchPeople';
-import { Person } from '@/types';
-
-const GET_CATECHISTS = gql`
-  query GetCatechists {
-    getCatechists {
-      id
-      name
-      lastName
-    }
-  }
-`;
+import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Home() {
   const router = useRouter();
-  const { loading, error, data } = useQuery(GET_CATECHISTS);
-  const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
-
-  const handleSubmit = () => {
-    console.log('Form submitted index', { selectedCatechists });
-    updateCatechists(selectedCatechists);
-    router.push('/step1');
-  };
-
-  if (loading) return <Text>Cargando...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text variant="headlineSmall">Parroquia "San José de Ancón"</Text>
-        <Image source={require('../assets/images/icon.png')} style={styles.headerImage}  />
+        <Image source={require('@/assets/images/icon.png')} style={styles.headerImage}  />
         <Text variant="headlineLarge">Misión Catequética</Text>
         <Text variant="headlineMedium">2024</Text>
       </View>
-      <View style={styles.body}>
-        <Text variant="labelMedium">Seleccione los catequistas que harán ésta visita:</Text>
-        <SearchPeople
-          placeholder="Buscar"
-          people={data.getCatechists}
-          onSelectionChange={setSelectedCatechists}
-        />
-      </View>
-      <View style={styles.footer}>
-        <Link href="/step1" asChild>
-          <Button
-            mode="contained"
-            onPress={handleSubmit}
-            style={styles.button}
-            disabled={selectedCatechists.length === 0}
-          >
-            Empezar
-          </Button>
-        </Link>
+      <View style={styles.buttonsContainer}>
+        <Button
+          icon={() => <Ionicons name="clipboard-outline" size={24} />}
+          mode="contained"
+          onPress={() => router.push('/survey')}
+          style={styles.button}
+        >
+          Encuesta
+        </Button>
+        <Button
+          icon={() => <Ionicons name="bar-chart-outline" size={24} />}
+          mode="contained"
+          onPress={() => router.push('/reports')}
+          style={styles.button}
+        >
+          Reportes
+        </Button>
       </View>
     </View>
   );
@@ -67,10 +40,9 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 16,
-    backgroundColor: "#cccccc",
   },
   header: {
     alignItems: 'center',
@@ -85,19 +57,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 16
   },
-  body: {
-    flexDirection: "column",
-    gap: 8,
-    flexWrap: "wrap",
-    width: "100%",
-    marginBottom: 16
-  },
-  footer: {
-    flexDirection: "row",
-    marginBottom: 16,
-    gap: 8
+  buttonsContainer: {
+    marginTop: 20,
+    width: '100%',
+    alignItems: 'center',
   },
   button: {
-    marginTop: 20,
+    marginVertical: 10,
+    width: '80%',
   },
 });

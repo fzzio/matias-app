@@ -123,7 +123,7 @@ export default function Step4() {
           <Pagination currentStep={4} totalSteps={4} />
           <Text variant="headlineMedium">Revisión de la Información</Text>
           <LottieView
-            source={require("../assets/lottiefiles/1720857631441.json")}
+            source={require("@/assets/lottiefiles/1720857631441.json")}
             style={styles.headerLottieImage}
             autoPlay
             loop
