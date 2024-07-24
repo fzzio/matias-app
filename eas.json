@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 10.1.1"
+    "version": ">= 10.2.1"
   },
   "build": {
     "development": {
@@ -10,18 +10,10 @@
     "preview": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_MATIAS_API_URL": "https://matias-backend-fzzio-fabricio-orralas-projects.vercel.app/"
       }
-    },
-    "preview2": {
-      "android": {
-        "gradleCommand": ":app:assembleRelease"
-      }
-    },
-    "preview3": {
-      "developmentClient": true
-    },
-    "preview4": {
-      "distribution": "internal"
     },
     "production": {}
   },
