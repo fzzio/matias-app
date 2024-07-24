@@ -2,12 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Searchbar, List, Chip } from 'react-native-paper';
 
-interface Person {
-  id: string;
-  name: string;
-  lastName: string;
-}
-
+import { Person } from '@/types';
 interface SearchPeopleProps {
   people: Person[];
   onSelectionChange: React.Dispatch<React.SetStateAction<Person[]>>;
@@ -53,12 +48,13 @@ export function SearchPeople({ people, onSelectionChange, placeholder = "Search 
         style={styles.searchBar}
       />
       {searchQuery.trim() !== '' && (
-        <List.Section>
+        <List.Section style={styles.listContainer}>
           {filteredPeople.map(person => (
             <List.Item
               key={person.id}
               title={`${person.name} ${person.lastName}`}
               onPress={() => handleSelect(person)}
+              style={styles.listItem}
             />
           ))}
         </List.Section>
@@ -83,14 +79,22 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   searchBar: {
-    marginBottom: 10,
+    backgroundColor: "#FFFFFF"
+  },
+  listContainer: {
+    backgroundColor: "#FFFFFF"
+  },
+  listItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#000000"
   },
   chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 10,
+    gap: 8
   },
   chip: {
-    margin: 4,
+    backgroundColor: "#FFFFFF"
   },
 });

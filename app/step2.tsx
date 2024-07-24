@@ -1,41 +1,130 @@
-import { Link, useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { useRouter, Link } from 'expo-router';
+import { Button, Text } from 'react-native-paper';
 
 import { Pagination } from '@/components/Pagination';
+import { PersonForm } from '@/components/PersonForm';
+import { PersonInput, Sacrament } from '@/types';
+import { SurveyStore, updateCatechumens, updateOtherPeople } from "@/store/survey";
+import { useSacraments } from '@/hooks/useSacraments';
+import LottieView from 'lottie-react-native';
 
 export default function Step2() {
   const router = useRouter();
+  const { householdSize, catechumens } = SurveyStore.useState();
+  const { loading, error, sacraments } = useSacraments();
+  const [people, setPeople] = useState<PersonInput[]>([]);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const initialPeople: PersonInput[] = Array.from({ length: householdSize }).map((_, index) => {
+      if (index < catechumens.length) {
+        const { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray, isVolunteer } = catechumens[index];
+        return { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray.map((sacramentId: string) => sacramentId), isVolunteer: isVolunteer !== undefined ? isVolunteer : false };
+      } else {
+        return { name: "", lastName: "", sacraments: [], isVolunteer: false };
+      }
+    });
+    setPeople(initialPeople);
+  }, [householdSize, catechumens]);
+
+  useEffect(() => {
+    validateForm();
+  }, [people]);
+
+  const validateForm = () => {
+    const isValid = people.every(person =>
+      person.name.trim() !== "" &&
+      person.lastName.trim() !== "" &&
+      person.birthDate !== undefined &&
+      person.isVolunteer !== undefined
+    );
+    setIsFormValid(isValid);
+  };
+
+  const handleSubmit = () => {
+    console.log('Form submitted Step2');
+    const newCatechumens = people.filter(person => person.id !== undefined) as PersonInput[];
+    const newOtherPeople = people.filter(person => person.id === undefined);
+    updateCatechumens(newCatechumens);
+    updateOtherPeople(newOtherPeople);
+    router.push('/step3');
+  };
+
+  if (loading) return <Text>Cargando...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Pagination currentStep={2} totalSteps={3} />
-      <Text variant="headlineMedium">Step 2</Text>
-      <TextInput
-        label="Email"
-        style={styles.input}
+      <LottieView
+        source={require("../assets/lottiefiles/1720857631441.json")}
+        style={styles.headerLottieImage}
+        autoPlay
+        loop
       />
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => router.back()}>Back</Button>
-        <Link href="/step3" asChild>
-          <Button mode="contained">Continue</Button>
-        </Link>
+      <View style={styles.header}>
+        <Text variant="headlineMedium">Información por persona</Text>
       </View>
-    </View>
+      <View style={styles.body}>
+        {people.map((person, index) => (
+          <PersonForm
+            key={index}
+            person={person}
+            index={index}
+            sacraments={sacraments}
+            updatePerson={(index, field, value) => {
+              const newPeople = [...people];
+              newPeople[index] = { ...newPeople[index], [field]: value };
+              setPeople(newPeople);
+            }}
+            style={{ marginBottom: 20 }}
+          />
+        ))}
+      </View>
+      <View style={styles.footer}>
+        <Button onPress={() => router.back()}>Atrás</Button>
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          disabled={!isFormValid}
+        >
+          Continuar
+        </Button>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: 'center',
+    padding: 18,
   },
-  input: {
-    marginBottom: 20,
+  header: {
+    alignItems: 'center',
+    flexDirection: "column",
+    alignContent: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 16
   },
-  buttonContainer: {
+  headerLottieImage: {
+    width: "100%",
+    height: 200,
+    marginBottom: 10
+  },
+  body: {
+    flexDirection: "column",
+    gap: 16,
+    flexWrap: "wrap",
+    width: "100%",
+    marginBottom: 16
+  },
+  footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 30,
   },
 });
