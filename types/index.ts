@@ -31,7 +31,10 @@ export interface PersonInput {
   name: string;
   lastName: string;
   birthDate?: Date;
+  email?: string;
+  phone?: string;
   sacraments: string[];
+  isCatechist?: boolean;
   isVolunteer?: boolean;
 }
 
