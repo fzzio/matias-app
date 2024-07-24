@@ -58,7 +58,7 @@ export default function Step1() {
     updateHouseholdSize(parseInt(householdSize));
     updateSelectedLocation(selectedLocation);
     updateCatechumens(catechumensAsPersonInput);
-    router.push('/step2');
+    router.push('/survey/step2');
   };
 
   if (loadingLocations || loadingCatechumens) return <Text>Cargando...</Text>;
@@ -68,7 +68,7 @@ export default function Step1() {
     <View style={styles.container}>
       <Pagination currentStep={1} totalSteps={4} />
       <LottieView
-        source={require("../assets/lottiefiles/1721342873275.json")}
+        source={require("@/assets/lottiefiles/1721342873275.json")}
         style={styles.headerLottieImage}
         autoPlay
         loop

@@ -1,0 +1,1105 @@
+package.json
+```
+{
+  "name": "matias-app",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "test": "jest --watchAll",
+    "lint": "expo lint"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.10.8",
+    "@expo/vector-icons": "^14.0.2",
+    "@react-navigation/native": "^6.0.2",
+    "expo": "~51.0.21",
+    "expo-asset": "~10.0.10",
+    "expo-constants": "~16.0.2",
+    "expo-dev-client": "~4.0.20",
+    "expo-font": "~12.0.8",
+    "expo-image": "~1.12.13",
+    "expo-linking": "~6.3.1",
+    "expo-router": "~3.5.18",
+    "expo-splash-screen": "~0.27.5",
+    "expo-status-bar": "~1.12.1",
+    "expo-system-ui": "~3.0.7",
+    "expo-web-browser": "~13.0.3",
+    "graphql": "^15.8.0",
+    "lottie-react-native": "6.7.0",
+    "pullstate": "^1.25.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.74.3",
+    "react-native-gesture-handler": "~2.16.1",
+    "react-native-paper": "^5.12.3",
+    "react-native-reanimated": "~3.10.1",
+    "react-native-safe-area-context": "4.10.5",
+    "react-native-screens": "3.31.1",
+    "react-native-web": "~0.19.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/jest": "^29.5.12",
+    "@types/react": "~18.2.45",
+    "@types/react-test-renderer": "^18.0.7",
+    "jest": "^29.2.1",
+    "jest-expo": "~51.0.3",
+    "react-test-renderer": "18.2.0",
+    "typescript": "~5.3.3"
+  },
+  "private": true,
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
+```
+
+
+./app/+html.tsx
+```
+import { ScrollViewStyleReset } from 'expo-router/html';
+import { type PropsWithChildren } from 'react';
+
+/**
+ * This file is web-only and used to configure the root HTML for every web page during static rendering.
+ * The contents of this function only run in Node.js environments and do not have access to the DOM or browser APIs.
+ */
+export default function Root({ children }: PropsWithChildren) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        {/*
+          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native.
+          However, body scrolling is often nice to have for mobile web. If you want to enable it, remove this line.
+        */}
+        <ScrollViewStyleReset />
+
+        {/* Using raw CSS styles as an escape-hatch to ensure the background color never flickers in dark-mode. */}
+        <style dangerouslySetInnerHTML={{ __html: responsiveBackground }} />
+        {/* Add any additional <head> elements that you want globally available on web... */}
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+
+const responsiveBackground = `
+body {
+  background-color: #fff;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000;
+  }
+}`;
+
+```
+
+./app/+not-found.tsx
+```
+import { Link, Stack } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from 'react-native-paper';
+
+export default function NotFoundScreen() {
+  return (
+    <>
+      <Stack.Screen options={{ title: 'Oops!' }} />
+      <View style={styles.container}>
+        <Text>This screen doesn't exist.</Text>
+        <Link href="/" style={styles.link}>
+          <Text>Go to home screen!</Text>
+        </Link>
+      </View>
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  link: {
+    marginTop: 15,
+    paddingVertical: 15,
+  },
+});
+
+```
+
+./app/index.tsx
+```
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, Text } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+export default function Home() {
+  const router = useRouter();
+
+  return (
+    <View style={styles.container}>
+      <Text variant="headlineMedium">Bienvenido a la Misión Catequética</Text>
+      <View style={styles.buttonsContainer}>
+        <Button
+          icon={() => <Ionicons name="clipboard-outline" size={24} />}
+          mode="contained"
+          onPress={() => router.push('/survey/index')}
+          style={styles.button}
+        >
+          Encuesta
+        </Button>
+        <Button
+          icon={() => <Ionicons name="bar-chart-outline" size={24} />}
+          mode="contained"
+          onPress={() => router.push('/reports/index')}
+          style={styles.button}
+        >
+          Reportes
+        </Button>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  buttonsContainer: {
+    marginTop: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  button: {
+    marginVertical: 10,
+    width: '80%',
+  },
+});
+
+```
+
+./app/reports/index.tsx
+```
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, Text } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+
+export default function ReportsIndex() {
+  const router = useRouter();
+
+  return (
+    <View style={styles.container}>
+      <Text variant="headlineMedium">Menú de Reportes</Text>
+      <View style={styles.buttonsContainer}>
+        <Button
+          mode="contained"
+          onPress={() => router.push('/reports/report1')}
+          style={styles.button}
+        >
+          Reporte 1
+        </Button>
+        <Button
+          mode="contained"
+          onPress={() => router.push('/reports/report2')}
+          style={styles.button}
+        >
+          Reporte 2
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => router.push('/')}
+          style={styles.button}
+        >
+          Volver al Menú Principal
+        </Button>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  buttonsContainer: {
+    marginTop: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  button: {
+    marginVertical: 10,
+    width: '80%',
+  },
+});
+
+```
+
+./app/reports/report1.tsx
+```
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, Text } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+
+export default function Report1() {
+  const router = useRouter();
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Reporte 1</Text>
+      <Text>Aquí va el contenido del reporte 1.</Text>
+      <Button mode="contained" style={styles.button} onPress={() => router.back()}>
+        Volver
+      </Button>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    padding: 16,
+  },
+  header: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  button: {
+    marginTop: 20,
+    width: '80%',
+  },
+});
+
+```
+
+./app/reports/report2.tsx
+```
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, Text } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+
+export default function Report1() {
+  const router = useRouter();
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Reporte 1</Text>
+      <Text>Aquí va el contenido del reporte 1.</Text>
+      <Button mode="contained" style={styles.button} onPress={() => router.back()}>
+        Volver
+      </Button>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    padding: 16,
+  },
+  header: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  button: {
+    marginTop: 20,
+    width: '80%',
+  },
+});
+
+```
+
+./app/reports/_layout.tsx
+```
+import { Stack } from 'expo-router';
+
+export default function SurveyLayout() {
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="report1" options={{ headerShown: false }} />
+      <Stack.Screen name="report2" options={{ headerShown: false }} />
+    </Stack>
+  );
+}
+
+```
+
+./app/survey/index.tsx
+```
+import * as React from 'react';
+import { Link, useRouter } from 'expo-router';
+import { StyleSheet, Image, View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
+import { gql, useQuery } from '@apollo/client';
+import { updateCatechists } from "@/store/survey";
+
+import { SearchPeople } from '@/components/SearchPeople';
+import { Person } from '@/types';
+
+const GET_CATECHISTS = gql`
+  query GetCatechists {
+    getCatechists {
+      id
+      name
+      lastName
+    }
+  }
+`;
+
+export default function Home() {
+  const router = useRouter();
+  const { loading, error, data } = useQuery(GET_CATECHISTS);
+  const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
+
+  const handleSubmit = () => {
+    console.log('Form submitted index', { selectedCatechists });
+    updateCatechists(selectedCatechists);
+    router.push('/survey/step1');
+  };
+
+  if (loading) return <Text>Cargando...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text variant="headlineSmall">Parroquia "San José de Ancón"</Text>
+        <Image source={require('@/assets/images/icon.png')} style={styles.headerImage}  />
+        <Text variant="headlineLarge">Misión Catequética</Text>
+        <Text variant="headlineMedium">2024</Text>
+      </View>
+      <View style={styles.body}>
+        <Text variant="labelMedium">Seleccione los catequistas que harán ésta visita:</Text>
+        <SearchPeople
+          placeholder="Buscar"
+          people={data.getCatechists}
+          onSelectionChange={setSelectedCatechists}
+        />
+      </View>
+      <View style={styles.footer}>
+        <Link href="/step1" asChild>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={styles.button}
+            disabled={selectedCatechists.length === 0}
+          >
+            Empezar
+          </Button>
+        </Link>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    backgroundColor: "#cccccc",
+  },
+  header: {
+    alignItems: 'center',
+    flexDirection: "column",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 16
+  },
+  headerImage: {
+    height: 200,
+    width: 200,
+    borderRadius: 10,
+    marginBottom: 16
+  },
+  body: {
+    flexDirection: "column",
+    gap: 8,
+    flexWrap: "wrap",
+    width: "100%",
+    marginBottom: 16
+  },
+  footer: {
+    flexDirection: "row",
+    marginBottom: 16,
+    gap: 8
+  },
+  button: {
+    marginTop: 20,
+  },
+});
+
+```
+
+./app/survey/step1.tsx
+```
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Button, Text, TextInput } from 'react-native-paper';
+import { useQuery, gql } from '@apollo/client';
+import LottieView from "lottie-react-native";
+
+import { Pagination } from '@/components/Pagination';
+import { SearchLocation } from '@/components/SearchLocation';
+import { SearchPeople } from '@/components/SearchPeople';
+import { Location, Catechumen } from '@/types';
+import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
+
+const GET_LOCATIONS = gql`
+  query GetLocations {
+    getLocations {
+      id
+      name
+    }
+  }
+`;
+
+const GET_CATECHUMENS = gql`
+  query GetCatechumens($year: String!) {
+    getCatechumens(year: $year) {
+      id
+      name
+      lastName
+      sacraments {
+        id
+      }
+    }
+  }
+`;
+
+export default function Step1() {
+  const router = useRouter();
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [householdSize, setHouseholdSize] = useState('');
+  const [selectedCatechumens, setSelectedCatechumens] = useState<Catechumen[]>([]);
+
+  const { loading: loadingLocations, error: errorLocations, data: locationsData } = useQuery(GET_LOCATIONS);
+  const { loading: loadingCatechumens, error: errorCatechumens, data: catechumensData } = useQuery(GET_CATECHUMENS, {
+    variables: { year: "2024" },
+  });
+
+  const handleSubmit = () => {
+    console.log('Form submitted Step1');
+    const catechumensAsPersonInput = selectedCatechumens.map(({ id, idCard, name, lastName, birthDate, sacraments }) => ({
+      id,
+      idCard,
+      name,
+      lastName,
+      birthDate,
+      sacraments: sacraments.map(sacrament => sacrament.id),
+      isVolunteer: false,
+    }));
+    updateHouseholdSize(parseInt(householdSize));
+    updateSelectedLocation(selectedLocation);
+    updateCatechumens(catechumensAsPersonInput);
+    router.push('/survey/step2');
+  };
+
+  if (loadingLocations || loadingCatechumens) return <Text>Cargando...</Text>;
+  if (errorLocations || errorCatechumens) return <Text>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
+
+  return (
+    <View style={styles.container}>
+      <Pagination currentStep={1} totalSteps={4} />
+      <LottieView
+        source={require("@/assets/lottiefiles/1721342873275.json")}
+        style={styles.headerLottieImage}
+        autoPlay
+        loop
+      />
+      <View style={styles.header}>
+        <Text variant="headlineMedium">Información del Hogar</Text>
+      </View>
+      <View style={styles.body}>
+        <SearchLocation
+          locations={locationsData.getLocations}
+          onLocationSelect={setSelectedLocation}
+          placeholder="Buscar ubicación"
+        />
+        <TextInput
+          label="Número de personas viviendo en el hogar"
+          value={householdSize}
+          onChangeText={setHouseholdSize}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+        <SearchPeople
+          people={catechumensData.getCatechumens}
+          onSelectionChange={setSelectedCatechumens}
+          placeholder="Buscar catequizandos"
+        />
+      </View>
+      <View style={styles.footer}>
+        <Button onPress={() => router.back()}>Atrás</Button>
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          disabled={!selectedLocation || !householdSize}
+        >
+          Continuar
+        </Button>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 18,
+    justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    flexDirection: "column",
+    alignContent: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 16
+  },
+  headerLottieImage: {
+    width: "100%",
+    height: "25%",
+    marginBottom: 10
+  },
+  body: {
+    flexDirection: "column",
+    gap: 16,
+    flexWrap: "wrap",
+    width: "100%",
+    marginBottom: 16
+  },
+  input: {
+    backgroundColor: "#FFFFFF"
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+});
+
+```
+
+./app/survey/step2.tsx
+```
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { useRouter, Link } from 'expo-router';
+import { Button, Text } from 'react-native-paper';
+
+import { Pagination } from '@/components/Pagination';
+import { PersonForm } from '@/components/PersonForm';
+import { PersonInput, Sacrament } from '@/types';
+import { SurveyStore, updateCatechumens, updateOtherPeople } from "@/store/survey";
+import { useSacraments } from '@/hooks/useSacraments';
+import LottieView from 'lottie-react-native';
+
+export default function Step2() {
+  const router = useRouter();
+  const { householdSize, catechumens } = SurveyStore.useState();
+  const { loading, error, sacraments } = useSacraments();
+  const [people, setPeople] = useState<PersonInput[]>([]);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const initialPeople: PersonInput[] = Array.from({ length: householdSize }).map((_, index) => {
+      if (index < catechumens.length) {
+        const { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray, isVolunteer } = catechumens[index];
+        return { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray.map((sacramentId: string) => sacramentId), isVolunteer: isVolunteer !== undefined ? isVolunteer : false };
+      } else {
+        return { name: "", lastName: "", sacraments: [], isVolunteer: false };
+      }
+    });
+    setPeople(initialPeople);
+  }, [householdSize, catechumens]);
+
+  useEffect(() => {
+    validateForm();
+  }, [people]);
+
+  const validateForm = () => {
+    const isValid = people.every(person =>
+      person.name.trim() !== "" &&
+      person.lastName.trim() !== "" &&
+      person.birthDate !== undefined &&
+      person.isVolunteer !== undefined
+    );
+    setIsFormValid(isValid);
+  };
+
+  const handleSubmit = () => {
+    console.log('Form submitted Step2');
+    const newCatechumens = people.filter(person => person.id !== undefined) as PersonInput[];
+    const newOtherPeople = people.filter(person => person.id === undefined);
+    updateCatechumens(newCatechumens);
+    updateOtherPeople(newOtherPeople);
+    router.push('/survey/step3');
+  };
+
+  if (loading) return <Text>Cargando...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
+
+  return (
+    <ScrollView style={styles.container}>
+      <Pagination currentStep={2} totalSteps={3} />
+      <LottieView
+        source={require("@/assets/lottiefiles/1720857631441.json")}
+        style={styles.headerLottieImage}
+        autoPlay
+        loop
+      />
+      <View style={styles.header}>
+        <Text variant="headlineMedium">Información por persona</Text>
+      </View>
+      <View style={styles.body}>
+        {people.map((person, index) => (
+          <PersonForm
+            key={index}
+            person={person}
+            index={index}
+            sacraments={sacraments}
+            updatePerson={(index, field, value) => {
+              const newPeople = [...people];
+              newPeople[index] = { ...newPeople[index], [field]: value };
+              setPeople(newPeople);
+            }}
+            style={{ marginBottom: 20 }}
+          />
+        ))}
+      </View>
+      <View style={styles.footer}>
+        <Button onPress={() => router.back()}>Atrás</Button>
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          disabled={!isFormValid}
+        >
+          Continuar
+        </Button>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 18,
+  },
+  header: {
+    alignItems: 'center',
+    flexDirection: "column",
+    alignContent: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 16
+  },
+  headerLottieImage: {
+    width: "100%",
+    height: 200,
+    marginBottom: 10
+  },
+  body: {
+    flexDirection: "column",
+    gap: 16,
+    flexWrap: "wrap",
+    width: "100%",
+    marginBottom: 16
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 30,
+  },
+});
+```
+
+./app/survey/step3.tsx
+```
+import { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text, TextInput } from 'react-native-paper';
+
+import { SurveyStore, updateObservations } from "@/store/survey";
+import { Pagination } from '@/components/Pagination';
+import LottieView from 'lottie-react-native';
+
+export default function Step3() {
+  const router = useRouter();
+  const [observations, setObservations] = useState("");
+
+  const handleSubmit = () => {
+    console.log('Form submitted Step3');
+    updateObservations(observations);
+    router.push('/survey/step4');
+  };
+
+  return (
+    <View style={styles.container}>
+      <Pagination currentStep={3} totalSteps={4} />
+      <LottieView
+        source={require("@/assets/lottiefiles/1720857631441.json")}
+        style={styles.headerLottieImage}
+        autoPlay
+        loop
+      />
+      <Text variant="headlineSmall">Ingrese sus observaciones</Text>
+      <TextInput
+        label="Observaciones"
+        value={observations}
+        onChangeText={setObservations}
+        multiline
+        style={styles.input}
+      />
+      <View style={styles.buttonContainer}>
+        <Button onPress={() => router.back()}>Atrás</Button>
+        <Button mode="contained" onPress={handleSubmit}>Revisar</Button>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  headerLottieImage: {
+    width: "100%",
+    height: 200,
+    marginBottom: 10
+  },
+  input: {
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+});
+
+```
+
+./app/survey/step4.tsx
+```
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, Modal } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Button, Text, Divider, ActivityIndicator } from 'react-native-paper';
+import { SurveyStore, clearSurvey } from '@/store/survey';
+import { Pagination } from '@/components/Pagination';
+import { gql, useMutation } from '@apollo/client';
+import { PersonInput } from '@/types';
+import LottieView from 'lottie-react-native';
+import CatechumenInfo from '@/components/Catechumen';
+import PersonInfo from '@/components/PersonInfo';
+import CatechistInfo from '@/components/CatechistInfo';
+
+const CREATE_SURVEY = gql`
+  mutation CreateSurvey($input: SurveyInput!) {
+    createSurvey(input: $input) {
+      id
+      householdSize
+      observations
+    }
+  }
+`;
+
+const CREATE_PEOPLE_BULK = gql`
+  mutation CreatePeopleBulk($input: [PersonInput!]!) {
+    createPeopleBulk(input: $input) {
+      id
+      name
+      lastName
+      email
+      phone
+    }
+  }
+`;
+
+export default function Step4() {
+  const router = useRouter();
+  const { catechists, selectedLocation, householdSize, catechumens, otherPeople, observations } = SurveyStore.useState();
+  const [createSurvey] = useMutation(CREATE_SURVEY);
+  const [createPeopleBulk] = useMutation(CREATE_PEOPLE_BULK);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSavePeople = async (people: PersonInput[]) => {
+    const response = await createPeopleBulk({
+      variables: {
+        input: people.map((person: PersonInput) => ({
+          idCard: person.idCard,
+          name: person.name,
+          lastName: person.lastName,
+          email: person.email,
+          phone: person.phone,
+          birthDate: person.birthDate ? person.birthDate.toISOString() : null,
+          sacraments: person.sacraments,
+          isCatechist: person.isCatechist,
+          isVolunteer: person.isVolunteer
+        })),
+      },
+    });
+    return response.data.createPeopleBulk.map((person: any) => person.id);
+  };
+
+  const handleFinish = async () => {
+    if (!selectedLocation) {
+      console.error("No se seleccionó ubicación.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const newPeopleIds = await handleSavePeople(otherPeople);
+      const surveyResponse = await createSurvey({
+        variables: {
+          input: {
+            householdSize,
+            observations,
+            catechumensInHousehold: catechumens.map(c => c.id),
+            nonParticipants: newPeopleIds,
+            catechists: catechists.map(c => c.id),
+            location: selectedLocation.id,
+          },
+        },
+      });
+
+      if (surveyResponse.data.createSurvey) {
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.error("Error al guardar la encuesta:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    clearSurvey();
+    router.push('/');
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showModal}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text>Información guardada con éxito</Text>
+            <Button onPress={closeModal}>Cerrar</Button>
+          </View>
+        </View>
+      </Modal>
+
+      {isLoading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator animating={true} size="large" />
+        </View>
+      ) : (
+        <>
+          <Pagination currentStep={4} totalSteps={4} />
+          <Text variant="headlineMedium">Revisión de la Información</Text>
+          <LottieView
+            source={require("@/assets/lottiefiles/1720857631441.json")}
+            style={styles.headerLottieImage}
+            autoPlay
+            loop
+          />
+
+          <Text variant="titleSmall">Catequistas</Text>
+          {catechists.map((catechist, index) => <CatechistInfo catechist={catechist} key={`catechist_${index}`} />)}
+          <Divider style={styles.divider} />
+
+          <Text variant="titleSmall">Ubicación Seleccionada</Text>
+          <Text>{selectedLocation?.name || 'N/A'}</Text>
+          <Divider style={styles.divider} />
+
+          <Text variant="titleSmall">Tamaño del Hogar</Text>
+          <Text>{householdSize}</Text>
+          <Divider style={styles.divider} />
+
+          <Text variant="titleLarge">Catequizandos</Text>
+          {catechumens.map((person, index) => <CatechumenInfo catechumen={person} key={`catechumen_${index}`} />)}
+          <Divider style={styles.divider} />
+
+          <Text variant="titleLarge">Otras Personas</Text>
+          {otherPeople.map((person, index) => <PersonInfo person={person} key={`person_${index}`} />)}
+          <Divider style={styles.divider} />
+
+          <Text variant="titleLarge">Observaciones</Text>
+          <Text>{observations}</Text>
+          <Divider style={styles.divider} />
+
+          <View style={styles.footer}>
+            <Button onPress={() => router.back()}>Atrás</Button>
+            <Button mode="contained" disabled={isLoading} onPress={handleFinish}>
+              Finalizar
+            </Button>
+          </View>
+        </>
+      )}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 18,
+  },
+  personContainer: {
+    marginBottom: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  headerLottieImage: {
+    width: "100%",
+    height: 200,
+    marginBottom: 10
+  },
+  divider: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+});
+
+```
+
+./app/survey/_layout.tsx
+```
+import { Stack } from 'expo-router';
+
+export default function SurveyLayout() {
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="step1" options={{ headerShown: false }} />
+      <Stack.Screen name="step2" options={{ headerShown: false }} />
+      <Stack.Screen name="step3" options={{ headerShown: false }} />
+      <Stack.Screen name="step4" options={{ headerShown: false }} />
+    </Stack>
+  );
+}
+
+```
+
+./app/_layout.tsx
+```
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
+import { PaperProvider } from 'react-native-paper';
+import { ApolloProvider } from '@apollo/client';
+import client from '@/apollo-client';
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
+export default function RootLayout() {
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
+  return (
+    <ApolloProvider client={client}>
+      <PaperProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="survey" options={{ headerShown: false }} />
+          <Stack.Screen name="reports" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </PaperProvider>
+    </ApolloProvider>
+  );
+}
+
+```
+

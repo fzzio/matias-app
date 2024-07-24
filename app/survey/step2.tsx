@@ -49,7 +49,7 @@ export default function Step2() {
     const newOtherPeople = people.filter(person => person.id === undefined);
     updateCatechumens(newCatechumens);
     updateOtherPeople(newOtherPeople);
-    router.push('/step3');
+    router.push('/survey/step3');
   };
 
   if (loading) return <Text>Cargando...</Text>;
@@ -59,7 +59,7 @@ export default function Step2() {
     <ScrollView style={styles.container}>
       <Pagination currentStep={2} totalSteps={3} />
       <LottieView
-        source={require("../assets/lottiefiles/1720857631441.json")}
+        source={require("@/assets/lottiefiles/1720857631441.json")}
         style={styles.headerLottieImage}
         autoPlay
         loop
