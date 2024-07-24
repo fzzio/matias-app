@@ -1,13 +1,15 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import LottieView from 'lottie-react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, Text, Divider } from 'react-native-paper';
+import { Button, Text, Divider, ActivityIndicator } from 'react-native-paper';
 import { SurveyStore, clearSurvey } from '@/store/survey';
 import { Pagination } from '@/components/Pagination';
 import { gql, useMutation } from '@apollo/client';
-import { useSacraments } from '@/hooks/useSacraments';
 import { PersonInput } from '@/types';
+import LottieView from 'lottie-react-native';
+import CatechumenInfo from '@/components/Catechumen';
+import PersonInfo from '@/components/PersonInfo';
+import CatechistInfo from '@/components/CatechistInfo';
 
 const CREATE_SURVEY = gql`
   mutation CreateSurvey($input: SurveyInput!) {
@@ -34,38 +36,29 @@ const CREATE_PEOPLE_BULK = gql`
 export default function Step4() {
   const router = useRouter();
   const { catechists, selectedLocation, householdSize, catechumens, otherPeople, observations } = SurveyStore.useState();
-  const { getSacramentNameById } = useSacraments();
   const [createSurvey] = useMutation(CREATE_SURVEY);
-  const [createPeopleBulk, { data, loading, error }] = useMutation(CREATE_PEOPLE_BULK);
+  const [createPeopleBulk] = useMutation(CREATE_PEOPLE_BULK);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleSavePeople = async (people: PersonInput[]) => {
-    try {
-      const response = await createPeopleBulk({
-        variables: {
-          input: people.map((person: PersonInput) => ({
-            idCard: person.idCard,
-            name: person.name,
-            lastName: person.lastName,
-            email: person.email,
-            phone: person.phone,
-            birthDate: person.birthDate ? person.birthDate.toISOString() : null,
-            sacraments: person.sacraments,
-            isCatechist: person.isCatechist,
-            isVolunteer: person.isVolunteer
-          })),
-        },
-      });
-
-      if (response.data.createPeopleBulk) {
-        console.log("Personas creadas exitosamente", response.data.createPeopleBulk);
-        return response.data.createPeopleBulk.map((person: any) => person.id);
-      }
-    } catch (error) {
-      console.error("Error al crear personas", error);
-      throw new Error("Error al crear personas");
-    }
+    const response = await createPeopleBulk({
+      variables: {
+        input: people.map((person: PersonInput) => ({
+          idCard: person.idCard,
+          name: person.name,
+          lastName: person.lastName,
+          email: person.email,
+          phone: person.phone,
+          birthDate: person.birthDate ? person.birthDate.toISOString() : null,
+          sacraments: person.sacraments,
+          isCatechist: person.isCatechist,
+          isVolunteer: person.isVolunteer
+        })),
+      },
+    });
+    return response.data.createPeopleBulk.map((person: any) => person.id);
   };
-
 
   const handleFinish = async () => {
     if (!selectedLocation) {
@@ -73,6 +66,7 @@ export default function Step4() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const newPeopleIds = await handleSavePeople(otherPeople);
       const surveyResponse = await createSurvey({
@@ -89,71 +83,84 @@ export default function Step4() {
       });
 
       if (surveyResponse.data.createSurvey) {
-        console.log("Encuesta creada exitosamente");
-        clearSurvey();
-        router.push('/');
+        setShowModal(true);
       }
     } catch (error) {
       console.error("Error al guardar la encuesta:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const renderPersonInfo = (person: PersonInput, index: number) => (
-    <View key={`${person.id}_${index}`} style={styles.personContainer}>
-      <Text>Nombre: {person.name} {person.lastName}</Text>
-      <Text>Cédula: {person.idCard || 'N/A'}</Text>
-      <Text>Fecha de Nacimiento: {person.birthDate ? person.birthDate.toISOString().split('T')[0] : 'N/A'}</Text>
-      <Text>Sacramentos: {person.sacraments.map(getSacramentNameById).join(', ') || 'N/A'}</Text>
-      <Text>Voluntario: {person.isVolunteer ? 'Sí' : 'No'}</Text>
-    </View>
-  );
+  const closeModal = () => {
+    setShowModal(false);
+    clearSurvey();
+    router.push('/');
+  };
 
   return (
     <ScrollView style={styles.container}>
-      <Pagination currentStep={4} totalSteps={4} />
-      <LottieView
-        source={require("../assets/lottiefiles/1720857631441.json")}
-        style={styles.headerLottieImage}
-        autoPlay
-        loop
-      />
-      <Text variant="headlineMedium">Revisión de la Información</Text>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showModal}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text>Información guardada con éxito</Text>
+            <Button onPress={closeModal}>Cerrar</Button>
+          </View>
+        </View>
+      </Modal>
 
-      <Text variant="titleSmall">Catequistas</Text>
-      {catechists.map((catechist, index) => (
-        <Text key={`${catechist.id}_${index}`}>{catechist.name} {catechist.lastName}</Text>
-      ))}
-      <Divider style={styles.divider} />
+      {isLoading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator animating={true} size="large" />
+        </View>
+      ) : (
+        <>
+          <Pagination currentStep={4} totalSteps={4} />
+          <Text variant="headlineMedium">Revisión de la Información</Text>
+          <LottieView
+            source={require("../assets/lottiefiles/1720857631441.json")}
+            style={styles.headerLottieImage}
+            autoPlay
+            loop
+          />
 
-      <Text variant="titleSmall">Ubicación Seleccionada</Text>
-      <Text>{selectedLocation?.name || 'N/A'}</Text>
-      <Divider style={styles.divider} />
+          <Text variant="titleSmall">Catequistas</Text>
+          {catechists.map((catechist, index) => <CatechistInfo catechist={catechist} key={`catechist_${index}`} />)}
+          <Divider style={styles.divider} />
 
-      <Text variant="titleSmall">Tamaño del Hogar</Text>
-      <Text>{householdSize}</Text>
-      <Divider style={styles.divider} />
+          <Text variant="titleSmall">Ubicación Seleccionada</Text>
+          <Text>{selectedLocation?.name || 'N/A'}</Text>
+          <Divider style={styles.divider} />
 
-      <Text variant="titleLarge">Catequizandos</Text>
-      {catechumens.map((person, index) => renderPersonInfo(person, index))}
-      <Divider style={styles.divider} />
+          <Text variant="titleSmall">Tamaño del Hogar</Text>
+          <Text>{householdSize}</Text>
+          <Divider style={styles.divider} />
 
-      <Text variant="titleLarge">Otras Personas</Text>
-      {otherPeople.map((person, index) => renderPersonInfo(person, index + catechumens.length))}
-      <Divider style={styles.divider} />
+          <Text variant="titleLarge">Catequizandos</Text>
+          {catechumens.map((person, index) => <CatechumenInfo catechumen={person} key={`catechumen_${index}`} />)}
+          <Divider style={styles.divider} />
 
-      <Text variant="titleLarge">Observaciones</Text>
-      <Text>{observations}</Text>
-      <Divider style={styles.divider} />
+          <Text variant="titleLarge">Otras Personas</Text>
+          {otherPeople.map((person, index) => <PersonInfo person={person} key={`person_${index}`} />)}
+          <Divider style={styles.divider} />
 
-      <View style={styles.footer}>
-        <Button onPress={() => router.back()}>Atrás</Button>
-        <Button
-          mode="contained"
-          onPress={handleFinish}
-        >
-          Finalizar
-        </Button>
-      </View>
+          <Text variant="titleLarge">Observaciones</Text>
+          <Text>{observations}</Text>
+          <Divider style={styles.divider} />
+
+          <View style={styles.footer}>
+            <Button onPress={() => router.back()}>Atrás</Button>
+            <Button mode="contained" disabled={isLoading} onPress={handleFinish}>
+              Finalizar
+            </Button>
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -169,6 +176,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   headerLottieImage: {
     width: "100%",
