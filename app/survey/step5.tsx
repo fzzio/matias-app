@@ -33,7 +33,7 @@ const CREATE_PEOPLE_BULK = gql`
   }
 `;
 
-export default function Step4() {
+export default function Step5() {
   const router = useRouter();
   const { catechists, selectedLocation, householdSize, catechumens, otherPeople, observations } = SurveyStore.useState();
   const [createSurvey] = useMutation(CREATE_SURVEY);

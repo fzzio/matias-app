@@ -10,7 +10,7 @@ import { SurveyStore, updateOtherPeople } from "@/store/survey";
 import { useSacraments } from '@/hooks/useSacraments';
 import { commonStyles, buttonStyles } from '@/styles';
 
-export default function Step2() {
+export default function Step3() {
   const router = useRouter();
   const { householdSize, catechumens } = SurveyStore.useState();
   const { loading, error, sacraments } = useSacraments();

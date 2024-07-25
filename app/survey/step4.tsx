@@ -6,7 +6,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import { SurveyStore, updateObservations } from "@/store/survey";
 import { Pagination } from '@/components/Pagination';
 
-export default function Step3() {
+export default function Step4() {
   const router = useRouter();
   const [observations, setObservations] = useState("");
 

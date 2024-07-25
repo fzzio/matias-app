@@ -33,7 +33,7 @@ const GET_CATECHUMENS = gql`
   }
 `;
 
-export default function Step1() {
+export default function Step2() {
   const router = useRouter();
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [householdSize, setHouseholdSize] = useState('');

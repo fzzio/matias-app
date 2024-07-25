@@ -20,7 +20,7 @@ const GET_CATECHISTS = gql`
   }
 `;
 
-export default function Home() {
+export default function Step1() {
   const router = useRouter();
   const { loading, error, data } = useQuery(GET_CATECHISTS);
   const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
