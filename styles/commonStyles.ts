@@ -17,6 +17,7 @@ export const commonStyles = StyleSheet.create({
     fontSize: 16,
     color: theme.colors.onBackground,
     lineHeight: 24,
+    flexWrap: 'wrap'
   },
   link: {
     marginTop: 15,

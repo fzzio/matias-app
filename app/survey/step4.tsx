@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
-
-import { SurveyStore, updateObservations } from "@/store/survey";
+import { Button, Text, TextInput, Surface } from 'react-native-paper';
 import { Pagination } from '@/components/Pagination';
+import { updateObservations } from "@/store/survey";
+import { commonStyles, buttonStyles, inputStyles } from '@/styles';
 
 export default function Step4() {
   const router = useRouter();
@@ -17,40 +17,55 @@ export default function Step4() {
   };
 
   return (
-    <View style={styles.container}>
-      <Pagination currentStep={4} totalSteps={5} />
-      <Text variant="headlineSmall">Ingrese sus observaciones</Text>
-      <TextInput
-        label="Observaciones"
-        value={observations}
-        onChangeText={setObservations}
-        multiline
-        style={styles.input}
-      />
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => router.back()}>Atrás</Button>
-        <Button mode="contained" onPress={handleSubmit}>Revisar</Button>
-      </View>
-    </View>
+    <ScrollView style={styles.container}>
+      <Surface style={commonStyles.surface}>
+        <Pagination currentStep={4} totalSteps={5} />
+        <View style={commonStyles.headerTitle}>
+          <Text style={commonStyles.title}>Observaciones</Text>
+        </View>
+        <View style={styles.body}>
+          <Text style={commonStyles.subtitle}>Ingrese sus observaciones:</Text>
+          <TextInput
+            label="Observaciones"
+            value={observations}
+            onChangeText={setObservations}
+            multiline
+            numberOfLines={4}
+            style={[inputStyles.defaultInput, styles.textArea]}
+          />
+        </View>
+        <View style={commonStyles.footerButtons}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={buttonStyles.primaryButton}
+            labelStyle={buttonStyles.primaryButtonLabel}
+          >
+            Revisar
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={() => router.back()}
+            style={buttonStyles.secondaryButton}
+            labelStyle={buttonStyles.secondaryButtonLabel}
+          >
+            Atrás
+          </Button>
+        </View>
+      </Surface>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
+    ...commonStyles.container,
   },
-  headerLottieImage: {
-    width: "100%",
-    height: 200,
-    marginBottom: 10
+  body: {
+    gap: 16,
+    marginBottom: 24,
   },
-  input: {
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  textArea: {
+    height: 120,
   },
 });

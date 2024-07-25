@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, Text, Divider, ActivityIndicator } from 'react-native-paper';
+import { Button, Text, Divider, ActivityIndicator, Surface } from 'react-native-paper';
 import { SurveyStore, clearSurvey } from '@/store/survey';
 import { Pagination } from '@/components/Pagination';
 import { gql, useMutation } from '@apollo/client';
@@ -10,6 +10,8 @@ import LottieView from 'lottie-react-native';
 import CatechumenInfo from '@/components/CatechumenInfo';
 import PersonInfo from '@/components/PersonInfo';
 import CatechistInfo from '@/components/CatechistInfo';
+import { commonStyles, buttonStyles } from '@/styles';
+import { theme } from '@/styles/theme';
 
 const CREATE_SURVEY = gql`
   mutation CreateSurvey($input: SurveyInput!) {
@@ -98,86 +100,102 @@ export default function Step5() {
     router.push('/');
   };
 
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator animating={true} size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={showModal}
-        onRequestClose={closeModal}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text>Información guardada con éxito</Text>
-            <Button onPress={closeModal}>Cerrar</Button>
+      <Surface style={commonStyles.surface}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showModal}
+          onRequestClose={closeModal}
+        >
+          <View style={styles.centeredView}>
+            <Surface style={styles.modalView}>
+              <Text style={styles.modalText}>Información guardada con éxito</Text>
+              <Button mode="contained" onPress={closeModal} style={buttonStyles.primaryButton}>
+                Cerrar
+              </Button>
+            </Surface>
           </View>
+        </Modal>
+
+        <Pagination currentStep={5} totalSteps={5} />
+        <View style={commonStyles.headerTitle}>
+          <Text style={commonStyles.title}>Revisión de la Información</Text>
         </View>
-      </Modal>
 
-      {isLoading ? (
-        <View style={styles.loader}>
-          <ActivityIndicator animating={true} size="large" />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Catequistas</Text>
+          {/* {catechists.map((catechist, index) => (
+            <CatechistInfo catechist={catechist} key={`catechist_${index}`} />
+          ))} */}
         </View>
-      ) : (
-        <>
-          <Pagination currentStep={4} totalSteps={4} />
-          <Text variant="headlineMedium">Revisión de la Información</Text>
-          <LottieView
-            source={require("@/assets/lottiefiles/1720857631441.json")}
-            style={styles.headerLottieImage}
-            autoPlay
-            loop
-          />
 
-          <Text variant="titleSmall">Catequistas</Text>
-          {catechists.map((catechist, index) => <CatechistInfo catechist={catechist} key={`catechist_${index}`} />)}
-          <Divider style={styles.divider} />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Ubicación Seleccionada</Text>
+          <Text style={styles.sectionContent}>{selectedLocation?.name || 'N/A'}</Text>
+        </View>
 
-          <Text variant="titleSmall">Ubicación Seleccionada</Text>
-          <Text>{selectedLocation?.name || 'N/A'}</Text>
-          <Divider style={styles.divider} />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Tamaño del Hogar</Text>
+          <Text style={styles.sectionContent}>{householdSize}</Text>
+        </View>
 
-          <Text variant="titleSmall">Tamaño del Hogar</Text>
-          <Text>{householdSize}</Text>
-          <Divider style={styles.divider} />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Catequizandos</Text>
+          {catechumens.map((person, index) => (
+            <CatechumenInfo catechumen={person} key={`catechumen_${index}`} />
+          ))}
+        </View>
 
-          <Text variant="titleLarge">Catequizandos</Text>
-          {catechumens.map((person, index) => <CatechumenInfo catechumen={person} key={`catechumen_${index}`} />)}
-          <Divider style={styles.divider} />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Otras Personas</Text>
+          {otherPeople.map((person, index) => (
+            <PersonInfo person={person} key={`person_${index}`} />
+          ))}
+        </View>
 
-          <Text variant="titleLarge">Otras Personas</Text>
-          {otherPeople.map((person, index) => <PersonInfo person={person} key={`person_${index}`} />)}
-          <Divider style={styles.divider} />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Observaciones</Text>
+          <Text style={styles.sectionContent}>{observations}</Text>
+        </View>
 
-          <Text variant="titleLarge">Observaciones</Text>
-          <Text>{observations}</Text>
-          <Divider style={styles.divider} />
-
-          <View style={styles.footer}>
-            <Button onPress={() => router.back()}>Atrás</Button>
-            <Button mode="contained" disabled={isLoading} onPress={handleFinish}>
-              Finalizar
-            </Button>
-          </View>
-        </>
-      )}
+        <View style={commonStyles.footerButtons}>
+          <Button
+            mode="contained"
+            onPress={handleFinish}
+            style={buttonStyles.primaryButton}
+            labelStyle={buttonStyles.primaryButtonLabel}
+          >
+            Finalizar
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={() => router.back()}
+            style={buttonStyles.secondaryButton}
+            labelStyle={buttonStyles.secondaryButtonLabel}
+          >
+            Atrás
+          </Button>
+        </View>
+      </Surface>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 18,
+    ...commonStyles.container,
   },
-  personContainer: {
-    marginBottom: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  loader: {
+  loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -186,35 +204,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
+    borderRadius: theme.roundness,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
     elevation: 5,
   },
-  headerLottieImage: {
-    width: "100%",
-    height: 200,
-    marginBottom: 10
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    ...commonStyles.bodyText,
   },
-  divider: {
-    marginTop: 10,
+  headerLottieImage: {
+    width: '100%',
+    height: 200,
     marginBottom: 20,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+  sectionContainer: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    ...commonStyles.subtitle,
+    marginBottom: 10,
+  },
+  sectionContent: {
+    // TODO
   },
 });
