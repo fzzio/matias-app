@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Link, useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+import { StyleSheet, View, SafeAreaView } from 'react-native';
+import { Button, Text, Surface } from 'react-native-paper';
 import { gql, useQuery } from '@apollo/client';
 import { updateCatechists } from "@/store/survey";
-
 import { SearchPeople } from '@/components/SearchPeople';
 import { Person } from '@/types';
+import { theme } from '@/styles/theme';
+import { commonStyles, buttonStyles } from '@/styles';
+import LottieView from 'lottie-react-native';
 
 const GET_CATECHISTS = gql`
   query GetCatechists {
@@ -29,71 +31,88 @@ export default function Home() {
     router.push('/survey/step1');
   };
 
-  if (loading) return <Text>Cargando...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
+  if (loading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
+  if (error) return <Text style={commonStyles.errorText}>Error: {error.message}</Text>;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text variant="headlineLarge">Encuesta</Text>
-      </View>
-      <View style={styles.body}>
-        <Text variant="labelMedium">Seleccione los catequistas que harán ésta visita:</Text>
-        <SearchPeople
-          placeholder="Buscar"
-          people={data.getCatechists}
-          onSelectionChange={setSelectedCatechists}
-        />
-      </View>
-      <View style={styles.footer}>
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          style={styles.button}
-          disabled={selectedCatechists.length === 0}
-        >
-          Empezar
-        </Button>
-        <Button
-          mode="outlined"
-          onPress={() => router.push('/')}
-          style={styles.button}
-        >
-          Volver al Menú Principal
-        </Button>
-      </View>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Surface style={styles.surface}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Encuesta</Text>
+          <LottieView
+            source={require("@/assets/lottiefiles/1721342873275.json")}
+            style={styles.headerLottieImage}
+            autoPlay
+            loop
+          />
+        </View>
+        <View style={styles.body}>
+          <Text style={styles.subtitle}>Seleccione los catequistas que harán ésta visita:</Text>
+          <SearchPeople
+            placeholder="Buscar catequistas"
+            people={data.getCatechists}
+            onSelectionChange={setSelectedCatechists}
+            style={styles.searchPeople}
+          />
+        </View>
+        <View style={styles.footer}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={selectedCatechists.length === 0 ? buttonStyles.disabledButton : buttonStyles.primaryButton}
+            labelStyle={selectedCatechists.length === 0 ? buttonStyles.disabledButtonLabel : buttonStyles.primaryButtonLabel}
+            disabled={selectedCatechists.length === 0}
+          >
+            Empezar
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={() => router.push('/')}
+            style={buttonStyles.secondaryButton}
+            labelStyle={buttonStyles.secondaryButtonLabel}
+          >
+            Volver al Menú Principal
+          </Button>
+        </View>
+      </Surface>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    backgroundColor: "#cccccc",
+    ...commonStyles.container,
+  },
+  surface: {
+    padding: 24,
+    borderRadius: theme.roundness,
+    backgroundColor: theme.colors.background,
+    elevation: 4,
   },
   header: {
     alignItems: 'center',
-    flexDirection: "column",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 16
+    marginBottom: 24,
+  },
+  title: {
+    ...commonStyles.title,
+    marginBottom: 16,
+  },
+  headerLottieImage: {
+    width: 200,
+    height: 200,
   },
   body: {
-    flexDirection: "column",
-    gap: 8,
-    flexWrap: "wrap",
-    width: "100%",
-    marginBottom: 16
+    gap: 16,
+  },
+  subtitle: {
+    ...commonStyles.subtitle,
+    color: theme.colors.onSurface,
   },
   footer: {
-    flexDirection: "row",
-    marginBottom: 16,
-    gap: 8
+    marginTop: 24,
+    gap: 16,
   },
-  button: {
-    marginTop: 20,
+  searchPeople: {
+    marginBottom: 10,
   },
 });

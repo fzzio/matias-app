@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Text, Button } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { commonStyles, buttonStyles } from '@/styles';
+import { theme } from '@/styles/theme';
 
 export default function Home() {
   const router = useRouter();
@@ -10,25 +12,27 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text variant="headlineSmall">Parroquia "San José de Ancón"</Text>
-        <Image source={require('@/assets/images/icon.png')} style={styles.headerImage}  />
-        <Text variant="headlineLarge">Misión Catequética</Text>
-        <Text variant="headlineMedium">2024</Text>
+        <Text style={styles.title}>Parroquia "San José de Ancón"</Text>
+        <Image source={require('@/assets/images/icon.png')} style={styles.headerImage} />
+        <Text style={styles.subtitle}>Misión Catequética</Text>
+        <Text style={styles.year}>2024</Text>
       </View>
       <View style={styles.buttonsContainer}>
         <Button
-          icon={() => <Ionicons name="clipboard-outline" size={24} />}
+          icon={() => <Ionicons name="clipboard-outline" size={24} color={theme.colors.onPrimary} />}
           mode="contained"
           onPress={() => router.push('/survey')}
-          style={styles.button}
+          style={buttonStyles.primaryButton}
+          labelStyle={buttonStyles.primaryButtonLabel}
         >
           Encuesta
         </Button>
         <Button
-          icon={() => <Ionicons name="bar-chart-outline" size={24} />}
-          mode="contained"
+          icon={() => <Ionicons name="bar-chart-outline" size={24} color={theme.colors.primary} />}
+          mode="outlined"
           onPress={() => router.push('/reports')}
-          style={styles.button}
+          style={buttonStyles.secondaryButton}
+          labelStyle={buttonStyles.secondaryButtonLabel}
         >
           Reportes
         </Button>
@@ -39,31 +43,35 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...commonStyles.container,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
   },
   header: {
-    alignItems: 'center',
-    flexDirection: "column",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 16
+    ...commonStyles.header,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.roundness,
+    padding: 24,
+    marginBottom: 32,
+  },
+  title: {
+    ...commonStyles.title,
+    color: theme.colors.onPrimary,
+    textAlign: 'center',
+  },
+  subtitle: {
+    ...commonStyles.subtitle,
+    color: theme.colors.onPrimary,
+  },
+  year: {
+    ...commonStyles.bodyText,
+    color: theme.colors.onPrimary,
   },
   headerImage: {
-    height: 200,
-    width: 200,
-    borderRadius: 10,
-    marginBottom: 16
+    ...commonStyles.headerImage,
+    marginVertical: 16,
   },
   buttonsContainer: {
-    marginTop: 20,
-    width: '100%',
-    alignItems: 'center',
-  },
-  button: {
-    marginVertical: 10,
-    width: '80%',
+    ...commonStyles.buttonsContainer,
+    gap: 16,
   },
 });

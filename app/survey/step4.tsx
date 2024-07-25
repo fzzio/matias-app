@@ -7,7 +7,7 @@ import { Pagination } from '@/components/Pagination';
 import { gql, useMutation } from '@apollo/client';
 import { PersonInput } from '@/types';
 import LottieView from 'lottie-react-native';
-import CatechumenInfo from '@/components/Catechumen';
+import CatechumenInfo from '@/components/CatechumenInfo';
 import PersonInfo from '@/components/PersonInfo';
 import CatechistInfo from '@/components/CatechistInfo';
 

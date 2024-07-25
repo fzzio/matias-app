@@ -3,7 +3,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { PaperProvider } from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { ApolloProvider } from '@apollo/client';
 import client from '@/apollo-client';
 
@@ -14,6 +14,33 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#8b0000',
+      onPrimary: '#ffffff',
+      secondary: '#ffc107',
+      onSecondary: '#000000',
+      background: '#ffffff',
+      onBackground: '#333333',
+      surface: '#ffffff',
+      onSurface: '#333333',
+      error: '#B00020',
+      onError: '#ffffff',
+    },
+    typography: {
+      bodyLarge: {
+        fontFamily: 'Roboto',
+        fontWeight: '400',
+      },
+      titleLarge: {
+        fontFamily: 'Roboto',
+        fontWeight: '500',
+      },
+    },
+  };
 
   useEffect(() => {
     if (loaded) {
@@ -27,7 +54,7 @@ export default function RootLayout() {
 
   return (
     <ApolloProvider client={client}>
-      <PaperProvider>
+      <PaperProvider theme={theme}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="survey" options={{ headerShown: false }} />

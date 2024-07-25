@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Searchbar, List, Chip } from 'react-native-paper';
-
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import { Searchbar, List, Chip, SearchbarProps } from 'react-native-paper';
 import { Person } from '@/types';
-interface SearchPeopleProps {
+import { searchInputStyles } from '@/styles';
+
+interface SearchPeopleProps extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
   people: Person[];
-  onSelectionChange: React.Dispatch<React.SetStateAction<Person[]>>;
-  placeholder?: string;
+  onSelectionChange: (selectedPeople: Person[]) => void;
+  style?: ViewStyle;
 }
 
-export function SearchPeople({ people, onSelectionChange, placeholder = "Search people"  }: SearchPeopleProps) {
+export function SearchPeople({
+  people,
+  onSelectionChange,
+  style,
+  ...searchBarProps
+}: SearchPeopleProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredPeople, setFilteredPeople] = useState<Person[]>([]);
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
@@ -29,42 +35,45 @@ export function SearchPeople({ people, onSelectionChange, placeholder = "Search 
   }, [searchQuery, people, selectedPeople]);
 
   const handleSelect = (person: Person) => {
-    onSelectionChange(prev => [...prev, person]);
-    setSelectedPeople(prev => [...prev, person]);
+    const newSelectedPeople = [...selectedPeople, person];
+    setSelectedPeople(newSelectedPeople);
+    onSelectionChange(newSelectedPeople);
     setSearchQuery('');
   };
 
   const handleRemove = (person: Person) => {
-    onSelectionChange(prev => prev.filter(p => p.id !== person.id));
-    setSelectedPeople(prev => prev.filter(p => p.id !== person.id));
+    const newSelectedPeople = selectedPeople.filter(p => p.id !== person.id);
+    setSelectedPeople(newSelectedPeople);
+    onSelectionChange(newSelectedPeople);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Searchbar
-        placeholder={placeholder}
         onChangeText={setSearchQuery}
         value={searchQuery}
-        style={styles.searchBar}
+        style={searchInputStyles.input}
+        {...searchBarProps}
       />
       {searchQuery.trim() !== '' && (
-        <List.Section style={styles.listContainer}>
+        <List.Section style={searchInputStyles.listContainer}>
           {filteredPeople.map(person => (
             <List.Item
               key={person.id}
               title={`${person.name} ${person.lastName}`}
               onPress={() => handleSelect(person)}
-              style={styles.listItem}
+              style={searchInputStyles.listItem}
             />
           ))}
         </List.Section>
       )}
-      <View style={styles.chipsContainer}>
+      <View style={searchInputStyles.chipsContainer}>
         {selectedPeople.map(person => (
           <Chip
             key={person.id}
             onClose={() => handleRemove(person)}
-            style={styles.chip}
+            style={searchInputStyles.chip}
+            textStyle={searchInputStyles.chipText}
           >
             {`${person.name} ${person.lastName}`}
           </Chip>
@@ -77,24 +86,5 @@ export function SearchPeople({ people, onSelectionChange, placeholder = "Search 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-  },
-  searchBar: {
-    backgroundColor: "#FFFFFF"
-  },
-  listContainer: {
-    backgroundColor: "#FFFFFF"
-  },
-  listItem: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#000000"
-  },
-  chipsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    gap: 8
-  },
-  chip: {
-    backgroundColor: "#FFFFFF"
   },
 });

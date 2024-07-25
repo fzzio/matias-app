@@ -3,6 +3,7 @@ import { View, StyleSheet, ViewStyle } from 'react-native';
 import { TextInput, Checkbox, Text, Button, RadioButton } from 'react-native-paper';
 import { calculateAge, generateBirthDateFromAge } from '@/utils/calculate';
 import { PersonInput, Sacrament } from '@/types';
+import { theme } from '@/styles/theme';
 
 interface PersonFormProps {
   person: PersonInput;
@@ -103,19 +104,18 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    width: "100%"
+    padding: 16,
+    borderRadius: theme.roundness,
+    backgroundColor: theme.colors.surface,
+    elevation: 2,
   },
   input: {
-    marginBottom: 10,
-    backgroundColor: "#FFFFFF"
+    marginBottom: 16,
+    backgroundColor: theme.colors.background,
   },
   radioButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 8,
   }
 });

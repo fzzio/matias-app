@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Searchbar, List, Chip } from 'react-native-paper';
-import { Location } from '../types';
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import { Searchbar, List, Chip, SearchbarProps } from 'react-native-paper';
+import { Location } from '@/types';
+import { searchInputStyles } from '@/styles';
 
-interface SearchLocationProps {
+interface SearchLocationProps extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
   locations: Location[];
   onLocationSelect: (location: Location | null) => void;
   placeholder?: string;
+  style?: ViewStyle;
 }
 
-export function SearchLocation({ locations, onLocationSelect, placeholder = "Search location" }: SearchLocationProps) {
+export function SearchLocation({
+  locations,
+  onLocationSelect,
+  style,
+  ...searchBarProps
+}: SearchLocationProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -37,30 +44,31 @@ export function SearchLocation({ locations, onLocationSelect, placeholder = "Sea
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Searchbar
-        placeholder={placeholder}
         onChangeText={setSearchQuery}
         value={searchQuery}
-        style={styles.searchBar}
+        style={searchInputStyles.input}
+        {...searchBarProps}
       />
       {searchQuery.trim() !== '' && (
-        <List.Section style={styles.listContainer}>
+        <List.Section style={searchInputStyles.listContainer}>
           {filteredLocations.map(location => (
             <List.Item
               key={location.id}
               title={location.name}
               onPress={() => handleSelect(location)}
-              style={styles.listItem}
+              style={searchInputStyles.listItem}
             />
           ))}
         </List.Section>
       )}
       {selectedLocation && (
-        <View style={styles.chipsContainer}>
+        <View style={searchInputStyles.chipsContainer}>
           <Chip
             onClose={handleRemove}
-            style={styles.chip}
+            style={searchInputStyles.chip}
+            textStyle={searchInputStyles.chipText}
           >
             {selectedLocation.name}
           </Chip>
@@ -73,24 +81,5 @@ export function SearchLocation({ locations, onLocationSelect, placeholder = "Sea
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-  },
-  searchBar: {
-    backgroundColor: "#FFFFFF"
-  },
-  listContainer: {
-    backgroundColor: "#FFFFFF"
-  },
-  listItem: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#000000"
-  },
-  chipsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    gap: 8
-  },
-  chip: {
-    backgroundColor: "#FFFFFF"
   },
 });
