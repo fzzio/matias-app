@@ -16,7 +16,7 @@ const CatechistInfo: React.FC<CatechistInfoProps> = ({ catechist, style }) => {
       <Text>Nombre: {catechist.name} {catechist.lastName}</Text>
       <Text>Cédula: {catechist.idCard || 'N/A'}</Text>
       <Text>Fecha de Nacimiento: {catechist.birthDate ? catechist.birthDate.toISOString().split('T')[0] : 'N/A'}</Text>
-      {/* <Text>Sacramentos: {catechist.sacraments.map(getSacramentNameById).join(', ') || 'N/A'}</Text> */}
+      <Text>Sacramentos: {catechist?.sacraments.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}</Text>
       <Text>Voluntario: {catechist.isVolunteer ? 'Sí' : 'No'}</Text>
     </View>
   );

@@ -4,8 +4,9 @@ import { useRouter } from 'expo-router';
 import { Button, Surface, Text } from 'react-native-paper';
 import { Pagination } from '@/components/Pagination';
 import { PersonForm } from '@/components/PersonForm';
-import { PersonInput } from '@/types';
-import { SurveyStore, updateCatechumens, updateOtherPeople } from "@/store/survey";
+import CatechumenInfo from '@/components/CatechumenInfo';
+import { Catechumen, PersonInput } from '@/types';
+import { SurveyStore, updateOtherPeople } from "@/store/survey";
 import { useSacraments } from '@/hooks/useSacraments';
 import { commonStyles, buttonStyles } from '@/styles';
 
@@ -17,16 +18,17 @@ export default function Step2() {
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
-    const initialPeople: PersonInput[] = Array.from({ length: householdSize }).map((_, index) => {
-      if (index < catechumens.length) {
-        const { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray, isVolunteer } = catechumens[index];
-        return { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray.map((sacramentId: string) => sacramentId), isVolunteer: isVolunteer !== undefined ? isVolunteer : false };
-      } else {
-        return { name: "", lastName: "", sacraments: [], isVolunteer: false };
-      }
-    });
+    const additionalPeopleCount = householdSize - catechumens.length;
+    const initialPeople: PersonInput[] = Array.from({ length: additionalPeopleCount }).map(() => ({
+      name: "",
+      lastName: "",
+      birthDate: undefined,
+      sacraments: [],
+      isVolunteer: false
+    }));
+
     setPeople(initialPeople);
-  }, [householdSize, catechumens]);
+  }, [householdSize, catechumens.length]);
 
   useEffect(() => {
     validateForm();
@@ -43,12 +45,10 @@ export default function Step2() {
   };
 
   const handleSubmit = () => {
-    console.log('Form submitted Step2');
-    const newCatechumens = people.filter(person => person.id !== undefined) as PersonInput[];
+    console.log('Form submitted Step3');
     const newOtherPeople = people.filter(person => person.id === undefined);
-    updateCatechumens(newCatechumens);
     updateOtherPeople(newOtherPeople);
-    router.push('/survey/step3');
+    router.push('/survey/step4');
   };
 
   if (loading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
@@ -56,47 +56,51 @@ export default function Step2() {
 
   return (
     <ScrollView style={styles.container}>
-      <Surface style={commonStyles.surface}>
-        <Pagination currentStep={3} totalSteps={5} />
-        <View style={commonStyles.headerTitle}>
-          <Text style={commonStyles.title}>Información por persona</Text>
-        </View>
-        <View style={styles.body}>
-          {people.map((person, index) => (
-            <PersonForm
-              key={index}
-              person={person}
-              index={index}
-              sacraments={sacraments}
-              updatePerson={(index, field, value) => {
-                const newPeople = [...people];
-                newPeople[index] = { ...newPeople[index], [field]: value };
-                setPeople(newPeople);
-              }}
-              style={{ marginBottom: 20 }}
-            />
-          ))}
-        </View>
-        <View style={commonStyles.footerButtons}>
-          <Button
-            mode="contained"
-            onPress={handleSubmit}
-            style={isFormValid ? buttonStyles.primaryButton : buttonStyles.disabledButton}
-            labelStyle={isFormValid ? buttonStyles.primaryButtonLabel : buttonStyles.disabledButtonLabel}
-            disabled={!isFormValid}
-          >
-            Continuar
-          </Button>
-          <Button
-            mode="outlined"
-            onPress={() => router.back()}
-            style={buttonStyles.secondaryButton}
-            labelStyle={buttonStyles.secondaryButtonLabel}
-          >
-            Atrás
-          </Button>
-        </View>
-      </Surface>
+      <Pagination currentStep={3} totalSteps={5} />
+      <View style={commonStyles.headerTitle}>
+        <Text style={commonStyles.title}>Información por persona</Text>
+      </View>
+      <View style={styles.body}>
+        {catechumens.map((catechumen, indexC) => (
+          <CatechumenInfo
+            key={indexC}
+            catechumen={catechumen}
+          />
+        ))}
+        {people.map((person, indexP) => (
+          <PersonForm
+            key={indexP}
+            person={person}
+            index={indexP}
+            sacraments={sacraments}
+            updatePerson={(indexP, field, value) => {
+              const newPeople = [...people];
+              newPeople[indexP] = { ...newPeople[indexP], [field]: value };
+              setPeople(newPeople);
+            }}
+            style={{ marginBottom: 20 }}
+          />
+        ))}
+      </View>
+      <View style={commonStyles.footerButtons}>
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          style={isFormValid ? buttonStyles.primaryButton : buttonStyles.disabledButton}
+          labelStyle={isFormValid ? buttonStyles.primaryButtonLabel : buttonStyles.disabledButtonLabel}
+          disabled={!isFormValid}
+        >
+          Continuar
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => router.back()}
+          style={buttonStyles.secondaryButton}
+          labelStyle={buttonStyles.secondaryButtonLabel}
+        >
+          Atrás
+        </Button>
+      </View>
     </ScrollView>
   );
 }
@@ -112,5 +116,6 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 24,
   },
 });

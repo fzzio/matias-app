@@ -8,7 +8,7 @@ export default function SurveyLayout() {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerLayout}>
         <LottieView
-          source={require("@/assets/lottiefiles/1721342873275.json")}
+          source={require("@/assets/lottiefiles/1720857631441.json")}
           style={styles.headerLottieImage}
           autoPlay
           loop
@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     ...commonStyles.container,
   },
   headerLottieImage: {
-    width: 200,
-    height: 200,
+    width: 180,
+    height: 180,
   },
   headerLayout: {
     alignItems: 'center',

@@ -26,7 +26,7 @@ export default function Home() {
   const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
 
   const handleSubmit = () => {
-    console.log('Form submitted index', { selectedCatechists });
+    console.log('Form submitted step1', { selectedCatechists });
     updateCatechists(selectedCatechists);
     router.push('/survey/step2');
   };

@@ -8,7 +8,7 @@ export const commonStyles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.primary,
     marginBottom: 16,
@@ -46,7 +46,7 @@ export const commonStyles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    color: theme.colors.onPrimary,
+    color: theme.colors.primary,
     marginBottom: 8,
   },
   buttonsContainer: {

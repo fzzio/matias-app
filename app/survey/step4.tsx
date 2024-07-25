@@ -5,27 +5,20 @@ import { Button, Text, TextInput } from 'react-native-paper';
 
 import { SurveyStore, updateObservations } from "@/store/survey";
 import { Pagination } from '@/components/Pagination';
-import LottieView from 'lottie-react-native';
 
 export default function Step3() {
   const router = useRouter();
   const [observations, setObservations] = useState("");
 
   const handleSubmit = () => {
-    console.log('Form submitted Step3');
+    console.log('Form submitted Step4');
     updateObservations(observations);
-    router.push('/survey/step4');
+    router.push('/survey/step5');
   };
 
   return (
     <View style={styles.container}>
-      <Pagination currentStep={3} totalSteps={4} />
-      <LottieView
-        source={require("@/assets/lottiefiles/1720857631441.json")}
-        style={styles.headerLottieImage}
-        autoPlay
-        loop
-      />
+      <Pagination currentStep={4} totalSteps={5} />
       <Text variant="headlineSmall">Ingrese sus observaciones</Text>
       <TextInput
         label="Observaciones"

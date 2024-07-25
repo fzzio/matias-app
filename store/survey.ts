@@ -1,11 +1,11 @@
 import { registerInDevtools, Store } from "pullstate";
-import { Location, Catechist, Sacrament, PersonInput } from "@/types";
+import { Location, Catechist, Sacrament, PersonInput, Catechumen } from "@/types";
 
 export interface SurveyState {
   catechists: Catechist[];
   selectedLocation: Location | null;
   householdSize: number;
-  catechumens: PersonInput[];
+  catechumens: Catechumen[];
   otherPeople: PersonInput[];
   observations: string;
   sacraments: Sacrament[];
@@ -37,7 +37,7 @@ export const updateHouseholdSize = (size: number) => {
   SurveyStore.update(s => { s.householdSize = size; });
 };
 
-export const updateCatechumens = (catechumens: PersonInput[]) => {
+export const updateCatechumens = (catechumens: Catechumen[]) => {
   SurveyStore.update(s => { s.catechumens = catechumens; });
 };
 

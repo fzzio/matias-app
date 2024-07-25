@@ -45,19 +45,10 @@ export default function Step1() {
   });
 
   const handleSubmit = () => {
-    console.log('Form submitted Step1');
-    const catechumensAsPersonInput = selectedCatechumens.map(({ id, idCard, name, lastName, birthDate, sacraments }) => ({
-      id,
-      idCard,
-      name,
-      lastName,
-      birthDate,
-      sacraments: sacraments.map(sacrament => sacrament.id),
-      isVolunteer: false,
-    }));
+    console.log('Form submitted Step2');
     updateHouseholdSize(parseInt(householdSize));
     updateSelectedLocation(selectedLocation);
-    updateCatechumens(catechumensAsPersonInput);
+    updateCatechumens(selectedCatechumens);
     router.push('/survey/step3');
   };
 
@@ -79,17 +70,17 @@ export default function Step1() {
             onLocationSelect={setSelectedLocation}
             placeholder="Buscar ubicación"
           />
-          <TextInput
-            label="Total personas viviendo en el hogar"
-            value={householdSize}
-            onChangeText={setHouseholdSize}
-            keyboardType="numeric"
-            style={inputStyles.defaultInput}
-          />
           <SearchPeople
             people={catechumensData.getCatechumens}
             onSelectionChange={setSelectedCatechumens}
             placeholder="Buscar catequizandos"
+          />
+          <TextInput
+            label="Total personas en el hogar"
+            value={householdSize}
+            onChangeText={setHouseholdSize}
+            keyboardType="numeric"
+            style={inputStyles.defaultInput}
           />
         </View>
         <View style={commonStyles.footerButtons}>

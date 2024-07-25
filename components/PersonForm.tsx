@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { TextInput, Checkbox, Text, Button, RadioButton } from 'react-native-paper';
+import { TextInput, Checkbox, Text, Button, RadioButton, Surface } from 'react-native-paper';
 import { calculateAge, generateBirthDateFromAge } from '@/utils/calculate';
 import { PersonInput, Sacrament } from '@/types';
 import { theme } from '@/styles/theme';
+import { buttonStyles, commonStyles, inputStyles } from '@/styles';
 
 interface PersonFormProps {
   person: PersonInput;
@@ -15,7 +16,7 @@ interface PersonFormProps {
 
 export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacraments, updatePerson, style }) => {
   const [tempAge, setTempAge] = useState<string>('');
-  const personInfo = `Persona #` + (index + 1);
+  const personInfo = `Persona #${index + 1}`;
 
   const handleAgeInput = (value: string) => {
     setTempAge(value);
@@ -26,6 +27,7 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
     if (!isNaN(age)) {
       const birthDate = generateBirthDateFromAge(age);
       updatePerson(index, 'birthDate', birthDate);
+      setTempAge('');
     }
   };
 
@@ -37,43 +39,52 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
   };
 
   return (
-    <View style={[styles.container, style]}>
-      <Text variant="titleMedium">Datos de {personInfo}</Text>
+    <Surface style={[styles.container, style]}>
+      <Text style={styles.title}>{personInfo}</Text>
       <TextInput
-        label={`Cédula ${personInfo}`}
+        label="Cédula"
         value={person.idCard}
         onChangeText={(value) => updatePerson(index, 'idCard', value)}
         style={styles.input}
       />
       <TextInput
-        label={`Nombre ${personInfo}`}
+        label="Nombre"
         value={person.name}
         onChangeText={(value) => updatePerson(index, 'name', value)}
         style={styles.input}
       />
       <TextInput
-        label={`Apellido ${personInfo}`}
+        label="Apellido"
         value={person.lastName}
         onChangeText={(value) => updatePerson(index, 'lastName', value)}
         style={styles.input}
       />
       <TextInput
-        label={`F. de Nacimiento ${personInfo} (YYYY-MM-DD)`}
+        label="Fecha de Nacimiento (YYYY-MM-DD)"
         value={person.birthDate ? person.birthDate.toISOString().split('T')[0] : ''}
         onChangeText={(value) => updatePerson(index, 'birthDate', new Date(value))}
         style={styles.input}
       />
-      <Text>Edad: {person.birthDate ? calculateAge(person.birthDate) : 'N/A'}</Text>
-      <TextInput
-        label={`Edad ${personInfo} (si no conoce)`}
-        value={tempAge}
-        onChangeText={handleAgeInput}
-        keyboardType="numeric"
-        style={styles.input}
-      />
-      <Button onPress={confirmAge} mode='contained-tonal'>Confirmar Edad Persona {index + 1}</Button>
+      <Text style={styles.ageText}>Edad: {person.birthDate ? calculateAge(person.birthDate) : 'N/A'}</Text>
+      <View style={styles.ageInputContainer}>
+        <TextInput
+          label="Edad"
+          value={tempAge}
+          onChangeText={handleAgeInput}
+          keyboardType="numeric"
+          style={[styles.input, styles.ageInput]}
+        />
+        <Button
+          onPress={confirmAge}
+          mode="contained-tonal"
+          style={[buttonStyles.secondaryButton, styles.confirmAgeButton ]}
+          labelStyle={[buttonStyles.secondaryButtonLabel, styles.secondaryButtonLabel]}
+        >
+          Confirmar
+        </Button>
+      </View>
 
-      <Text variant="bodyMedium">{`Sacramentos ${personInfo}:`}</Text>
+      <Text style={styles.sectionTitle}>Sacramentos:</Text>
       {sacraments.map((sacrament) => (
         <Checkbox.Item
           key={`${sacrament.id}_${index}`}
@@ -83,39 +94,67 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
         />
       ))}
 
-      <Text variant="bodyMedium">¿Desea participar como voluntario en actividades de la iglesia?</Text>
+      <Text style={styles.sectionTitle}>¿Desea participar como voluntario en actividades de la iglesia?</Text>
       <RadioButton.Group
         onValueChange={(value) => updatePerson(index, 'isVolunteer', value === 'yes')}
         value={person.isVolunteer ? 'yes' : 'no'}
       >
-        <View style={styles.radioButton}>
-          <RadioButton value="yes" />
-          <Text>Sí</Text>
-        </View>
-        <View style={styles.radioButton}>
-          <RadioButton value="no" />
-          <Text>No</Text>
+        <View style={styles.radioButtonContainer}>
+          <RadioButton.Item label="Sí" value="yes" />
+          <RadioButton.Item label="No" value="no" />
         </View>
       </RadioButton.Group>
-    </View>
+    </Surface>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    ...commonStyles.surface,
     marginBottom: 20,
-    padding: 16,
-    borderRadius: theme.roundness,
-    backgroundColor: theme.colors.surface,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: theme.colors.backdrop
+  },
+  title: {
+    ...commonStyles.title,
+    fontSize: 20,
+    marginBottom: 16,
   },
   input: {
+    ...inputStyles.defaultInput,
     marginBottom: 16,
-    backgroundColor: theme.colors.background,
   },
-  radioButton: {
+  ageText: {
+    ...commonStyles.bodyText,
+    marginBottom: 8,
+  },
+  ageInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 16,
+  },
+  ageInput: {
+    flex: 1,
+    marginRight: 8,
+  },
+  confirmAgeButton: {
+    marginLeft: 8,
     marginBottom: 8,
-  }
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    minWidth: 100,
+    verticalAlign: 'middle'
+  },
+  secondaryButtonLabel: {
+    fontSize: 14,
+  },
+  sectionTitle: {
+    ...commonStyles.subtitle,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  radioButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
 });
