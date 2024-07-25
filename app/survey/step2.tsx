@@ -1,130 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { useRouter, Link } from 'expo-router';
-import { Button, Text } from 'react-native-paper';
-
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Button, Surface, Text, TextInput } from 'react-native-paper';
+import { useQuery, gql } from '@apollo/client';
 import { Pagination } from '@/components/Pagination';
-import { PersonForm } from '@/components/PersonForm';
-import { PersonInput, Sacrament } from '@/types';
-import { SurveyStore, updateCatechumens, updateOtherPeople } from "@/store/survey";
-import { useSacraments } from '@/hooks/useSacraments';
-import LottieView from 'lottie-react-native';
+import { SearchLocation } from '@/components/SearchLocation';
+import { SearchPeople } from '@/components/SearchPeople';
+import { Location, Catechumen } from '@/types';
+import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
+import { commonStyles, buttonStyles, inputStyles } from '@/styles';
+import { theme } from '@/styles/theme';
 
-export default function Step2() {
-  const router = useRouter();
-  const { householdSize, catechumens } = SurveyStore.useState();
-  const { loading, error, sacraments } = useSacraments();
-  const [people, setPeople] = useState<PersonInput[]>([]);
-  const [isFormValid, setIsFormValid] = useState(false);
+const GET_LOCATIONS = gql`
+  query GetLocations {
+    getLocations {
+      id
+      name
+    }
+  }
+`;
 
-  useEffect(() => {
-    const initialPeople: PersonInput[] = Array.from({ length: householdSize }).map((_, index) => {
-      if (index < catechumens.length) {
-        const { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray, isVolunteer } = catechumens[index];
-        return { id, idCard, name, lastName, birthDate, sacraments: sacramentsArray.map((sacramentId: string) => sacramentId), isVolunteer: isVolunteer !== undefined ? isVolunteer : false };
-      } else {
-        return { name: "", lastName: "", sacraments: [], isVolunteer: false };
+const GET_CATECHUMENS = gql`
+  query GetCatechumens($year: String!) {
+    getCatechumens(year: $year) {
+      id
+      name
+      lastName
+      sacraments {
+        id
       }
-    });
-    setPeople(initialPeople);
-  }, [householdSize, catechumens]);
+    }
+  }
+`;
 
-  useEffect(() => {
-    validateForm();
-  }, [people]);
+export default function Step1() {
+  const router = useRouter();
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [householdSize, setHouseholdSize] = useState('');
+  const [selectedCatechumens, setSelectedCatechumens] = useState<Catechumen[]>([]);
 
-  const validateForm = () => {
-    const isValid = people.every(person =>
-      person.name.trim() !== "" &&
-      person.lastName.trim() !== "" &&
-      person.birthDate !== undefined &&
-      person.isVolunteer !== undefined
-    );
-    setIsFormValid(isValid);
-  };
+  const { loading: loadingLocations, error: errorLocations, data: locationsData } = useQuery(GET_LOCATIONS);
+  const { loading: loadingCatechumens, error: errorCatechumens, data: catechumensData } = useQuery(GET_CATECHUMENS, {
+    variables: { year: "2024" },
+  });
 
   const handleSubmit = () => {
-    console.log('Form submitted Step2');
-    const newCatechumens = people.filter(person => person.id !== undefined) as PersonInput[];
-    const newOtherPeople = people.filter(person => person.id === undefined);
-    updateCatechumens(newCatechumens);
-    updateOtherPeople(newOtherPeople);
+    console.log('Form submitted Step1');
+    const catechumensAsPersonInput = selectedCatechumens.map(({ id, idCard, name, lastName, birthDate, sacraments }) => ({
+      id,
+      idCard,
+      name,
+      lastName,
+      birthDate,
+      sacraments: sacraments.map(sacrament => sacrament.id),
+      isVolunteer: false,
+    }));
+    updateHouseholdSize(parseInt(householdSize));
+    updateSelectedLocation(selectedLocation);
+    updateCatechumens(catechumensAsPersonInput);
     router.push('/survey/step3');
   };
 
-  if (loading) return <Text>Cargando...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
+  if (loadingLocations || loadingCatechumens) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
+  if (errorLocations || errorCatechumens) return <Text style={commonStyles.errorText}>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
+
+  const isFormValid = selectedLocation && householdSize !== '';
 
   return (
-    <ScrollView style={styles.container}>
-      <Pagination currentStep={2} totalSteps={3} />
-      <LottieView
-        source={require("@/assets/lottiefiles/1720857631441.json")}
-        style={styles.headerLottieImage}
-        autoPlay
-        loop
-      />
-      <View style={styles.header}>
-        <Text variant="headlineMedium">Información por persona</Text>
-      </View>
-      <View style={styles.body}>
-        {people.map((person, index) => (
-          <PersonForm
-            key={index}
-            person={person}
-            index={index}
-            sacraments={sacraments}
-            updatePerson={(index, field, value) => {
-              const newPeople = [...people];
-              newPeople[index] = { ...newPeople[index], [field]: value };
-              setPeople(newPeople);
-            }}
-            style={{ marginBottom: 20 }}
+    <View style={styles.container}>
+      <Surface style={commonStyles.surface}>
+        <Pagination currentStep={2} totalSteps={5} />
+        <View style={commonStyles.headerTitle}>
+          <Text style={commonStyles.title}>Información del Hogar</Text>
+        </View>
+        <View style={styles.body}>
+          <SearchLocation
+            locations={locationsData.getLocations}
+            onLocationSelect={setSelectedLocation}
+            placeholder="Buscar ubicación"
           />
-        ))}
-      </View>
-      <View style={styles.footer}>
-        <Button onPress={() => router.back()}>Atrás</Button>
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          disabled={!isFormValid}
-        >
-          Continuar
-        </Button>
-      </View>
-    </ScrollView>
+          <TextInput
+            label="Total personas viviendo en el hogar"
+            value={householdSize}
+            onChangeText={setHouseholdSize}
+            keyboardType="numeric"
+            style={inputStyles.defaultInput}
+          />
+          <SearchPeople
+            people={catechumensData.getCatechumens}
+            onSelectionChange={setSelectedCatechumens}
+            placeholder="Buscar catequizandos"
+          />
+        </View>
+        <View style={commonStyles.footerButtons}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={isFormValid ? buttonStyles.primaryButton : buttonStyles.disabledButton}
+            labelStyle={isFormValid ? buttonStyles.primaryButtonLabel : buttonStyles.disabledButtonLabel}
+            disabled={!isFormValid}
+          >
+            Continuar
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={() => router.back()}
+            style={buttonStyles.secondaryButton}
+            labelStyle={buttonStyles.secondaryButtonLabel}
+          >
+            Atrás
+          </Button>
+        </View>
+      </Surface>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 18,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: "column",
-    alignContent: "center",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 16
-  },
-  headerLottieImage: {
-    width: "100%",
-    height: 200,
-    marginBottom: 10
+    ...commonStyles.container,
   },
   body: {
-    flexDirection: "column",
     gap: 16,
-    flexWrap: "wrap",
-    width: "100%",
-    marginBottom: 16
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30,
+    marginBottom: 24,
   },
 });

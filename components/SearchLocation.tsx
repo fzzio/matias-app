@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { Searchbar, List, Chip, SearchbarProps } from 'react-native-paper';
+import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
 import { Location } from '@/types';
 import { searchInputStyles } from '@/styles';
+import { theme } from '@/styles/theme';
 
 interface SearchLocationProps extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
   locations: Location[];
@@ -69,6 +70,7 @@ export function SearchLocation({
             onClose={handleRemove}
             style={searchInputStyles.chip}
             textStyle={searchInputStyles.chipText}
+            closeIcon={props => <Icon source={"close"} {...props} color={theme.colors.onPrimary} />}
           >
             {selectedLocation.name}
           </Chip>

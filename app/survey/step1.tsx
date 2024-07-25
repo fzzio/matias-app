@@ -1,146 +1,91 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import * as React from 'react';
 import { useRouter } from 'expo-router';
-import { Button, Text, TextInput } from 'react-native-paper';
-import { useQuery, gql } from '@apollo/client';
-import LottieView from "lottie-react-native";
-
-import { Pagination } from '@/components/Pagination';
-import { SearchLocation } from '@/components/SearchLocation';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text, Surface } from 'react-native-paper';
+import { gql, useQuery } from '@apollo/client';
+import { updateCatechists } from "@/store/survey";
 import { SearchPeople } from '@/components/SearchPeople';
-import { Location, Catechumen } from '@/types';
-import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
+import { Person } from '@/types';
+import { theme } from '@/styles/theme';
+import { commonStyles, buttonStyles } from '@/styles';
+import { Pagination } from '@/components/Pagination';
 
-const GET_LOCATIONS = gql`
-  query GetLocations {
-    getLocations {
-      id
-      name
-    }
-  }
-`;
-
-const GET_CATECHUMENS = gql`
-  query GetCatechumens($year: String!) {
-    getCatechumens(year: $year) {
+const GET_CATECHISTS = gql`
+  query GetCatechists {
+    getCatechists {
       id
       name
       lastName
-      sacraments {
-        id
-      }
     }
   }
 `;
 
-export default function Step1() {
+export default function Home() {
   const router = useRouter();
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-  const [householdSize, setHouseholdSize] = useState('');
-  const [selectedCatechumens, setSelectedCatechumens] = useState<Catechumen[]>([]);
-
-  const { loading: loadingLocations, error: errorLocations, data: locationsData } = useQuery(GET_LOCATIONS);
-  const { loading: loadingCatechumens, error: errorCatechumens, data: catechumensData } = useQuery(GET_CATECHUMENS, {
-    variables: { year: "2024" },
-  });
+  const { loading, error, data } = useQuery(GET_CATECHISTS);
+  const [selectedCatechists, setSelectedCatechists] = React.useState<Person[]>([]);
 
   const handleSubmit = () => {
-    console.log('Form submitted Step1');
-    const catechumensAsPersonInput = selectedCatechumens.map(({ id, idCard, name, lastName, birthDate, sacraments }) => ({
-      id,
-      idCard,
-      name,
-      lastName,
-      birthDate,
-      sacraments: sacraments.map(sacrament => sacrament.id),
-      isVolunteer: false,
-    }));
-    updateHouseholdSize(parseInt(householdSize));
-    updateSelectedLocation(selectedLocation);
-    updateCatechumens(catechumensAsPersonInput);
+    console.log('Form submitted index', { selectedCatechists });
+    updateCatechists(selectedCatechists);
     router.push('/survey/step2');
   };
 
-  if (loadingLocations || loadingCatechumens) return <Text>Cargando...</Text>;
-  if (errorLocations || errorCatechumens) return <Text>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
+  if (loading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
+  if (error) return <Text style={commonStyles.errorText}>Error: {error.message}</Text>;
 
   return (
     <View style={styles.container}>
-      <Pagination currentStep={1} totalSteps={4} />
-      <LottieView
-        source={require("@/assets/lottiefiles/1721342873275.json")}
-        style={styles.headerLottieImage}
-        autoPlay
-        loop
-      />
-      <View style={styles.header}>
-        <Text variant="headlineMedium">Información del Hogar</Text>
-      </View>
-      <View style={styles.body}>
-        <SearchLocation
-          locations={locationsData.getLocations}
-          onLocationSelect={setSelectedLocation}
-          placeholder="Buscar ubicación"
-        />
-        <TextInput
-          label="Número de personas viviendo en el hogar"
-          value={householdSize}
-          onChangeText={setHouseholdSize}
-          keyboardType="numeric"
-          style={styles.input}
-        />
-        <SearchPeople
-          people={catechumensData.getCatechumens}
-          onSelectionChange={setSelectedCatechumens}
-          placeholder="Buscar catequizandos"
-        />
-      </View>
-      <View style={styles.footer}>
-        <Button onPress={() => router.back()}>Atrás</Button>
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          disabled={!selectedLocation || !householdSize}
-        >
-          Continuar
-        </Button>
-      </View>
+      <Surface style={commonStyles.surface}>
+        <Pagination currentStep={1} totalSteps={5} />
+        <View style={commonStyles.headerTitle}>
+          <Text style={commonStyles.title}>Encuesta</Text>
+        </View>
+        <View style={styles.body}>
+          <Text style={styles.subtitle}>Seleccione los catequistas que harán ésta visita:</Text>
+          <SearchPeople
+            placeholder="Buscar catequistas"
+            people={data.getCatechists}
+            onSelectionChange={setSelectedCatechists}
+            style={styles.searchPeople}
+          />
+        </View>
+        <View style={commonStyles.footerButtons}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={selectedCatechists.length === 0 ? buttonStyles.disabledButton : buttonStyles.primaryButton}
+            labelStyle={selectedCatechists.length === 0 ? buttonStyles.disabledButtonLabel : buttonStyles.primaryButtonLabel}
+            disabled={selectedCatechists.length === 0}
+          >
+            Empezar
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={() => router.push('/')}
+            style={buttonStyles.secondaryButton}
+            labelStyle={buttonStyles.secondaryButtonLabel}
+          >
+            Volver al Menú Principal
+          </Button>
+        </View>
+      </Surface>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 18,
-    justifyContent: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: "column",
-    alignContent: "center",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 16
-  },
-  headerLottieImage: {
-    width: "100%",
-    height: "25%",
-    marginBottom: 10
+    ...commonStyles.container,
   },
   body: {
-    flexDirection: "column",
     gap: 16,
-    flexWrap: "wrap",
-    width: "100%",
-    marginBottom: 16
   },
-  input: {
-    backgroundColor: "#FFFFFF"
+  subtitle: {
+    ...commonStyles.subtitle,
+    color: theme.colors.onSurface,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+  searchPeople: {
+    marginBottom: 10,
   },
 });

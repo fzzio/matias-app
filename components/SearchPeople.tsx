@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { Searchbar, List, Chip, SearchbarProps } from 'react-native-paper';
+import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
 import { Person } from '@/types';
 import { searchInputStyles } from '@/styles';
+import { theme } from '@/styles/theme';
 
 interface SearchPeopleProps extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
   people: Person[];
@@ -74,6 +75,7 @@ export function SearchPeople({
             onClose={() => handleRemove(person)}
             style={searchInputStyles.chip}
             textStyle={searchInputStyles.chipText}
+            closeIcon={props => <Icon source={"close"} {...props} color={theme.colors.onPrimary} />}
           >
             {`${person.name} ${person.lastName}`}
           </Chip>

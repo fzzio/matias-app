@@ -8,13 +8,11 @@ export const inputStyles = StyleSheet.create({
     borderRadius: theme.roundness,
     borderWidth: 1,
     borderColor: theme.colors.onSurface,
-    padding: 10,
   },
   outlineInput: {
     backgroundColor: theme.colors.background,
     borderColor: theme.colors.primary,
     borderWidth: 1,
     borderRadius: theme.roundness,
-    padding: 10,
   }
 });

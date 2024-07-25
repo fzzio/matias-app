@@ -4,7 +4,7 @@ import { theme } from '@/styles/theme';
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 12,
     backgroundColor: theme.colors.background,
   },
   title: {
@@ -32,6 +32,18 @@ export const commonStyles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     padding: 20,
   },
+  footerButtons: {
+    gap: 8,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    alignItems: 'center',
+    alignContent: 'center',
+    flexDirection: "column",
+    flexWrap: "wrap",
+    gap: 4,
+  },
   subtitle: {
     fontSize: 18,
     color: theme.colors.onPrimary,
@@ -42,6 +54,12 @@ export const commonStyles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+  surface: {
+    padding: 16,
+    borderRadius: theme.roundness,
+    backgroundColor: theme.colors.background,
+    elevation: 4,
+  },
   headerImage: {
     height: 120,
     width: 120,
@@ -49,19 +67,21 @@ export const commonStyles = StyleSheet.create({
     marginBottom: 16,
   },
   loadingText: {
-    fontSize: 16,
     color: theme.colors.onBackground,
-    lineHeight: 24,
     flex: 1,
+    fontSize: 16,
+    lineHeight: 24,
+    marginTop: 20,
     textAlign: 'center',
     verticalAlign: 'middle',
-    marginTop: 20,
   },
   errorText: {
+    color: theme.colors.error,
+    flex: 1,
     fontSize: 16,
     lineHeight: 24,
-    color: theme.colors.error,
-    textAlign: 'center',
     marginTop: 20,
+    textAlign: 'center',
+    verticalAlign: 'middle',
   }
 });
