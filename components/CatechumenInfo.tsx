@@ -3,8 +3,8 @@ import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { Catechumen } from '@/types';
 import { commonStyles } from '@/styles';
-import { theme } from '@/styles/theme';
 import { useSacraments } from '@/hooks/useSacraments';
+import InfoItem from '@/components/InfoItem';
 
 interface CatechumenInfoProps {
   catechumen: Catechumen;
@@ -33,13 +33,6 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) =>
   );
 };
 
-const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <View style={styles.infoItem}>
-    <Text style={styles.label}>{label}:</Text>
-    <Text style={styles.value}>{value}</Text>
-  </View>
-);
-
 const styles = StyleSheet.create({
   container: {
     ...commonStyles.surface,
@@ -52,19 +45,6 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     gap: 8,
-  },
-  infoItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  label: {
-    ...commonStyles.bodyText,
-    fontWeight: 'bold',
-    color: theme.colors.primary,
-  },
-  value: {
-    ...commonStyles.bodyText,
   },
 });
 
