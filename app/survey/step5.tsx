@@ -134,9 +134,9 @@ export default function Step5() {
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Catequistas</Text>
-          {/* {catechists.map((catechist, index) => (
+          {catechists.map((catechist, index) => (
             <CatechistInfo catechist={catechist} key={`catechist_${index}`} />
-          ))} */}
+          ))}
         </View>
 
         <View style={styles.sectionContainer}>
