@@ -9,8 +9,6 @@ export const buttonStyles = StyleSheet.create({
     borderRadius: theme.roundness,
     elevation: 2,
     minWidth: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   primaryButtonLabel: {
     color: theme.colors.onPrimary,
@@ -25,8 +23,6 @@ export const buttonStyles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: theme.roundness,
     minWidth: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   secondaryButtonLabel: {
     color: theme.colors.primary,
@@ -41,8 +37,6 @@ export const buttonStyles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: theme.roundness,
     minWidth: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
     opacity: 0.5,
   },
   disabledButtonLabel: {
