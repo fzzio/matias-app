@@ -12,6 +12,7 @@ import PersonInfo from '@/components/PersonInfo';
 import CatechistInfo from '@/components/CatechistInfo';
 import { commonStyles, buttonStyles } from '@/styles';
 import { theme } from '@/styles/theme';
+import InfoItem from '@/components/InfoItem';
 
 const CREATE_SURVEY = gql`
   mutation CreateSurvey($input: SurveyInput!) {
@@ -133,20 +134,19 @@ export default function Step5() {
         </View>
 
         <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Información General</Text>
+          <Surface style={styles.infoCard}>
+            <InfoItem label="Ubicación Seleccionada" value={selectedLocation?.name || 'N/A'} />
+            <InfoItem label="Tamaño del Hogar" value={householdSize.toString()} />
+            <InfoItem label="Observaciones" value={observations || 'N/A'} />
+          </Surface>
+        </View>
+
+        <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Catequistas</Text>
           {catechists.map((catechist, index) => (
             <CatechistInfo catechist={catechist} key={`catechist_${index}`} />
           ))}
-        </View>
-
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Ubicación Seleccionada</Text>
-          <Text style={styles.sectionContent}>{selectedLocation?.name || 'N/A'}</Text>
-        </View>
-
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Tamaño del Hogar</Text>
-          <Text style={styles.sectionContent}>{householdSize}</Text>
         </View>
 
         <View style={styles.sectionContainer}>
@@ -161,11 +161,6 @@ export default function Step5() {
           {otherPeople.map((person, index) => (
             <PersonInfo person={person} key={`person_${index}`} />
           ))}
-        </View>
-
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Observaciones</Text>
-          <Text style={styles.sectionContent}>{observations}</Text>
         </View>
 
         <View style={commonStyles.footerButtons}>
@@ -230,7 +225,10 @@ const styles = StyleSheet.create({
     ...commonStyles.subtitle,
     marginBottom: 10,
   },
-  sectionContent: {
-    // TODO
+  infoCard: {
+    padding: 16,
+    borderRadius: theme.roundness,
+    backgroundColor: theme.colors.surface,
+    elevation: 4,
   },
 });
