@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle, Keyboard } from 'react-native';
 import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
 import { Location } from '@/types';
 import { searchInputStyles } from '@/styles';
@@ -37,6 +37,7 @@ export function SearchLocation({
     setSelectedLocation(location);
     onLocationSelect(location);
     setSearchQuery('');
+    Keyboard.dismiss();
   };
 
   const handleRemove = () => {

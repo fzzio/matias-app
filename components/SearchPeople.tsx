@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle, Keyboard } from 'react-native';
 import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
 import { Person } from '@/types';
 import { searchInputStyles } from '@/styles';
@@ -40,6 +40,7 @@ export function SearchPeople({
     setSelectedPeople(newSelectedPeople);
     onSelectionChange(newSelectedPeople);
     setSearchQuery('');
+    Keyboard.dismiss();
   };
 
   const handleRemove = (person: Person) => {
