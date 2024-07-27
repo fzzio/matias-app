@@ -27,18 +27,19 @@ export function SearchPeople({
     if (searchQuery.trim() === '') {
       setFilteredPeople([]);
     } else {
-      const filtered = people.filter(
-        person =>
+      const filtered = people
+        .filter(person =>
           !selectedPeople.some(selected => selected.id === person.id) &&
           (person.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            person.lastName.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
+            person.lastName.toLowerCase().includes(searchQuery.toLowerCase())))
+        .sort((a, b) => `${a.name} ${a.lastName}`.localeCompare(`${b.name} ${b.lastName}`));
       setFilteredPeople(filtered);
     }
   }, [searchQuery, people, selectedPeople]);
 
   const handleSelect = (person: Person | Catechist | Catechumen) => {
     const newSelectedPeople = [...selectedPeople, person];
+    newSelectedPeople.sort((a, b) => `${a.name} ${a.lastName}`.localeCompare(`${b.name} ${b.lastName}`));
     setSelectedPeople(newSelectedPeople);
     onSelectionChange(newSelectedPeople);
     setSearchQuery('');

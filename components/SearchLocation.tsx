@@ -26,9 +26,9 @@ export function SearchLocation({
     if (searchQuery.trim() === '') {
       setFilteredLocations([]);
     } else {
-      const filtered = locations.filter(
-        location => location.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const filtered = locations
+        .filter(location => location.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        .sort((a, b) => a.name.localeCompare(b.name));
       setFilteredLocations(filtered);
     }
   }, [searchQuery, locations]);
