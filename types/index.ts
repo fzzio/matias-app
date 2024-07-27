@@ -5,12 +5,14 @@ export interface CatechismLevel {
 
 export interface Sacrament {
   id: string;
-  catechismLevel: CatechismLevel;
+  name: string;
 }
 
 export interface Course {
   id: string;
-  name: string;
+  year: string;
+  catechismLevel: CatechismLevel;
+  location: Location;
 }
 
 export interface Person {

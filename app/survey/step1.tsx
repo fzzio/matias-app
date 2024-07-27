@@ -64,6 +64,7 @@ export default function Step1() {
             placeholder="Buscar catequistas"
             people={data.getCatechists}
             onSelectionChange={handleCatechistSelectionChange}
+            personType='Catechist'
             style={styles.searchPeople}
           />
         </View>

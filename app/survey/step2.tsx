@@ -91,6 +91,7 @@ export default function Step2() {
             people={catechumensData.getCatechumens}
             onSelectionChange={handleCatechumenSelectionChange}
             placeholder="Buscar catequizandos"
+            personType='Catechumen'
           />
           <TextInput
             label="Total personas en el hogar"

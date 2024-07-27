@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ViewStyle, Keyboard } from 'react-native';
 import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
-import { Catechist, Catechumen, Person } from '@/types';
+import { Catechist, Catechumen, Course, Person } from '@/types';
 import { searchInputStyles } from '@/styles';
 import { theme } from '@/styles/theme';
 
 interface SearchPeopleProps extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
   people: Person[] | Catechist[] | Catechumen[];
   onSelectionChange: (selectedPeople: Person[] | Catechist[] | Catechumen[]) => void;
+  personType?: 'Person' | 'Catechist' | 'Catechumen';
   style?: ViewStyle;
 }
 
 export function SearchPeople({
   people,
   onSelectionChange,
+  personType,
   style,
   ...searchBarProps
 }: SearchPeopleProps) {
@@ -78,7 +80,7 @@ export function SearchPeople({
             textStyle={searchInputStyles.chipText}
             closeIcon={props => <Icon source={"close"} {...props} color={theme.colors.onPrimary} />}
           >
-            {`${person.name} ${person.lastName}`}
+            {getChipLabel(person, personType)}
           </Chip>
         ))}
       </View>
@@ -91,3 +93,21 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
+function getChipLabel(person: Person | Catechist | Catechumen, personType?: 'Person' | 'Catechist' | 'Catechumen'): string {
+  let label = `${person.name} ${person.lastName}`;
+
+  if (personType === 'Catechist' && 'coursesAsCatechist' in person) {
+    const courseDetails = person.coursesAsCatechist?.map((course: Course) =>
+      `${course.catechismLevel?.name} - ${course.year} - ${course.location?.name}`
+    ).filter(detail => detail.includes("undefined") === false).join(', ');
+    label += courseDetails ? ` (${courseDetails})` : '';
+  } else if (personType === 'Catechumen' && 'coursesAsCatechumen' in person) {
+    const courseDetails = person.coursesAsCatechumen?.map((course: Course) =>
+      `${course.catechismLevel?.name} - ${course.year} - ${course.location?.name}`
+    ).filter(detail => detail.includes("undefined") === false).join(', ');
+    label += courseDetails ? ` (${courseDetails})` : '';
+  }
+
+  return label;
+}
