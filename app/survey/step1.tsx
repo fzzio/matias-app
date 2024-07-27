@@ -5,7 +5,7 @@ import { Button, Text, Surface } from 'react-native-paper';
 import { gql, useQuery } from '@apollo/client';
 import { updateCatechists } from "@/store/survey";
 import { SearchPeople } from '@/components/SearchPeople';
-import { Catechist } from '@/types';
+import { Catechist, Catechumen, Person } from '@/types';
 import { theme } from '@/styles/theme';
 import { commonStyles, buttonStyles } from '@/styles';
 import { Pagination } from '@/components/Pagination';
@@ -42,6 +42,12 @@ export default function Step1() {
     router.push('/survey/step2');
   };
 
+  const handleCatechistSelectionChange = (selectedPeople: Person[] | Catechist[] | Catechumen[]) => {
+    if (selectedPeople.every(person => (person as Catechist).coursesAsCatechist !== undefined)) {
+      setSelectedCatechists(selectedPeople as Catechist[]);
+    }
+  };
+
   if (loading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
   if (error) return <Text style={commonStyles.errorText}>Error: {error.message}</Text>;
 
@@ -57,7 +63,7 @@ export default function Step1() {
           <SearchPeople
             placeholder="Buscar catequistas"
             people={data.getCatechists}
-            onSelectionChange={setSelectedCatechists}
+            onSelectionChange={handleCatechistSelectionChange}
             style={styles.searchPeople}
           />
         </View>

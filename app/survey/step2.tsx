@@ -6,7 +6,7 @@ import { useQuery, gql } from '@apollo/client';
 import { Pagination } from '@/components/Pagination';
 import { SearchLocation } from '@/components/SearchLocation';
 import { SearchPeople } from '@/components/SearchPeople';
-import { Location, Catechumen } from '@/types';
+import { Location, Catechumen, Person, Catechist } from '@/types';
 import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
 import { commonStyles, buttonStyles, inputStyles } from '@/styles';
 
@@ -63,6 +63,12 @@ export default function Step2() {
     router.push('/survey/step3');
   };
 
+  const handleCatechumenSelectionChange = (selectedPeople: Person[] | Catechist[] | Catechumen[]) => {
+    if (selectedPeople.every(person => (person as Catechumen).coursesAsCatechumen !== undefined)) {
+      setSelectedCatechumens(selectedPeople as Catechumen[]);
+    }
+  };
+
   if (loadingLocations || loadingCatechumens) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
   if (errorLocations || errorCatechumens) return <Text style={commonStyles.errorText}>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
 
@@ -83,7 +89,7 @@ export default function Step2() {
           />
           <SearchPeople
             people={catechumensData.getCatechumens}
-            onSelectionChange={setSelectedCatechumens}
+            onSelectionChange={handleCatechumenSelectionChange}
             placeholder="Buscar catequizandos"
           />
           <TextInput

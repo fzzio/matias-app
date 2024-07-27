@@ -22,15 +22,17 @@ export interface Person {
   phone?: string;
   birthDate?: Date;
   sacraments: Sacrament[];
-  coursesAsCatechist: Course[];
-  coursesAsCatechumen: Course[];
   isCatechist?: boolean;
   isVolunteer?: boolean;
 }
 
-export interface Catechumen extends Person {}
+export interface Catechumen extends Person {
+  coursesAsCatechumen: Course[];
+}
 
-export interface Catechist extends Person {}
+export interface Catechist extends Person {
+  coursesAsCatechist: Course[];
+}
 
 export interface Location {
   id: string;

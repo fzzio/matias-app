@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ViewStyle, Keyboard } from 'react-native';
 import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
-import { Person } from '@/types';
+import { Catechist, Catechumen, Person } from '@/types';
 import { searchInputStyles } from '@/styles';
 import { theme } from '@/styles/theme';
 
 interface SearchPeopleProps extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
-  people: Person[];
-  onSelectionChange: (selectedPeople: Person[]) => void;
+  people: Person[] | Catechist[] | Catechumen[];
+  onSelectionChange: (selectedPeople: Person[] | Catechist[] | Catechumen[]) => void;
   style?: ViewStyle;
 }
 
@@ -18,8 +18,8 @@ export function SearchPeople({
   ...searchBarProps
 }: SearchPeopleProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredPeople, setFilteredPeople] = useState<Person[]>([]);
-  const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
+  const [filteredPeople, setFilteredPeople] = useState<Person[] | Catechist[] | Catechumen[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<Person[] | Catechist[] | Catechumen[]>([]);
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -35,7 +35,7 @@ export function SearchPeople({
     }
   }, [searchQuery, people, selectedPeople]);
 
-  const handleSelect = (person: Person) => {
+  const handleSelect = (person: Person | Catechist | Catechumen) => {
     const newSelectedPeople = [...selectedPeople, person];
     setSelectedPeople(newSelectedPeople);
     onSelectionChange(newSelectedPeople);
@@ -43,7 +43,7 @@ export function SearchPeople({
     Keyboard.dismiss();
   };
 
-  const handleRemove = (person: Person) => {
+  const handleRemove = (person: Person | Catechist | Catechumen) => {
     const newSelectedPeople = selectedPeople.filter(p => p.id !== person.id);
     setSelectedPeople(newSelectedPeople);
     onSelectionChange(newSelectedPeople);
