@@ -36,6 +36,15 @@ export default function Home() {
         >
           Reportes
         </Button>
+        <Button
+          icon={() => <Ionicons name="sync-outline" size={24} color={theme.colors.primary} />}
+          mode="outlined"
+          onPress={() => router.push('/')}
+          style={buttonStyles.secondaryButton}
+          labelStyle={buttonStyles.secondaryButtonLabel}
+        >
+          Sincronizar
+        </Button>
       </View>
     </View>
   );
