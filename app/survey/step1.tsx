@@ -5,20 +5,27 @@ import { Button, Text, Surface } from 'react-native-paper';
 import { gql, useQuery } from '@apollo/client';
 import { updateCatechists } from "@/store/survey";
 import { SearchPeople } from '@/components/SearchPeople';
-import { Catechist, Person } from '@/types';
+import { Catechist } from '@/types';
 import { theme } from '@/styles/theme';
 import { commonStyles, buttonStyles } from '@/styles';
 import { Pagination } from '@/components/Pagination';
-import CatechistInfo from '@/components/CatechistInfo';
 
 const GET_CATECHISTS = gql`
   query GetCatechists {
     getCatechists {
       id
+      idCard
       name
       lastName
+      phone
+      birthDate
+      email
       sacraments {
         id
+      }
+      coursesAsCatechist {
+        id
+        year
       }
     }
   }

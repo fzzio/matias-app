@@ -27,7 +27,6 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) =>
           label="Sacramentos"
           value={catechumen.sacraments.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
         />
-        <InfoItem label="Voluntario" value={catechumen.isVolunteer ? 'Sí' : 'No'} />
       </View>
     </Surface>
   );

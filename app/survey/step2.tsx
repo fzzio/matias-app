@@ -9,7 +9,6 @@ import { SearchPeople } from '@/components/SearchPeople';
 import { Location, Catechumen } from '@/types';
 import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
 import { commonStyles, buttonStyles, inputStyles } from '@/styles';
-import { theme } from '@/styles/theme';
 
 const GET_LOCATIONS = gql`
   query GetLocations {
@@ -24,10 +23,22 @@ const GET_CATECHUMENS = gql`
   query GetCatechumens($year: String!) {
     getCatechumens(year: $year) {
       id
+      idCard
       name
       lastName
+      phone
+      birthDate
+      email
       sacraments {
         id
+      }
+      coursesAsCatechumen {
+        id
+        year
+        catechismLevel {
+          id
+          name
+        }
       }
     }
   }
