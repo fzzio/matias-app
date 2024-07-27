@@ -12,3 +12,12 @@ export function generateBirthDateFromAge(age: number): Date {
   const today = new Date();
   return new Date(today.getFullYear() - age, 0, 1);
 }
+
+export function parseDate(dateString: string): Date | undefined {
+  if (dateString && /^\d+$/.test(dateString)) {
+    return new Date(parseInt(dateString));
+  } else if (Date.parse(dateString)) {
+    return new Date(dateString);
+  }
+  return undefined;
+}

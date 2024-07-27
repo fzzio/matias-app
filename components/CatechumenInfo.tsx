@@ -1,33 +1,32 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
-import { useSacraments } from '@/hooks/useSacraments';
-import { PersonInput } from '@/types';
+import { Catechumen } from '@/types';
 import { commonStyles } from '@/styles';
+import { useSacraments } from '@/hooks/useSacraments';
 import InfoItem from '@/components/InfoItem';
 
-interface PersonInfoProps {
-  person: PersonInput;
+interface CatechumenInfoProps {
+  catechumen: Catechumen;
   style?: ViewStyle;
 }
 
-const PersonInfo: React.FC<PersonInfoProps> = ({ person, style }) => {
+const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) => {
   const { getSacramentNameById } = useSacraments();
 
   return (
     <Surface style={[styles.container, style]}>
-      <Text style={styles.title}>{person.name} {person.lastName}</Text>
+      <Text style={styles.title}>{catechumen.name} {catechumen.lastName}</Text>
       <View style={styles.infoContainer}>
-        <InfoItem label="Cédula" value={person.idCard || 'N/A'} />
+        <InfoItem label="Cédula" value={catechumen.idCard || 'N/A'} />
         <InfoItem
           label="Fecha de Nacimiento"
-          value={person.birthDate ? person.birthDate.toISOString().split('T')[0] : 'N/A'} 
+          value={catechumen.birthDate ? catechumen.birthDate.toISOString().split('T')[0] : 'N/A'}
         />
         <InfoItem
           label="Sacramentos"
-          value={person.sacraments.map(getSacramentNameById).join(', ') || 'N/A'} 
+          value={catechumen.sacraments.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
         />
-        <InfoItem label="Voluntario" value={person.isVolunteer ? 'Sí' : 'No'} />
       </View>
     </Surface>
   );
@@ -48,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PersonInfo;
+export default CatechumenInfo;

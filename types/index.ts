@@ -1,6 +1,18 @@
+export interface CatechismLevel {
+  id: string;
+  name: string;
+}
+
 export interface Sacrament {
   id: string;
   name: string;
+}
+
+export interface Course {
+  id: string;
+  year: string;
+  catechismLevel: CatechismLevel;
+  location: Location;
 }
 
 export interface Person {
@@ -16,9 +28,13 @@ export interface Person {
   isVolunteer?: boolean;
 }
 
-export interface Catechumen extends Person {}
+export interface Catechumen extends Person {
+  coursesAsCatechumen: Course[];
+}
 
-export interface Catechist extends Person {}
+export interface Catechist extends Person {
+  coursesAsCatechist: Course[];
+}
 
 export interface Location {
   id: string;

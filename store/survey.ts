@@ -1,11 +1,12 @@
 import { registerInDevtools, Store } from "pullstate";
-import { Location, Catechist, Sacrament, PersonInput } from "@/types";
+import { Location, Catechist, Sacrament, PersonInput, Catechumen } from "@/types";
+import { parseDate } from "@/utils/calculate";
 
 export interface SurveyState {
   catechists: Catechist[];
   selectedLocation: Location | null;
   householdSize: number;
-  catechumens: PersonInput[];
+  catechumens: Catechumen[];
   otherPeople: PersonInput[];
   observations: string;
   sacraments: Sacrament[];
@@ -26,7 +27,12 @@ registerInDevtools({
 });
 
 export const updateCatechists = (catechists: Catechist[]) => {
-  SurveyStore.update(s => { s.catechists = catechists; });
+  SurveyStore.update(s => {
+    s.catechists = catechists.map(catechist => ({
+      ...catechist,
+      birthDate: parseDate(catechist.birthDate as unknown as string)
+    }));
+  });
 };
 
 export const updateSelectedLocation = (location: Location | null) => {
@@ -37,8 +43,13 @@ export const updateHouseholdSize = (size: number) => {
   SurveyStore.update(s => { s.householdSize = size; });
 };
 
-export const updateCatechumens = (catechumens: PersonInput[]) => {
-  SurveyStore.update(s => { s.catechumens = catechumens; });
+export const updateCatechumens = (catechumens: Catechumen[]) => {
+  SurveyStore.update(s => {
+    s.catechumens = catechumens.map(catechumen => ({
+      ...catechumen,
+      birthDate: parseDate(catechumen.birthDate as unknown as string)
+    }));
+  });
 };
 
 export const updateOtherPeople = (otherPeople: PersonInput[]) => {

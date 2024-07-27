@@ -1,7 +1,11 @@
+// components/CatechistInfo.tsx
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import { Text, Surface } from 'react-native-paper';
+import { Catechist } from '@/types';
+import { commonStyles } from '@/styles';
 import { useSacraments } from '@/hooks/useSacraments';
-import { Catechist, PersonInput } from '@/types';
+import InfoItem from '@/components/InfoItem';
 
 interface CatechistInfoProps {
   catechist: Catechist;
@@ -12,23 +16,35 @@ const CatechistInfo: React.FC<CatechistInfoProps> = ({ catechist, style }) => {
   const { getSacramentNameById } = useSacraments();
 
   return (
-    <View  style={[styles.personContainer, style]}>
-      <Text>Nombre: {catechist.name} {catechist.lastName}</Text>
-      <Text>Cédula: {catechist.idCard || 'N/A'}</Text>
-      <Text>Fecha de Nacimiento: {catechist.birthDate ? catechist.birthDate.toISOString().split('T')[0] : 'N/A'}</Text>
-      {/* <Text>Sacramentos: {catechist.sacraments.map(getSacramentNameById).join(', ') || 'N/A'}</Text> */}
-      <Text>Voluntario: {catechist.isVolunteer ? 'Sí' : 'No'}</Text>
-    </View>
+    <Surface style={[styles.container, style]}>
+      <Text style={styles.title}>{catechist.name} {catechist.lastName}</Text>
+      <View style={styles.infoContainer}>
+        <InfoItem label="Cédula" value={catechist.idCard || 'N/A'} />
+        <InfoItem
+          label="Fecha de Nacimiento"
+          value={catechist.birthDate ? catechist.birthDate.toISOString().split('T')[0] : 'N/A'}
+        />
+        <InfoItem
+          label="Sacramentos"
+          value={catechist?.sacraments?.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
+        />
+      </View>
+    </Surface>
   );
 };
 
 const styles = StyleSheet.create({
-  personContainer: {
-    marginBottom: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+  container: {
+    ...commonStyles.surface,
+    marginBottom: 16,
+  },
+  title: {
+    ...commonStyles.title,
+    fontSize: 18,
+    marginBottom: 12,
+  },
+  infoContainer: {
+    gap: 8,
   },
 });
 
