@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ViewStyle, Keyboard } from 'react-native';
 import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
-import { Catechist, Catechumen, Course, Person } from '@/types';
+import { Person, Catechist, Catechumen, Course } from '@/types';
 import { searchInputStyles } from '@/styles';
 import { theme } from '@/styles/theme';
 
-interface SearchPeopleProps extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
-  people: Person[] | Catechist[] | Catechumen[];
-  onSelectionChange: (selectedPeople: Person[] | Catechist[] | Catechumen[]) => void;
+interface SearchPeopleProps<T extends Person> extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
+  people: T[];
+  onSelectionChange: (selectedPeople: T[]) => void;
   personType?: 'Person' | 'Catechist' | 'Catechumen';
   style?: ViewStyle;
 }
 
-export function SearchPeople({
+export function SearchPeople<T extends Person>({
   people,
   onSelectionChange,
   personType,
   style,
   ...searchBarProps
-}: SearchPeopleProps) {
+}: SearchPeopleProps<T>) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredPeople, setFilteredPeople] = useState<Person[] | Catechist[] | Catechumen[]>([]);
-  const [selectedPeople, setSelectedPeople] = useState<Person[] | Catechist[] | Catechumen[]>([]);
+  const [filteredPeople, setFilteredPeople] = useState<T[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<T[]>([]);
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -37,7 +37,7 @@ export function SearchPeople({
     }
   }, [searchQuery, people, selectedPeople]);
 
-  const handleSelect = (person: Person | Catechist | Catechumen) => {
+  const handleSelect = (person: T) => {
     const newSelectedPeople = [...selectedPeople, person];
     newSelectedPeople.sort((a, b) => `${a.name} ${a.lastName}`.localeCompare(`${b.name} ${b.lastName}`));
     setSelectedPeople(newSelectedPeople);
@@ -46,7 +46,7 @@ export function SearchPeople({
     Keyboard.dismiss();
   };
 
-  const handleRemove = (person: Person | Catechist | Catechumen) => {
+  const handleRemove = (person: T) => {
     const newSelectedPeople = selectedPeople.filter(p => p.id !== person.id);
     setSelectedPeople(newSelectedPeople);
     onSelectionChange(newSelectedPeople);
@@ -95,16 +95,16 @@ const styles = StyleSheet.create({
   },
 });
 
-function getChipLabel(person: Person | Catechist | Catechumen, personType?: 'Person' | 'Catechist' | 'Catechumen'): string {
+function getChipLabel<T extends Person>(person: T, personType?: 'Person' | 'Catechist' | 'Catechumen'): string {
   let label = `${person.name} ${person.lastName}`;
 
   if (personType === 'Catechist' && 'coursesAsCatechist' in person) {
-    const courseDetails = person.coursesAsCatechist?.map((course: Course) =>
+    const courseDetails = (person as Catechist).coursesAsCatechist?.map((course: Course) =>
       `${course.catechismLevel?.name} - ${course.year} - ${course.location?.name}`
     ).filter(detail => detail.includes("undefined") === false).join(', ');
     label += courseDetails ? ` (${courseDetails})` : '';
   } else if (personType === 'Catechumen' && 'coursesAsCatechumen' in person) {
-    const courseDetails = person.coursesAsCatechumen?.map((course: Course) =>
+    const courseDetails = (person as Catechumen).coursesAsCatechumen?.map((course: Course) =>
       `${course.catechismLevel?.name} - ${course.year} - ${course.location?.name}`
     ).filter(detail => detail.includes("undefined") === false).join(', ');
     label += courseDetails ? ` (${courseDetails})` : '';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Surface, Text, TextInput } from 'react-native-paper';
@@ -6,7 +6,7 @@ import { useQuery, gql } from '@apollo/client';
 import { Pagination } from '@/components/Pagination';
 import { SearchLocation } from '@/components/SearchLocation';
 import { SearchPeople } from '@/components/SearchPeople';
-import { Location, Catechumen, Person, Catechist } from '@/types';
+import { Location, Catechumen } from '@/types';
 import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
 import { commonStyles, buttonStyles, inputStyles } from '@/styles';
 
@@ -21,7 +21,7 @@ const GET_LOCATIONS = gql`
 
 const GET_CATECHUMENS = gql`
   query GetCatechumens($year: String!) {
-    getCatechumens(year: $year) {
+    getCatechumensByYear(year: $year) {
       id
       idCard
       name
@@ -39,6 +39,10 @@ const GET_CATECHUMENS = gql`
           id
           name
         }
+        location {
+          id
+          name
+        }
       }
     }
   }
@@ -53,6 +57,7 @@ export default function Step2() {
   const { loading: loadingLocations, error: errorLocations, data: locationsData } = useQuery(GET_LOCATIONS);
   const { loading: loadingCatechumens, error: errorCatechumens, data: catechumensData } = useQuery(GET_CATECHUMENS, {
     variables: { year: "2024" },
+    skip: !locationsData,
   });
 
   const handleSubmit = () => {
@@ -63,14 +68,16 @@ export default function Step2() {
     router.push('/survey/step3');
   };
 
-  const handleCatechumenSelectionChange = (selectedPeople: Person[] | Catechist[] | Catechumen[]) => {
-    if (selectedPeople.every(person => (person as Catechumen).coursesAsCatechumen !== undefined)) {
-      setSelectedCatechumens(selectedPeople as Catechumen[]);
-    }
+  const handleCatechumenSelectionChange = (selectedCatechumens: Catechumen[]) => {
+    setSelectedCatechumens(selectedCatechumens);
   };
 
   if (loadingLocations || loadingCatechumens) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
-  if (errorLocations || errorCatechumens) return <Text style={commonStyles.errorText}>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
+  if (errorLocations) return <Text style={commonStyles.errorText}>Error al cargar ubicaciones: {errorLocations.message}</Text>;
+  if (errorCatechumens) return <Text style={commonStyles.errorText}>Error al cargar catecúmenos: {errorCatechumens.message}</Text>;
+
+  const locations = locationsData?.getLocations || [];
+  const catechumens = catechumensData?.getCatechumensByYear || [];
 
   const isFormValid = selectedLocation && householdSize !== '';
 
@@ -83,12 +90,12 @@ export default function Step2() {
         </View>
         <View style={styles.body}>
           <SearchLocation
-            locations={locationsData.getLocations}
+            locations={locations}
             onLocationSelect={setSelectedLocation}
             placeholder="Buscar ubicación"
           />
-          <SearchPeople
-            people={catechumensData.getCatechumens}
+          <SearchPeople<Catechumen>
+            people={catechumens}
             onSelectionChange={handleCatechumenSelectionChange}
             placeholder="Buscar catequizandos"
             personType='Catechumen'
