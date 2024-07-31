@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ViewStyle, Keyboard } from 'react-native';
+import { View, StyleSheet, ViewStyle, Keyboard, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Searchbar, List, Chip, SearchbarProps, Icon } from 'react-native-paper';
 import { Person, Catechist, Catechumen, Course } from '@/types';
 import { searchInputStyles } from '@/styles';
@@ -53,7 +53,10 @@ export function SearchPeople<T extends Person>({
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={[styles.container, style]}
+    >
       <Searchbar
         onChangeText={setSearchQuery}
         value={searchQuery}
@@ -61,16 +64,18 @@ export function SearchPeople<T extends Person>({
         {...searchBarProps}
       />
       {searchQuery.trim() !== '' && (
-        <List.Section style={searchInputStyles.listContainer}>
-          {filteredPeople.map(person => (
-            <List.Item
-              key={person.id}
-              title={`${person.name} ${person.lastName}`}
-              onPress={() => handleSelect(person)}
-              style={searchInputStyles.listItem}
-            />
-          ))}
-        </List.Section>
+        <ScrollView style={styles.scrollView}>
+          <List.Section style={searchInputStyles.listContainer}>
+            {filteredPeople.map(person => (
+              <List.Item
+                key={person.id}
+                title={`${person.name} ${person.lastName}`}
+                onPress={() => handleSelect(person)}
+                style={searchInputStyles.listItem}
+              />
+            ))}
+          </List.Section>
+        </ScrollView>
       )}
       <View style={searchInputStyles.chipsContainer}>
         {selectedPeople.map(person => (
@@ -85,13 +90,16 @@ export function SearchPeople<T extends Person>({
           </Chip>
         ))}
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+  },
+  scrollView: {
+    maxHeight: 200
   },
 });
 
