@@ -16,7 +16,7 @@ export default function Step5() {
   const router = useRouter();
   const {
     catechists,
-    selectedLocation,
+    location,
     householdSize,
     catechumens,
     people,
@@ -27,7 +27,7 @@ export default function Step5() {
   const handleFinish = async () => {
     const newSurvey = {
       catechists: catechists,
-      location: selectedLocation?.id,
+      location: location,
       householdSize,
       catechumens: catechumens,
       people: people,
@@ -77,7 +77,7 @@ export default function Step5() {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Información General</Text>
           <Surface style={styles.infoCard}>
-            <InfoItem label="Ubicación Seleccionada" value={selectedLocation?.name || 'N/A'} />
+            <InfoItem label="Ubicación Seleccionada" value={location?.name || 'N/A'} />
             <InfoItem label="Tamaño del Hogar" value={householdSize.toString()} />
             <InfoItem label="Observaciones" value={observations || 'N/A'} />
           </Surface>

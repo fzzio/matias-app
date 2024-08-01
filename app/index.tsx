@@ -58,6 +58,7 @@ export default function Home() {
       console.log('Surveys and other data synced');
       setSurveysPending(0);
       setIsInitialDataSynced(true);
+      Alert.alert('Surveys and other data synced');
     } catch (error) {
       console.error('Error syncing data:', error);
       Alert.alert('Error', 'Failed to sync data. Please try again.');
@@ -137,18 +138,16 @@ export default function Home() {
           icon={() => <Ionicons name="sync-outline" size={24} color={theme.colors.primary} />}
           mode="outlined"
           onPress={syncData}
-          style={buttonStyles.secondaryButton}
-          labelStyle={buttonStyles.secondaryButtonLabel}
+          style={!isSyncing ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+          labelStyle={!isSyncing ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
           disabled={!isConnected || isSyncing}
         >
-          Sincronizar ({surveysPending} pendientes)
+          {isSyncing ? 'Sincronizando...' : `Sincronizar (${surveysPending} pendientes)`}
         </Button>
         <Button
           icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}
           mode="outlined"
           onPress={clearLocalData}
-          // style={[buttonStyles.secondaryButton, { borderColor: theme.colors.error }]}
-          // labelStyle={[buttonStyles.secondaryButtonLabel, { color: theme.colors.error }]}
           style={isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
           labelStyle={isInitialDataSynced ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
           disabled={!isInitialDataSynced}

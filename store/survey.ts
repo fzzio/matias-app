@@ -4,7 +4,7 @@ import { parseDate } from "@/utils/calculate";
 
 export interface SurveyState {
   catechists: Catechist[];
-  selectedLocation: Location | null;
+  location: Location | null;
   householdSize: number;
   catechumens: Catechumen[];
   people: PersonInput[];
@@ -14,7 +14,7 @@ export interface SurveyState {
 
 export const SurveyStore = new Store<SurveyState>({
   catechists: [],
-  selectedLocation: null,
+  location: null,
   householdSize: 0,
   catechumens: [],
   people: [],
@@ -36,7 +36,7 @@ export const updateCatechists = (catechists: Catechist[]) => {
 };
 
 export const updateSelectedLocation = (location: Location | null) => {
-  SurveyStore.update(s => { s.selectedLocation = location; });
+  SurveyStore.update(s => { s.location = location; });
 };
 
 export const updateHouseholdSize = (size: number) => {

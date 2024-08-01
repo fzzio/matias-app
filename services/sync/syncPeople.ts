@@ -1,7 +1,6 @@
 import client from '@/services/apollo-client';
 import { gql } from '@apollo/client';
 import { PersonInput } from '@/types';
-import { SurveyStore } from '@/store/survey';
 
 const CREATE_PEOPLE_BULK = gql`
   mutation CreatePeopleBulk($input: [PersonInput!]!) {
@@ -9,14 +8,6 @@ const CREATE_PEOPLE_BULK = gql`
       id
       idCard
       name
-      lastName
-      birthDate
-      email
-      phone
-      isVolunteer
-      sacraments {
-        id
-      }
     }
   }
 `;
@@ -28,8 +19,8 @@ export const syncPeople = async (people: PersonInput[]) => {
       variables: { input: people }
     });
 
-    SurveyStore.update(s => { s.people = data.createPeopleBulk; });
-    console.log('People synced successfully');
+    console.log('*** [2]People data sent:', JSON.stringify(data));
+    console.log('People saved successfully');
     return data.createPeopleBulk;
   } catch (error) {
     console.error('Error syncing people:', error);

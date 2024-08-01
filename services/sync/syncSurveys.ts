@@ -2,6 +2,7 @@ import client from '@/services/apollo-client';
 import { gql } from '@apollo/client';
 import { SurveyStore } from '@/store/survey';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { syncPeople } from './syncPeople';
 
 const CREATE_SURVEY = gql`
   mutation CreateSurvey($input: SurveyInput!) {
@@ -31,13 +32,15 @@ export const syncSurveys = async () => {
     const surveys = storedSurveys ? JSON.parse(storedSurveys) : [];
 
     for (const surveyData of surveys) {
+      const peopleSurvey = await syncPeople(surveyData.people);
+
       const input = {
-        householdSize: surveyData.householdSize,
-        catechumens: surveyData.catechumens.map((c: { id: string }) => c.id),
-        people: surveyData.people.map((p: { id: string }) => p.id),
-        observations: surveyData.observations,
         catechists: surveyData.catechists.map((c: { id: string }) => c.id),
-        location: surveyData.selectedLocation?.id
+        catechumens: surveyData.catechumens.map((c: { id: string }) => c.id),
+        householdSize: surveyData.householdSize,
+        location: surveyData.location?.id,
+        observations: surveyData.observations,
+        people: peopleSurvey.map((p: { id: string }) => p.id),
       };
 
       if (!input.location) {
