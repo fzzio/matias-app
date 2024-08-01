@@ -7,7 +7,7 @@ export interface SurveyState {
   selectedLocation: Location | null;
   householdSize: number;
   catechumens: Catechumen[];
-  otherPeople: PersonInput[];
+  people: PersonInput[];
   observations: string;
   sacraments: Sacrament[];
 }
@@ -17,7 +17,7 @@ export const SurveyStore = new Store<SurveyState>({
   selectedLocation: null,
   householdSize: 0,
   catechumens: [],
-  otherPeople: [],
+  people: [],
   observations: "",
   sacraments: [],
 });
@@ -52,8 +52,8 @@ export const updateCatechumens = (catechumens: Catechumen[]) => {
   });
 };
 
-export const updateOtherPeople = (otherPeople: PersonInput[]) => {
-  SurveyStore.update(s => { s.otherPeople = otherPeople; });
+export const updatePeople = (people: PersonInput[]) => {
+  SurveyStore.update(s => { s.people = people; });
 };
 
 export const updateObservations = (observations: string) => {
@@ -69,7 +69,7 @@ export const clearSurvey = () => {
   updateSelectedLocation(null);
   updateHouseholdSize(0);
   updateCatechumens([]);
-  updateOtherPeople([]);
+  updatePeople([]);
   updateObservations("");
   updateSacraments([]);
 };

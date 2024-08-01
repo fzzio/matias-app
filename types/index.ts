@@ -49,7 +49,6 @@ export interface PersonInput {
   email?: string;
   phone?: string;
   sacraments: string[];
-  isCatechist?: boolean;
   isVolunteer?: boolean;
 }
 

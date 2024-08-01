@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text, Surface } from 'react-native-paper';
-import { gql, useQuery } from '@apollo/client';
 import { updateCatechists } from "@/store/survey";
 import { SearchPeople } from '@/components/SearchPeople';
 import { Catechist } from '@/types';
@@ -10,34 +10,38 @@ import { theme } from '@/styles/theme';
 import { commonStyles, buttonStyles } from '@/styles';
 import { Pagination } from '@/components/Pagination';
 
-const GET_CATECHISTS = gql`
-  query GetCatechists {
-    getCatechists {
-      id
-      idCard
-      name
-      lastName
-      phone
-      birthDate
-      email
-      sacraments {
-        id
-      }
-      coursesAsCatechist {
-        id
-        year
-      }
-    }
-  }
-`;
-
 export default function Step1() {
   const router = useRouter();
-  const { loading, error, data } = useQuery(GET_CATECHISTS);
+  const [catechists, setCatechists] = React.useState<Catechist[]>([]);
   const [selectedCatechists, setSelectedCatechists] = React.useState<Catechist[]>([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = () => {
-    console.log('Form submitted step1', { selectedCatechists });
+  useEffect(() => {
+    const loadCatechists = async () => {
+      try {
+        const storedCatechists = await AsyncStorage.getItem('catechists');
+        if (storedCatechists) {
+          setCatechists(JSON.parse(storedCatechists));
+        } else {
+          throw new Error('No catechists found in local storage');
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          setError('Failed to load catechists: ' + err.message);
+        } else {
+          setError('Failed to load catechists due to an unexpected error');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCatechists();
+  }, []);
+
+  const handleNext = () => {
+    console.log('Step 1... Done!: ');
     updateCatechists(selectedCatechists);
     router.push('/survey/step2');
   };
@@ -47,7 +51,7 @@ export default function Step1() {
   };
 
   if (loading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
-  if (error) return <Text style={commonStyles.errorText}>Error: {error.message}</Text>;
+  if (error) return <Text style={commonStyles.errorText}>Error: {error}</Text>;
 
   return (
     <View style={styles.container}>
@@ -60,7 +64,7 @@ export default function Step1() {
           <Text style={styles.subtitle}>Seleccione los catequistas que harán ésta visita:</Text>
           <SearchPeople<Catechist>
             placeholder="Buscar catequistas"
-            people={data.getCatechists}
+            people={catechists}
             onSelectionChange={handleCatechistSelectionChange}
             personType='Catechist'
             style={styles.searchPeople}
@@ -69,7 +73,7 @@ export default function Step1() {
         <View style={commonStyles.footerButtons}>
           <Button
             mode="contained"
-            onPress={handleSubmit}
+            onPress={handleNext}
             style={selectedCatechists.length === 0 ? buttonStyles.disabledButton : buttonStyles.primaryButton}
             labelStyle={selectedCatechists.length === 0 ? buttonStyles.disabledButtonLabel : buttonStyles.primaryButtonLabel}
             disabled={selectedCatechists.length === 0}
