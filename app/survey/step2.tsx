@@ -1,76 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Surface, Text, TextInput } from 'react-native-paper';
-import { useQuery, gql } from '@apollo/client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Pagination } from '@/components/Pagination';
 import { SearchLocation } from '@/components/SearchLocation';
 import { SearchPeople } from '@/components/SearchPeople';
-import { Location, Catechumen, Person, Catechist } from '@/types';
+import { Location, Catechumen } from '@/types';
 import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
 import { commonStyles, buttonStyles, inputStyles } from '@/styles';
 
-const GET_LOCATIONS = gql`
-  query GetLocations {
-    getLocations {
-      id
-      name
-    }
-  }
-`;
-
-const GET_CATECHUMENS = gql`
-  query GetCatechumens($year: String!) {
-    getCatechumens(year: $year) {
-      id
-      idCard
-      name
-      lastName
-      phone
-      birthDate
-      email
-      sacraments {
-        id
-      }
-      coursesAsCatechumen {
-        id
-        year
-        catechismLevel {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
 export default function Step2() {
   const router = useRouter();
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [catechumens, setCatechumens] = useState<Catechumen[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [householdSize, setHouseholdSize] = useState('');
   const [selectedCatechumens, setSelectedCatechumens] = useState<Catechumen[]>([]);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { loading: loadingLocations, error: errorLocations, data: locationsData } = useQuery(GET_LOCATIONS);
-  const { loading: loadingCatechumens, error: errorCatechumens, data: catechumensData } = useQuery(GET_CATECHUMENS, {
-    variables: { year: "2024" },
-  });
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        const storedLocations = await AsyncStorage.getItem('locations');
+        const storedCatechumens = await AsyncStorage.getItem('catechumens');
 
-  const handleSubmit = () => {
-    console.log('Form submitted Step2');
+        if (storedLocations) {
+          setLocations(JSON.parse(storedLocations));
+        } else {
+          throw new Error('No locations found in local storage');
+        }
+
+        if (storedCatechumens) {
+          setCatechumens(JSON.parse(storedCatechumens));
+        } else {
+          throw new Error('No catechumens found in local storage');
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          setError('Failed to load data: ' + err.message);
+        } else {
+          setError('Failed to load data due to an unexpected error');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const handleNext = () => {
+    console.log('Step 2... Done!: ');
     updateHouseholdSize(parseInt(householdSize));
     updateSelectedLocation(selectedLocation);
     updateCatechumens(selectedCatechumens);
     router.push('/survey/step3');
   };
 
-  const handleCatechumenSelectionChange = (selectedPeople: Person[] | Catechist[] | Catechumen[]) => {
-    if (selectedPeople.every(person => (person as Catechumen).coursesAsCatechumen !== undefined)) {
-      setSelectedCatechumens(selectedPeople as Catechumen[]);
-    }
+  const handleCatechumenSelectionChange = (selectedCatechumens: Catechumen[]) => {
+    setSelectedCatechumens(selectedCatechumens);
   };
 
-  if (loadingLocations || loadingCatechumens) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
-  if (errorLocations || errorCatechumens) return <Text style={commonStyles.errorText}>Error: {errorLocations?.message || errorCatechumens?.message}</Text>;
+  if (isLoading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
+  if (error) return <Text style={commonStyles.errorText}>Error: {error}</Text>;
 
   const isFormValid = selectedLocation && householdSize !== '';
 
@@ -83,12 +78,12 @@ export default function Step2() {
         </View>
         <View style={styles.body}>
           <SearchLocation
-            locations={locationsData.getLocations}
+            locations={locations}
             onLocationSelect={setSelectedLocation}
             placeholder="Buscar ubicación"
           />
-          <SearchPeople
-            people={catechumensData.getCatechumens}
+          <SearchPeople<Catechumen>
+            people={catechumens}
             onSelectionChange={handleCatechumenSelectionChange}
             placeholder="Buscar catequizandos"
             personType='Catechumen'
@@ -104,7 +99,7 @@ export default function Step2() {
         <View style={commonStyles.footerButtons}>
           <Button
             mode="contained"
-            onPress={handleSubmit}
+            onPress={handleNext}
             style={isFormValid ? buttonStyles.primaryButton : buttonStyles.disabledButton}
             labelStyle={isFormValid ? buttonStyles.primaryButtonLabel : buttonStyles.disabledButtonLabel}
             disabled={!isFormValid}

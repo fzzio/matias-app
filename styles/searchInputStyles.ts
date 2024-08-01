@@ -15,6 +15,8 @@ export const searchInputStyles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: theme.roundness,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: theme.colors.onSurface,
   },
   listItem: {
     borderBottomWidth: 1,

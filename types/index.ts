@@ -24,15 +24,14 @@ export interface Person {
   phone?: string;
   birthDate?: Date;
   sacraments: Sacrament[];
-  isCatechist?: boolean;
   isVolunteer?: boolean;
 }
 
-export interface Catechumen extends Person {
+export interface Catechumen extends Omit<Person, 'isVolunteer'>{
   coursesAsCatechumen: Course[];
 }
 
-export interface Catechist extends Person {
+export interface Catechist extends Omit<Person, 'isVolunteer'>{
   coursesAsCatechist: Course[];
 }
 
@@ -50,7 +49,6 @@ export interface PersonInput {
   email?: string;
   phone?: string;
   sacraments: string[];
-  isCatechist?: boolean;
   isVolunteer?: boolean;
 }
 

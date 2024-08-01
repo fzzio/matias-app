@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { ApolloProvider } from '@apollo/client';
-import client from '@/apollo-client';
+import client from '@/services/apollo-client';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

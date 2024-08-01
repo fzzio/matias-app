@@ -11,7 +11,7 @@ export default function Step4() {
   const [observations, setObservations] = useState("");
 
   const handleSubmit = () => {
-    console.log('Form submitted Step4');
+    console.log('Step 4... Done!: ');
     updateObservations(observations);
     router.push('/survey/step5');
   };

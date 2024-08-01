@@ -5,8 +5,8 @@ import { Button, Surface, Text } from 'react-native-paper';
 import { Pagination } from '@/components/Pagination';
 import { PersonForm } from '@/components/PersonForm';
 import CatechumenInfo from '@/components/CatechumenInfo';
-import { Catechumen, PersonInput } from '@/types';
-import { SurveyStore, updateOtherPeople } from "@/store/survey";
+import { PersonInput } from '@/types';
+import { SurveyStore, updatePeople } from "@/store/survey";
 import { useSacraments } from '@/hooks/useSacraments';
 import { commonStyles, buttonStyles } from '@/styles';
 
@@ -45,9 +45,9 @@ export default function Step3() {
   };
 
   const handleSubmit = () => {
-    console.log('Form submitted Step3');
+    console.log('Step 3... Done!: ');
     const newOtherPeople = people.filter(person => person.id === undefined);
-    updateOtherPeople(newOtherPeople);
+    updatePeople(newOtherPeople);
     router.push('/survey/step4');
   };
 
