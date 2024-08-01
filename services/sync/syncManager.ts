@@ -1,6 +1,6 @@
 import { SurveyStore } from '@/store/survey';
 import { syncCatechists } from './syncCatechists';
-import { syncCatechumens } from './syncCatechumens';
+import { syncCatechumens, syncCatechumensWithoutVisit } from './syncCatechumens';
 import { syncLocations } from './syncLocations';
 import { syncSurveys } from './syncSurveys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,7 @@ export const syncManager = async (options = { forceFull: false }) => {
   try {
     await syncCatechists();
     await syncCatechumens("2024");
+    await syncCatechumensWithoutVisit("2024");
     await syncLocations();
 
     const surveys = await AsyncStorage.getItem('surveys');

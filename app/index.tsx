@@ -152,7 +152,7 @@ export default function Home() {
           labelStyle={isInitialDataSynced ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
           disabled={!isInitialDataSynced}
         >
-          Limpiar datos locales
+          Limpiar
         </Button>
       </View>
     </View>
