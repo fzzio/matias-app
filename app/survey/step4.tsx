@@ -17,7 +17,9 @@ export default function Step4() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollViewContent}
+    >
       <Surface style={commonStyles.surface}>
         <Pagination currentStep={4} totalSteps={5} />
         <View style={commonStyles.headerTitle}>
@@ -67,5 +69,9 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 120,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 8,
   },
 });

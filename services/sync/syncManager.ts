@@ -1,4 +1,3 @@
-import { SurveyStore } from '@/store/survey';
 import { syncCatechists } from './syncCatechists';
 import { syncCatechumens, syncCatechumensWithoutVisit } from './syncCatechumens';
 import { syncLocations } from './syncLocations';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, Surface } from 'react-native-paper';
 import { updateCatechists } from "@/store/survey";
 import { SearchPeople } from '@/components/SearchPeople';
@@ -12,8 +12,8 @@ import { Pagination } from '@/components/Pagination';
 
 export default function Step1() {
   const router = useRouter();
-  const [catechists, setCatechists] = React.useState<Catechist[]>([]);
-  const [selectedCatechists, setSelectedCatechists] = React.useState<Catechist[]>([]);
+  const [catechists, setCatechists] = useState<Catechist[]>([]);
+  const [selectedCatechists, setSelectedCatechists] = useState<Catechist[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +54,9 @@ export default function Step1() {
   if (error) return <Text style={commonStyles.errorText}>Error: {error}</Text>;
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollViewContent}
+    >
       <Surface style={commonStyles.surface}>
         <Pagination currentStep={1} totalSteps={5} />
         <View style={commonStyles.headerTitle}>
@@ -90,7 +92,7 @@ export default function Step1() {
           </Button>
         </View>
       </Surface>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -107,5 +109,9 @@ const styles = StyleSheet.create({
   },
   searchPeople: {
     marginBottom: 10,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 8,
   },
 });
