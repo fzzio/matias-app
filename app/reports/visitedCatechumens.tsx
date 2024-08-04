@@ -4,14 +4,14 @@ import { Button, Text, Surface } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { commonStyles, buttonStyles } from '@/styles';
 
-export default function Report1() {
+export default function VisitedCatechumens() {
   const router = useRouter();
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Surface style={commonStyles.surface}>
         <View style={commonStyles.headerTitle}>
-          <Text style={commonStyles.title}>Reporte 1</Text>
+          <Text style={commonStyles.title}>Catequizandos Visitados</Text>
         </View>
         <View style={styles.body}>
           <Text>Aquí va el contenido del reporte 1.</Text>

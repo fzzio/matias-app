@@ -16,11 +16,11 @@ export default function ReportsIndex() {
         <View style={styles.body}>
           <Button
             mode="contained"
-            onPress={() => router.push('/reports/report1')}
+            onPress={() => router.push('/reports/visitedCatechumens')}
             style={buttonStyles.primaryButton}
             labelStyle={buttonStyles.primaryButtonLabel}
           >
-            Reporte 1
+            Catequizandos visitados
           </Button>
           <Button
             mode="contained"

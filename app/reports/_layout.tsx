@@ -22,7 +22,7 @@ export default function ReportsLayout() {
         </View>
         <Stack initialRouteName='index'>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="report1" options={{ headerShown: false }} />
+          <Stack.Screen name="visitedCatechumens" options={{ headerShown: false }} />
           <Stack.Screen name="report2" options={{ headerShown: false }} />
         </Stack>
       </KeyboardAvoidingView>
