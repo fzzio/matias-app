@@ -1,6 +1,7 @@
 import { syncCatechismLevels } from './syncCatechismLevels';
 import { syncCatechists } from './syncCatechists';
 import { syncCatechumens, syncCatechumensWithoutVisit } from './syncCatechumens';
+import { syncCourses } from './syncCourses';
 import { syncLocations } from './syncLocations';
 import { syncSacraments } from './syncSacraments';
 import { syncSurveys } from './syncSurveys';
@@ -14,6 +15,7 @@ export const syncManager = async (options = { forceFull: false }) => {
     await syncLocations();
     await syncSacraments();
     await syncCatechismLevels();
+    await syncCourses();
 
     const surveys = await AsyncStorage.getItem('surveys');
     const pendingSurveys = surveys ? JSON.parse(surveys) : [];

@@ -24,11 +24,11 @@ export default function ReportsIndex() {
           </Button>
           <Button
             mode="contained"
-            onPress={() => router.push('/reports/report2')}
+            // onPress={() => router.push('/reports/report2')}
             style={buttonStyles.primaryButton}
             labelStyle={buttonStyles.primaryButtonLabel}
           >
-            Reporte 2
+            Descargar todo
           </Button>
           <Button
             mode="outlined"

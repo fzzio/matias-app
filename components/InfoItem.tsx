@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 import { commonStyles } from '@/styles';
 import { theme } from '@/styles/theme';
@@ -7,10 +7,11 @@ import { theme } from '@/styles/theme';
 interface InfoItemProps {
   label: string;
   value: string;
+  style?: ViewStyle;
 }
 
-const InfoItem: React.FC<InfoItemProps> = ({ label, value }) => (
-  <View style={styles.infoItem}>
+const InfoItem: React.FC<InfoItemProps> = ({ label, value, style }) => (
+  <View style={[style, styles.infoItem]}>
     <Text style={styles.label}>{label}:</Text>
     <Text style={styles.value}>{value}</Text>
   </View>

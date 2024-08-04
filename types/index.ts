@@ -11,8 +11,12 @@ export interface Sacrament {
 export interface Course {
   id: string;
   year: string;
+  room: string;
   catechismLevel: CatechismLevel;
+  catechists: Catechist[];
+  catechumens: Catechumen[];
   location: Location;
+  description: string;
 }
 
 export interface Person {
