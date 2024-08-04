@@ -24,6 +24,7 @@ export default function Step3() {
       lastName: "",
       birthDate: undefined,
       sacraments: [],
+      missingSacraments: [],
       isVolunteer: false
     }));
 

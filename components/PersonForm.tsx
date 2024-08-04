@@ -38,6 +38,13 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
     updatePerson(index, 'sacraments', updatedSacraments);
   };
 
+  const toggleMissingSacrament = (sacramentId: string) => {
+    const updatedMissingSacraments = person.missingSacraments.includes(sacramentId)
+      ? person.missingSacraments.filter(id => id !== sacramentId)
+      : [...person.missingSacraments, sacramentId];
+    updatePerson(index, 'missingSacraments', updatedMissingSacraments);
+  };
+
   return (
     <Surface style={[styles.container, style]}>
       <Text style={styles.title}>{personInfo}</Text>
@@ -91,6 +98,15 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
           label={sacrament.name}
           status={person.sacraments.includes(sacrament.id) ? 'checked' : 'unchecked'}
           onPress={() => toggleSacrament(sacrament.id)}
+        />
+      ))}
+      <Text style={styles.sectionTitle}>Sacramentos pendientes:</Text>
+      {sacraments.map((sacrament) => (
+        <Checkbox.Item
+          key={`p_${sacrament.id}_${index}`}
+          label={sacrament.name}
+          status={person.missingSacraments.includes(sacrament.id) ? 'checked' : 'unchecked'}
+          onPress={() => toggleMissingSacrament(sacrament.id)}
         />
       ))}
 

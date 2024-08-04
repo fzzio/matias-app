@@ -10,6 +10,7 @@ export interface SurveyState {
   people: PersonInput[];
   observations: string;
   sacraments: Sacrament[];
+  missingSacraments: Sacrament[];
 }
 
 export const SurveyStore = new Store<SurveyState>({
@@ -20,6 +21,7 @@ export const SurveyStore = new Store<SurveyState>({
   people: [],
   observations: "",
   sacraments: [],
+  missingSacraments: [],
 });
 
 registerInDevtools({
@@ -63,6 +65,9 @@ export const updateObservations = (observations: string) => {
 export const updateSacraments = (sacraments: Sacrament[]) => {
   SurveyStore.update(s => { s.sacraments = sacraments; });
 };
+export const updateMissingSacraments = (missingSacraments: Sacrament[]) => {
+  SurveyStore.update(s => { s.missingSacraments = missingSacraments; });
+};
 
 export const clearSurvey = () => {
   updateCatechists([]);
@@ -72,4 +77,5 @@ export const clearSurvey = () => {
   updatePeople([]);
   updateObservations("");
   updateSacraments([]);
+  updateMissingSacraments([]);
 };
