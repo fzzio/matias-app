@@ -5,7 +5,6 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { buttonStyles, commonStyles } from '@/styles';
 import { useCatechismLevels } from '@/hooks/useCatechismLevels';
 import { useCourses } from '@/hooks/useCourses';
-import { SurveyStore } from '@/store/survey';
 import CourseInfo from '@/components/CourseInfo';
 import { Course } from '@/types';
 import InfoItem from '@/components/InfoItem';
@@ -15,7 +14,6 @@ export default function CatechismLevelDetail() {
   const { id } = useLocalSearchParams();
   const { catechismLevels, getCatechismLevelNameById } = useCatechismLevels();
   const { courses, loading, error } = useCourses();
-  const { catechumens } = SurveyStore.useState();
 
   const levelName = getCatechismLevelNameById(id as string);
   const filteredCourses = courses.filter(course => course.catechismLevel.id === id);
@@ -42,7 +40,7 @@ export default function CatechismLevelDetail() {
         <View key={index} style={styles.courseContainer}>
           <InfoItem label="Lugar" value={location} style={styles.locationTitle} />
           {coursesByLocation[location].map((course, idx) => (
-            <CourseInfo key={idx} course={course} catechumens={catechumens} />
+            <CourseInfo key={idx} course={course} />
           ))}
         </View>
       ))}
@@ -72,7 +70,7 @@ const styles = StyleSheet.create({
   locationTitle: {
     ...commonStyles.subtitle,
     marginBottom: 8,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   footer: {
     marginTop: 20,
