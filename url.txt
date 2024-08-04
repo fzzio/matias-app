@@ -1,1 +1,0 @@
-# EXPO_PUBLIC_MATIAS_API_URL=https://matias-backend-fzzio-fabricio-orralas-projects.vercel.app/

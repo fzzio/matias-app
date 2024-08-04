@@ -1,36 +1,40 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Button, Text, Surface } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import { commonStyles, buttonStyles } from '@/styles';
 
 export default function Report1() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Reporte 1</Text>
-      <Text>Aquí va el contenido del reporte 1.</Text>
-      <Button mode="contained" style={styles.button} onPress={() => router.back()}>
-        Volver
-      </Button>
-    </View>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <Surface style={commonStyles.surface}>
+        <View style={commonStyles.headerTitle}>
+          <Text style={commonStyles.title}>Reporte 1</Text>
+        </View>
+        <View style={styles.body}>
+          <Text>Aquí va el contenido del reporte 1.</Text>
+          <Button
+            mode="contained"
+            onPress={() => router.back()}
+            style={buttonStyles.primaryButton}
+            labelStyle={buttonStyles.primaryButtonLabel}
+          >
+            Volver
+          </Button>
+        </View>
+      </Surface>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    padding: 16,
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 8,
   },
-  header: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  button: {
-    marginTop: 20,
-    width: '80%',
+  body: {
+    gap: 16,
   },
 });
