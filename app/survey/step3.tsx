@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, Surface, Text } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import { Pagination } from '@/components/Pagination';
 import { PersonForm } from '@/components/PersonForm';
 import CatechumenInfo from '@/components/CatechumenInfo';
@@ -24,6 +24,7 @@ export default function Step3() {
       lastName: "",
       birthDate: undefined,
       sacraments: [],
+      missingSacraments: [],
       isVolunteer: false
     }));
 
@@ -55,7 +56,9 @@ export default function Step3() {
   if (error) return <Text style={commonStyles.errorText}>Error: {error.message}</Text>;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollViewContent}
+    >
       <Pagination currentStep={3} totalSteps={5} />
       <View style={commonStyles.headerTitle}>
         <Text style={commonStyles.title}>Información por persona</Text>
@@ -117,5 +120,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 24,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 8,
   },
 });

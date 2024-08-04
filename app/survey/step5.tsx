@@ -51,7 +51,9 @@ export default function Step5() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollViewContent}
+    >
       <Surface style={commonStyles.surface}>
         <Modal
           animationType="slide"
@@ -166,5 +168,9 @@ const styles = StyleSheet.create({
     borderRadius: theme.roundness,
     backgroundColor: theme.colors.surface,
     elevation: 4,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 8,
   },
 });

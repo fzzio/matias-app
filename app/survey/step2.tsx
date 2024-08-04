@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Surface, Text, TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -54,7 +54,11 @@ export default function Step2() {
 
   const handleNext = () => {
     console.log('Step 2... Done!: ');
-    updateHouseholdSize(parseInt(householdSize));
+    let householdSizeValue = parseInt(householdSize);
+    if (selectedCatechumens.length > parseInt(householdSize) ) {
+      householdSizeValue = selectedCatechumens.length;
+    }
+    updateHouseholdSize(householdSizeValue);
     updateSelectedLocation(selectedLocation);
     updateCatechumens(selectedCatechumens);
     router.push('/survey/step3');
@@ -70,7 +74,9 @@ export default function Step2() {
   const isFormValid = selectedLocation && householdSize !== '';
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollViewContent}
+    >
       <Surface style={commonStyles.surface}>
         <Pagination currentStep={2} totalSteps={5} />
         <View style={commonStyles.headerTitle}>
@@ -116,7 +122,7 @@ export default function Step2() {
           </Button>
         </View>
       </Surface>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -127,5 +133,9 @@ const styles = StyleSheet.create({
   body: {
     gap: 16,
     marginBottom: 24,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 8,
   },
 });

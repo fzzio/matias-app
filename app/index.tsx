@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Alert } from 'react-native';
+import { View, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -49,7 +49,7 @@ export default function Home() {
   const syncData = async () => {
     setIsSyncing(true);
     if (!isConnected) {
-      Alert.alert('Error', 'No internet connection');
+      Alert.alert('Error', 'Sin conexión a internet.');
       setIsSyncing(false);
       return;
     }
@@ -58,10 +58,10 @@ export default function Home() {
       console.log('Surveys and other data synced');
       setSurveysPending(0);
       setIsInitialDataSynced(true);
-      Alert.alert('Surveys and other data synced');
+      Alert.alert('Datos sincronizados');
     } catch (error) {
       console.error('Error syncing data:', error);
-      Alert.alert('Error', 'Failed to sync data. Please try again.');
+      Alert.alert('Error', 'Falló la sincronización. Por favor intente nuevamente.');
     } finally {
       setIsSyncing(false);
     }
@@ -101,61 +101,63 @@ export default function Home() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Parroquia "San José de Ancón"</Text>
-        <Image source={require('@/assets/images/icon.png')} style={styles.headerImage} />
-        <Text style={styles.subtitle}>Misión Catequética</Text>
-        <Text style={styles.year}>2024</Text>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Parroquia "San José de Ancón"</Text>
+          <Image source={require('@/assets/images/icon.png')} style={styles.headerImage} />
+          <Text style={styles.subtitle}>Misión Catequética</Text>
+          <Text style={styles.year}>2024</Text>
+        </View>
+        <View style={styles.buttonsContainer}>
+          {!isInitialDataSynced && (
+            <Text style={styles.syncMessage}>
+              Por favor, sincronice los datos antes de usar la Encuesta o los Reportes.
+            </Text>
+          )}
+          <Button
+            icon={() => <Ionicons name="clipboard-outline" size={24} color={theme.colors.onPrimary} />}
+            mode="contained"
+            onPress={() => router.push('/survey')}
+            style={isInitialDataSynced ? buttonStyles.primaryButton : buttonStyles.disabledButton}
+            labelStyle={isInitialDataSynced ? buttonStyles.primaryButtonLabel : buttonStyles.disabledButtonLabel}
+            disabled={!isInitialDataSynced}
+          >
+            Encuesta
+          </Button>
+          <Button
+            icon={() => <Ionicons name="bar-chart-outline" size={24} color={theme.colors.primary} />}
+            mode="outlined"
+            onPress={() => router.push('/reports')}
+            style={isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            labelStyle={isInitialDataSynced ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
+            disabled={!isInitialDataSynced}
+          >
+            Reportes
+          </Button>
+          <Button
+            icon={() => <Ionicons name="sync-outline" size={24} color={theme.colors.primary} />}
+            mode="outlined"
+            onPress={syncData}
+            style={!isSyncing ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            labelStyle={!isSyncing ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
+            disabled={!isConnected || isSyncing}
+          >
+            {isSyncing ? 'Sincronizando...' : `Sincronizar (${surveysPending} pendientes)`}
+          </Button>
+          <Button
+            icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}
+            mode="outlined"
+            onPress={clearLocalData}
+            style={isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            labelStyle={isInitialDataSynced ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
+            disabled={!isInitialDataSynced}
+          >
+            Limpiar
+          </Button>
+        </View>
       </View>
-      <View style={styles.buttonsContainer}>
-        {!isInitialDataSynced && (
-          <Text style={styles.syncMessage}>
-            Por favor, sincronice los datos antes de usar la Encuesta o los Reportes.
-          </Text>
-        )}
-        <Button
-          icon={() => <Ionicons name="clipboard-outline" size={24} color={theme.colors.onPrimary} />}
-          mode="contained"
-          onPress={() => router.push('/survey')}
-          style={isInitialDataSynced ? buttonStyles.primaryButton : buttonStyles.disabledButton}
-          labelStyle={isInitialDataSynced ? buttonStyles.primaryButtonLabel : buttonStyles.disabledButtonLabel}
-          disabled={!isInitialDataSynced}
-        >
-          Encuesta
-        </Button>
-        <Button
-          icon={() => <Ionicons name="bar-chart-outline" size={24} color={theme.colors.primary} />}
-          mode="outlined"
-          onPress={() => router.push('/reports')}
-          style={isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
-          labelStyle={isInitialDataSynced ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
-          disabled={!isInitialDataSynced}
-        >
-          Reportes
-        </Button>
-        <Button
-          icon={() => <Ionicons name="sync-outline" size={24} color={theme.colors.primary} />}
-          mode="outlined"
-          onPress={syncData}
-          style={!isSyncing ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
-          labelStyle={!isSyncing ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
-          disabled={!isConnected || isSyncing}
-        >
-          {isSyncing ? 'Sincronizando...' : `Sincronizar (${surveysPending} pendientes)`}
-        </Button>
-        <Button
-          icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}
-          mode="outlined"
-          onPress={clearLocalData}
-          style={isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
-          labelStyle={isInitialDataSynced ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
-          disabled={!isInitialDataSynced}
-        >
-          Limpiar datos locales
-        </Button>
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -197,5 +199,9 @@ const styles = StyleSheet.create({
     color: theme.colors.error,
     textAlign: 'center',
     marginTop: 10,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
 });

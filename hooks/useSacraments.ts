@@ -1,29 +1,38 @@
-import { useEffect } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { updateSacraments } from "@/store/survey";
-
-const GET_SACRAMENTS = gql`
-  query GetSacraments {
-    getSacraments {
-      id
-      name
-    }
-  }
-`;
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { updateSacraments } from '@/store/survey';
+import { Sacrament } from '@/types';
 
 export const useSacraments = () => {
-  const { loading, error, data } = useQuery(GET_SACRAMENTS);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [sacraments, setSacraments] = useState<Sacrament[]>([]);
 
   useEffect(() => {
-    if (data?.getSacraments) {
-      updateSacraments(data.getSacraments);
-    }
-  }, [data]);
+    const loadSacraments = async () => {
+      try {
+        const storedSacraments = await AsyncStorage.getItem('sacraments');
+        if (storedSacraments) {
+          const parsedSacraments = JSON.parse(storedSacraments);
+          setSacraments(parsedSacraments);
+          updateSacraments(parsedSacraments);
+        } else {
+          throw new Error('No sacraments found in local storage');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to load sacraments'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSacraments();
+  }, []);
 
   const getSacramentNameById = (id: string): string => {
-    const sacrament = data?.getSacraments.find((s: any) => s.id === id);
+    const sacrament = sacraments.find((s) => s.id === id);
     return sacrament ? sacrament.name : id;
   };
 
-  return { loading, error, sacraments: data?.getSacraments, getSacramentNameById };
+  return { loading, error, sacraments, getSacramentNameById };
 };

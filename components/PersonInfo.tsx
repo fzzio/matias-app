@@ -21,11 +21,15 @@ const PersonInfo: React.FC<PersonInfoProps> = ({ person, style }) => {
         <InfoItem label="Cédula" value={person.idCard || 'N/A'} />
         <InfoItem
           label="Fecha de Nacimiento"
-          value={person.birthDate ? person.birthDate.toISOString().split('T')[0] : 'N/A'} 
+          value={person.birthDate ? person.birthDate.toISOString().split('T')[0] : 'N/A'}
         />
         <InfoItem
           label="Sacramentos"
-          value={person.sacraments.map(getSacramentNameById).join(', ') || 'N/A'} 
+          value={person.sacraments.map(getSacramentNameById).join(', ') || 'N/A'}
+        />
+        <InfoItem
+          label="Sacramentos Pendientes"
+          value={person.missingSacraments.map(getSacramentNameById).join(', ') || 'N/A'}
         />
         <InfoItem label="Voluntario" value={person.isVolunteer ? 'Sí' : 'No'} />
       </View>
