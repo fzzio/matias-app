@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle, Platform } from 'react-native';
 import { TextInput, Checkbox, Text, Button, RadioButton, Surface } from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { calculateAge, generateBirthDateFromAge } from '@/utils/calculate';
 import { PersonInput, Sacrament } from '@/types';
 import { theme } from '@/styles/theme';
@@ -16,6 +17,7 @@ interface PersonFormProps {
 
 export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacraments, updatePerson, style }) => {
   const [tempAge, setTempAge] = useState<string>('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const personInfo = `Persona #${index + 1}`;
 
   const handleAgeInput = (value: string) => {
@@ -45,6 +47,13 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
     updatePerson(index, 'missingSacraments', updatedMissingSacraments);
   };
 
+  const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      updatePerson(index, 'birthDate', selectedDate);
+    }
+  };
+
   return (
     <Surface style={[styles.container, style]}>
       <Text style={styles.title}>{personInfo}</Text>
@@ -70,9 +79,19 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
       <TextInput
         label="Fecha de Nacimiento (YYYY-MM-DD)"
         value={person.birthDate ? person.birthDate.toISOString().split('T')[0] : ''}
-        onChangeText={(value) => updatePerson(index, 'birthDate', new Date(value))}
+        onFocus={() => setShowDatePicker(true)}
         style={styles.input}
+        showSoftInputOnFocus={false}
       />
+      {showDatePicker && (
+        <DateTimePicker
+          value={person.birthDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+          locale="es-ES"
+        />
+      )}
       <Text style={styles.ageText}>Edad: {person.birthDate ? calculateAge(person.birthDate) : 'N/A'}</Text>
       <View style={styles.ageInputContainer}>
         <TextInput
@@ -85,7 +104,7 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
         <Button
           onPress={confirmAge}
           mode="contained-tonal"
-          style={[buttonStyles.secondaryButton, styles.confirmAgeButton ]}
+          style={[buttonStyles.secondaryButton, styles.confirmAgeButton]}
           labelStyle={[buttonStyles.secondaryButtonLabel, styles.secondaryButtonLabel]}
         >
           Confirmar
@@ -130,7 +149,7 @@ const styles = StyleSheet.create({
     ...commonStyles.surface,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: theme.colors.backdrop
+    borderColor: theme.colors.backdrop,
   },
   title: {
     ...commonStyles.title,
@@ -160,7 +179,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 4,
     minWidth: 100,
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   },
   secondaryButtonLabel: {
     fontSize: 14,
