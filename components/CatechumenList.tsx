@@ -50,9 +50,9 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
     return <DataTable.Row><DataTable.Cell>No data available</DataTable.Cell></DataTable.Row>;
   }
 
-  const filteredCatechumens = catechumensTotal.filter(c =>
-    c.coursesAsCatechumen.some((cc: { id: string }) => cc.id === courseId)
-  );
+  const filteredCatechumens = catechumensTotal
+    .filter(c => c.coursesAsCatechumen.some((cc: { id: string }) => cc.id === courseId))
+    .sort((a, b) => a.lastName.localeCompare(b.lastName));
 
   return (
     <ScrollView horizontal style={[style]}>
