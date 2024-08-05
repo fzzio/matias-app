@@ -16,7 +16,7 @@ This is a mobile application designed to facilitate the management and organizat
 Misión Catequética connects to a backend API to fetch and store data. The API URL is configured in the `.env` file:
 
 ```env
-EXPO_PUBLIC_MATIAS_API_URL=https://matias-backend-fzzio-fabricio-orralas-projects.vercel.app/
+EXPO_PUBLIC_MATIAS_API_URL=...
 ```
 
 The app uses Apollo Client for GraphQL queries and mutations to interact with the backend. The Apollo Client is set up in the `services/apollo-client.ts` file.
@@ -55,7 +55,13 @@ To get started with the project, follow these steps:
 
 ## Screenshots
 
-[Add your screenshots here]
+![image](https://github.com/user-attachments/assets/d68347c9-8437-41a7-8778-303a9e1f43f0)
+
+![image](https://github.com/user-attachments/assets/a9bc857d-f175-4a4e-8aa7-29b77c59bc07)
+
+![image](https://github.com/user-attachments/assets/b79593dd-d55a-485f-844b-32e7fd1e3665)
+
+![image](https://github.com/user-attachments/assets/11acfc95-1475-4cfc-8758-2cd36be1909e)
 
 ## Conclusion
 
