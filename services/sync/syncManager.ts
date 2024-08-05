@@ -1,20 +1,15 @@
-import { syncCatechismLevels } from './syncCatechismLevels';
+import { syncBaseData } from './syncBaseData';
 import { syncCatechists } from './syncCatechists';
-import { syncCatechumens, syncCatechumensWithoutVisit } from './syncCatechumens';
+import { syncCatechumens } from './syncCatechumens';
 import { syncCourses } from './syncCourses';
-import { syncLocations } from './syncLocations';
-import { syncSacraments } from './syncSacraments';
-import { syncConductedSurveys, syncSurveys } from './syncSurveys';
+import { syncConductedSurveys, syncPendingSurveys } from './syncSurveys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const syncManager = async (options = { forceFull: false }) => {
   try {
+    await syncBaseData();
     await syncCatechists();
     await syncCatechumens("2024");
-    await syncCatechumensWithoutVisit("2024");
-    await syncLocations();
-    await syncSacraments();
-    await syncCatechismLevels();
     await syncCourses();
     await syncConductedSurveys();
 
@@ -22,7 +17,7 @@ export const syncManager = async (options = { forceFull: false }) => {
     const pendingSurveys = surveys ? JSON.parse(surveys) : [];
 
     if (pendingSurveys.length > 0 || options.forceFull) {
-      await syncSurveys();
+      await syncPendingSurveys();
     }
 
     console.log('All data synced successfully');

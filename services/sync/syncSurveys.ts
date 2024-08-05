@@ -50,7 +50,7 @@ query GetSurveys {
 }
 `;
 
-export const syncSurveys = async () => {
+export const syncPendingSurveys = async () => {
   try {
     const storedSurveys = await AsyncStorage.getItem('surveys');
     const surveys = storedSurveys ? JSON.parse(storedSurveys) : [];
