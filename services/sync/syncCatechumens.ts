@@ -26,6 +26,8 @@ const GET_CATECHUMENS = gql`
           id
           name
         }
+        description
+        room
       }
     }
   }
@@ -55,6 +57,8 @@ const GET_CATECHUMENS_WITHOUT_VISIT = gql`
           id
           name
         }
+        description
+        room
       }
     }
   }

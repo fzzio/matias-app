@@ -44,16 +44,14 @@ export default function Step5() {
   };
 
   const closeModal = () => {
-    console.log('Step 5... Done!: ');
+    console.log('Step 5... Done!');
     setShowModal(false);
     clearSurvey();
-    router.push('/');
+    router.replace('/');
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollViewContent}
-    >
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Surface style={commonStyles.surface}>
         <Modal
           animationType="slide"
@@ -172,5 +170,8 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     padding: 8,
+  },
+  footerButtons: {
+    marginTop: 20,
   },
 });

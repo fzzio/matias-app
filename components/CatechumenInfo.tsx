@@ -20,6 +20,8 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) =>
       <Text style={styles.courseItem}>• Ubicación: {course.location?.name || 'N/A'}</Text>
       <Text style={styles.courseItem}>• Año: {course.year || 'N/A'}</Text>
       <Text style={styles.courseItem}>• Nivel: {course.catechismLevel?.name || 'N/A'}</Text>
+      <Text style={styles.courseItem}>• Paralelo: {course.room || 'N/A'}</Text>
+      <Text style={styles.courseItem}>• Descripción: {course.description || 'N/A'}</Text>
     </View>
   );
 
@@ -30,7 +32,7 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) =>
         <InfoItem label="Cédula" value={catechumen.idCard || 'N/A'} />
         <InfoItem
           label="Fecha de Nacimiento"
-          value={catechumen.birthDate ? new Date(catechumen.birthDate).toLocaleDateString() : 'N/A'}
+          value={catechumen.birthDate ? new Date(catechumen.birthDate).toISOString().split('T')[0] : 'N/A'}
         />
         <InfoItem
           label="Email"
