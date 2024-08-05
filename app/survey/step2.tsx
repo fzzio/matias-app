@@ -4,17 +4,14 @@ import { useRouter } from 'expo-router';
 import { Button, Surface, Text, TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Pagination } from '@/components/Pagination';
-import { SearchLocation } from '@/components/SearchLocation';
 import { SearchPeople } from '@/components/SearchPeople';
-import { Location, Catechumen } from '@/types';
-import { updateSelectedLocation, updateHouseholdSize, updateCatechumens } from "@/store/survey";
+import { Catechumen } from '@/types';
+import { updateHouseholdSize, updateCatechumens } from "@/store/survey";
 import { commonStyles, buttonStyles, inputStyles } from '@/styles';
 
 export default function Step2() {
   const router = useRouter();
-  const [locations, setLocations] = useState<Location[]>([]);
   const [catechumens, setCatechumens] = useState<Catechumen[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [householdSize, setHouseholdSize] = useState('');
   const [selectedCatechumens, setSelectedCatechumens] = useState<Catechumen[]>([]);
   const [error, setError] = useState('');
@@ -24,14 +21,7 @@ export default function Step2() {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const storedLocations = await AsyncStorage.getItem('locations');
         const storedCatechumens = await AsyncStorage.getItem('catechumens');
-
-        if (storedLocations) {
-          setLocations(JSON.parse(storedLocations));
-        } else {
-          throw new Error('No locations found in local storage');
-        }
 
         if (storedCatechumens) {
           setCatechumens(JSON.parse(storedCatechumens));
@@ -59,7 +49,6 @@ export default function Step2() {
       householdSizeValue = selectedCatechumens.length;
     }
     updateHouseholdSize(householdSizeValue);
-    updateSelectedLocation(selectedLocation);
     updateCatechumens(selectedCatechumens);
     router.push('/survey/step3');
   };
@@ -71,7 +60,7 @@ export default function Step2() {
   if (isLoading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
   if (error) return <Text style={commonStyles.errorText}>Error: {error}</Text>;
 
-  const isFormValid = selectedLocation && householdSize !== '';
+  const isFormValid = householdSize !== '';
 
   return (
     <ScrollView
@@ -83,11 +72,6 @@ export default function Step2() {
           <Text style={commonStyles.title}>Información del Hogar</Text>
         </View>
         <View style={styles.body}>
-          <SearchLocation
-            locations={locations}
-            onLocationSelect={setSelectedLocation}
-            placeholder="Buscar ubicación"
-          />
           <SearchPeople<Catechumen>
             people={catechumens}
             onSelectionChange={handleCatechumenSelectionChange}

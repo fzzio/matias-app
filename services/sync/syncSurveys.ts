@@ -1,6 +1,5 @@
 import client from '@/services/apollo-client';
 import { gql } from '@apollo/client';
-import { SurveyStore } from '@/store/survey';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { syncPeople } from './syncPeople';
 
@@ -26,7 +25,31 @@ const CREATE_SURVEY = gql`
   }
 `;
 
-export const syncSurveys = async () => {
+const CONDUCTED_SURVEYS = gql`
+query GetSurveys {
+  getSurveys {
+    id
+    catechists {
+      id
+      name
+      lastName
+    }
+    catechumens {
+      id
+      name
+      lastName
+    }
+    people {
+      id
+      name
+      lastName
+    }
+    createdAt
+  }
+}
+`;
+
+export const syncPendingSurveys = async () => {
   try {
     const storedSurveys = await AsyncStorage.getItem('surveys');
     const surveys = storedSurveys ? JSON.parse(storedSurveys) : [];
@@ -57,9 +80,17 @@ export const syncSurveys = async () => {
     }
 
     await AsyncStorage.removeItem('surveys');
-    SurveyStore.update(s => { s.people = []; });
   } catch (error) {
     console.error('Error syncing surveys:', error);
     throw new Error('Sync failed');
+  }
+};
+
+export const syncConductedSurveys = async () => {
+  try {
+    const { data } = await client.query({ query: CONDUCTED_SURVEYS });
+    await AsyncStorage.setItem('conductedSurveys', JSON.stringify(data.getSurveys));
+  } catch (error) {
+    console.error('Error syncing conductedSurveys:', error);
   }
 };

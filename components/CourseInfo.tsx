@@ -15,7 +15,7 @@ const CourseInfo: React.FC<CourseInfoProps> = ({ course }) => {
     <Surface style={[commonStyles.surface, styles.courseContainer]}>
       <View style={styles.courseContainer}>
         <InfoItem label="Catequistas" value={course.catechists.map(c => `${c.name} ${c.lastName}`).join(', ')} />
-        <InfoItem label="Año" value={course.year} />
+        <InfoItem label="Paralelo" value={course.room} />
         <InfoItem label="Descripción" value={course.description} />
         <InfoItem label="Catecúmenos" value="" />
         <CatechumenList courseId={course.id} />

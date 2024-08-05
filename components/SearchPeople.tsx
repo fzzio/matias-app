@@ -112,7 +112,7 @@ function getChipLabel<T extends Person>(person: T, personType?: 'Person' | 'Cate
     ).filter(detail => detail.includes("undefined") === false).join(', ');
     label += courseDetails ? ` (${courseDetails})` : '';
   } else if (personType === 'Catechumen' && 'coursesAsCatechumen' in person) {
-    const courseDetails = (person as Catechumen).coursesAsCatechumen?.map((course: Course) =>
+    const courseDetails = (person as unknown as Catechumen).coursesAsCatechumen?.map((course: Course) =>
       `${course.catechismLevel?.name} - ${course.year} - ${course.location?.name}`
     ).filter(detail => detail.includes("undefined") === false).join(', ');
     label += courseDetails ? ` (${courseDetails})` : '';

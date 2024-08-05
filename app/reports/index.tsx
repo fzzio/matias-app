@@ -23,14 +23,6 @@ export default function ReportsIndex() {
             Catequizandos visitados
           </Button>
           <Button
-            mode="contained"
-            // onPress={() => router.push('/reports/report2')}
-            style={buttonStyles.primaryButton}
-            labelStyle={buttonStyles.primaryButtonLabel}
-          >
-            Descargar todo
-          </Button>
-          <Button
             mode="outlined"
             onPress={() => router.push('/')}
             style={buttonStyles.secondaryButton}

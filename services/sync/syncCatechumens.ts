@@ -26,13 +26,10 @@ const GET_CATECHUMENS = gql`
           id
           name
         }
+        description
+        room
       }
     }
-  }
-`;
-
-const GET_CATECHUMENS_WITHOUT_VISIT = gql`
-  query GetCatechumensWithoutVisit($year: String!) {
     getCatechumensWithoutVisitByYear(year: $year) {
       id
       idCard
@@ -55,10 +52,13 @@ const GET_CATECHUMENS_WITHOUT_VISIT = gql`
           id
           name
         }
+        description
+        room
       }
     }
   }
 `;
+
 
 export const syncCatechumens = async (year: string) => {
   try {
@@ -67,19 +67,8 @@ export const syncCatechumens = async (year: string) => {
       variables: { year }
     });
     await AsyncStorage.setItem('catechumensTotal', JSON.stringify(data.getCatechumensByYear));
-  } catch (error) {
-    console.error('Error syncing catechumensTotal:', error);
-  }
-};
-
-export const syncCatechumensWithoutVisit = async (year: string) => {
-  try {
-    const { data } = await client.query({
-      query: GET_CATECHUMENS_WITHOUT_VISIT,
-      variables: { year }
-    });
     await AsyncStorage.setItem('catechumens', JSON.stringify(data.getCatechumensWithoutVisitByYear));
   } catch (error) {
-    console.error('Error syncing catechumens:', error);
+    console.error('Error syncing catechumensTotal, catechumens:', error);
   }
 };
