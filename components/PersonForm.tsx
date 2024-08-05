@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ViewStyle, Platform } from 'react-native';
-import { TextInput, Checkbox, Text, Button, RadioButton, Surface } from 'react-native-paper';
+import { Text, Button, Checkbox, RadioButton, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { calculateAge, generateBirthDateFromAge } from '@/utils/calculate';
 import { PersonInput, Sacrament } from '@/types';
@@ -76,13 +76,20 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
         onChangeText={(value) => updatePerson(index, 'lastName', value)}
         style={styles.input}
       />
-      <TextInput
-        label="Fecha de Nacimiento (YYYY-MM-DD)"
-        value={person.birthDate ? person.birthDate.toISOString().split('T')[0] : ''}
-        onFocus={() => setShowDatePicker(true)}
-        style={styles.input}
-        showSoftInputOnFocus={false}
-      />
+      <View style={styles.dateContainer}>
+        <Button
+          mode="contained-tonal"
+          onPress={() => setShowDatePicker(true)}
+          style={[buttonStyles.secondaryButton, styles.confirmAgeButton]}
+        >
+          Seleccionar Fecha de Nacimiento
+        </Button>
+        {person.birthDate && (
+          <Text style={styles.dateText}>
+            Fecha de Nacimiento: {person.birthDate.toISOString().split('T')[0]}
+          </Text>
+        )}
+      </View>
       {showDatePicker && (
         <DateTimePicker
           value={person.birthDate || new Date()}
@@ -90,6 +97,8 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
           display="default"
           onChange={handleDateChange}
           locale="es-ES"
+          maximumDate={new Date()}
+          firstDayOfWeek={1}
         />
       )}
       <Text style={styles.ageText}>Edad: {person.birthDate ? calculateAge(person.birthDate) : 'N/A'}</Text>
@@ -160,6 +169,16 @@ const styles = StyleSheet.create({
     ...inputStyles.defaultInput,
     marginBottom: 16,
   },
+  dateContainer: {
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  dateButton: {
+    marginBottom: 8,
+  },
+  dateText: {
+    ...commonStyles.bodyText,
+  },
   ageText: {
     ...commonStyles.bodyText,
     marginBottom: 8,
@@ -194,3 +213,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
 });
+
+export default PersonForm;
