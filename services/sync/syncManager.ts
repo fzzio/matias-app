@@ -9,9 +9,7 @@ export const syncManager = async (options = { forceFull: false }) => {
   try {
     await syncBaseData();
     await syncCatechists();
-    await syncCatechumens("2024");
     await syncCourses();
-    await syncConductedSurveys();
 
     const surveys = await AsyncStorage.getItem('surveys');
     const pendingSurveys = surveys ? JSON.parse(surveys) : [];
@@ -19,6 +17,9 @@ export const syncManager = async (options = { forceFull: false }) => {
     if (pendingSurveys.length > 0 || options.forceFull) {
       await syncPendingSurveys();
     }
+
+    await syncCatechumens("2024");
+    await syncConductedSurveys();
 
     console.log('All data synced successfully');
   } catch (error) {

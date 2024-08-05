@@ -1,6 +1,5 @@
 import client from '@/services/apollo-client';
 import { gql } from '@apollo/client';
-import { SurveyStore } from '@/store/survey';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { syncPeople } from './syncPeople';
 
@@ -81,7 +80,6 @@ export const syncPendingSurveys = async () => {
     }
 
     await AsyncStorage.removeItem('surveys');
-    SurveyStore.update(s => { s.people = []; });
   } catch (error) {
     console.error('Error syncing surveys:', error);
     throw new Error('Sync failed');
