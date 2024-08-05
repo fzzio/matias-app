@@ -52,6 +52,7 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
         label="Cédula"
         value={person.idCard}
         onChangeText={(value) => updatePerson(index, 'idCard', value)}
+        keyboardType="numeric"
         style={styles.input}
       />
       <TextInput

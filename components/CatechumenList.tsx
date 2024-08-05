@@ -53,7 +53,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
   );
 
   return (
-    <ScrollView horizontal>
+    <ScrollView horizontal style={[style]}>
       <ScrollView>
         <DataTable style={styles.dataTable}>
           <DataTable.Header>
