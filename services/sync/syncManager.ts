@@ -4,7 +4,7 @@ import { syncCatechumens, syncCatechumensWithoutVisit } from './syncCatechumens'
 import { syncCourses } from './syncCourses';
 import { syncLocations } from './syncLocations';
 import { syncSacraments } from './syncSacraments';
-import { syncSurveys } from './syncSurveys';
+import { syncConductedSurveys, syncSurveys } from './syncSurveys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const syncManager = async (options = { forceFull: false }) => {
@@ -16,6 +16,7 @@ export const syncManager = async (options = { forceFull: false }) => {
     await syncSacraments();
     await syncCatechismLevels();
     await syncCourses();
+    await syncConductedSurveys();
 
     const surveys = await AsyncStorage.getItem('surveys');
     const pendingSurveys = surveys ? JSON.parse(surveys) : [];

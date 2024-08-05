@@ -26,6 +26,30 @@ const CREATE_SURVEY = gql`
   }
 `;
 
+const CONDUCTED_SURVEYS = gql`
+query GetSurveys {
+  getSurveys {
+    id
+    catechists {
+      id
+      name
+      lastName
+    }
+    catechumens {
+      id
+      name
+      lastName
+    }
+    people {
+      id
+      name
+      lastName
+    }
+    createdAt
+  }
+}
+`;
+
 export const syncSurveys = async () => {
   try {
     const storedSurveys = await AsyncStorage.getItem('surveys');
@@ -61,5 +85,14 @@ export const syncSurveys = async () => {
   } catch (error) {
     console.error('Error syncing surveys:', error);
     throw new Error('Sync failed');
+  }
+};
+
+export const syncConductedSurveys = async () => {
+  try {
+    const { data } = await client.query({ query: CONDUCTED_SURVEYS });
+    await AsyncStorage.setItem('conductedSurveys', JSON.stringify(data.getSurveys));
+  } catch (error) {
+    console.error('Error syncing conductedSurveys:', error);
   }
 };

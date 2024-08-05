@@ -1,30 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, ViewStyle } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { calculateAge } from '@/utils/calculate';
 import { Catechumen } from '@/types';
 
 interface CatechumenListProps {
   courseId: string;
+  style?: ViewStyle;
 }
 
-const getRandomCatechist = (catechists: { name: string; lastName: string }[]) => {
-  const randomIndex = Math.floor(Math.random() * catechists.length);
-  const catechist = catechists[randomIndex];
-  return `${catechist.name} ${catechist.lastName}`;
-};
-
-const getRandomDate = () => {
-  const start = new Date(2024, 0, 1);
-  const end = new Date();
-  const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-  return date.toLocaleDateString();
-};
-
-const CatechumenList: React.FC<CatechumenListProps> = ({ courseId }) => {
+const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
   const [catechumens, setCatechumens] = useState<Catechumen[]>([]);
   const [catechumensTotal, setCatechumensTotal] = useState<Catechumen[]>([]);
+  const [conductedSurveys, setConductedSurveys] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -33,8 +21,11 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId }) => {
       try {
         const catechumensData = await AsyncStorage.getItem('catechumens');
         const catechumensTotalData = await AsyncStorage.getItem('catechumensTotal');
+        const surveysData = await AsyncStorage.getItem('conductedSurveys');
+
         setCatechumens(catechumensData ? JSON.parse(catechumensData) : []);
         setCatechumensTotal(catechumensTotalData ? JSON.parse(catechumensTotalData) : []);
+        setConductedSurveys(surveysData ? JSON.parse(surveysData) : []);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load catechumens'));
       } finally {
@@ -46,7 +37,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId }) => {
   }, []);
 
   if (loading) {
-    return <DataTable.Row><DataTable.Cell>Loading...</DataTable.Cell></DataTable.Row>;
+    return <DataTable.Row><DataTable.Cell>Cargando...</DataTable.Cell></DataTable.Row>;
   }
 
   if (error) {
@@ -70,22 +61,25 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId }) => {
             <DataTable.Title style={styles.columnText}>Apellidos</DataTable.Title>
             <DataTable.Title style={styles.columnText}>Nombres</DataTable.Title>
             <DataTable.Title style={styles.columnVisit}>Visitado</DataTable.Title>
-            <DataTable.Title style={styles.columnText}>Por</DataTable.Title>
+            <DataTable.Title style={styles.columnCatechist}>Por</DataTable.Title>
             <DataTable.Title style={styles.columnText}>Fecha</DataTable.Title>
           </DataTable.Header>
           {filteredCatechumens.map((catechumen, idx) => {
-            const isVisited = !catechumens.some(c => c.id === catechumen.id);
+            const survey = conductedSurveys.find(s =>
+              s.catechumens.some((c: { id: string }) => c.id === catechumen.id)
+            );
+            const isVisited = !!survey;
+            const catechists = isVisited ? survey.catechists.map((c: { name: string, lastName: string }) => `${c.name} ${c.lastName}`).join(', ') : '-';
+            const visitDate = isVisited ? new Date(parseInt(survey.createdAt, 10)).toISOString().split('T')[0] : '-';
+
             return (
               <DataTable.Row key={idx}>
                 <DataTable.Cell style={styles.columnNumber}>{idx + 1}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnText}>{catechumen.lastName}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnText}>{catechumen.name}</DataTable.Cell>
-                <DataTable.Cell style={styles.columnVisit}>{isVisited ? '✅' : '⏳'}</DataTable.Cell>
-                <DataTable.Cell style={styles.columnText}>
-                  {/* {isVisited ? getRandomCatechist(catechumen.coursesAsCatechumen[0].catechists) : 'N/A'} */}
-                  {'N/A'}
-                </DataTable.Cell>
-                <DataTable.Cell style={styles.columnText}>{isVisited ? getRandomDate() : 'N/A'}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnVisit}>{isVisited ? '✅' : '-'}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnCatechist}>{catechists}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnText}>{visitDate}</DataTable.Cell>
               </DataTable.Row>
             );
           })}
@@ -97,16 +91,19 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId }) => {
 
 const styles = StyleSheet.create({
   dataTable: {
-    width: 800, // Adjust this width as necessary
+    width: 'auto',
   },
   columnNumber: {
-    width: 10,
+    width: 60,
   },
   columnText: {
     width: 150,
   },
+  columnCatechist: {
+    width: 250,
+  },
   columnVisit: {
-    width: 80,
+    width: 60,
   },
 });
 
