@@ -3,6 +3,8 @@ import { ScrollView, StyleSheet, ViewStyle } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Catechumen } from '@/types';
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 
 interface CatechumenListProps {
   courseId: string;
@@ -63,6 +65,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
             <DataTable.Title style={styles.columnVisit}>Visitado</DataTable.Title>
             <DataTable.Title style={styles.columnCatechist}>Por</DataTable.Title>
             <DataTable.Title style={styles.columnText}>Fecha</DataTable.Title>
+            <DataTable.Title style={styles.columnText}>Hora</DataTable.Title>
           </DataTable.Header>
           {filteredCatechumens.map((catechumen, idx) => {
             const survey = conductedSurveys.find(s =>
@@ -70,7 +73,8 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
             );
             const isVisited = !!survey;
             const catechists = isVisited ? survey.catechists.map((c: { name: string, lastName: string }) => `${c.name} ${c.lastName}`).join(', ') : '-';
-            const visitDate = isVisited ? new Date(parseInt(survey.createdAt, 10)).toISOString().split('T')[0] : '-';
+            const visitDate = isVisited ? format(toZonedTime(parseInt(survey.createdAt, 10), 'America/Bogota'), 'yyyy-MM-dd') : '-';
+            const visitTime = isVisited ? format(toZonedTime(parseInt(survey.createdAt, 10), 'America/Bogota'), 'HH:mm') : '-';
 
             return (
               <DataTable.Row key={idx}>
@@ -80,6 +84,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
                 <DataTable.Cell style={styles.columnVisit}>{isVisited ? '✅' : '-'}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnCatechist}>{catechists}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnText}>{visitDate}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnText}>{visitTime}</DataTable.Cell>
               </DataTable.Row>
             );
           })}
