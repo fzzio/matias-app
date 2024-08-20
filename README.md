@@ -53,6 +53,10 @@ To get started with the project, follow these steps:
     - For iOS: `expo start --ios`
     - For Web: `expo start --web`
 
+## Related Projects
+
+- [Misión Catequética Backend](https://github.com/fzzio/matias-backend) - The backend service that powers this application.
+
 ## Screenshots
 
 ![image](https://github.com/user-attachments/assets/d68347c9-8437-41a7-8778-303a9e1f43f0)
