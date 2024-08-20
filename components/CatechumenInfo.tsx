@@ -1,11 +1,12 @@
-import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { Catechumen, Course } from '@/types';
 import { commonStyles } from '@/styles';
 import { useSacraments } from '@/hooks/useSacraments';
 import InfoItem from '@/components/InfoItem';
 import { theme } from '@/styles/theme';
+import CatechumenEditForm from './CatechumenEditForm';
 
 interface CatechumenInfoProps {
   catechumen: Catechumen;
@@ -14,6 +15,8 @@ interface CatechumenInfoProps {
 
 const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) => {
   const { getSacramentNameById } = useSacraments();
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
+  const [currentCatechumen, setCurrentCatechumen] = useState<Catechumen>(catechumen);
 
   const renderCourseInfo = (course: Course) => (
     <View key={course.id} style={styles.courseContainer}>
@@ -26,38 +29,56 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) =>
   );
 
   return (
-    <Surface style={[styles.container, style]}>
-      <Text style={styles.title}>{catechumen.name} {catechumen.lastName}</Text>
-      <View style={styles.infoContainer}>
-        <InfoItem label="Cédula" value={catechumen.idCard || 'N/A'} />
-        <InfoItem
-          label="Fecha de Nacimiento"
-          value={catechumen.birthDate ? new Date(catechumen.birthDate).toISOString().split('T')[0] : 'N/A'}
-        />
-        <InfoItem
-          label="Teléfono"
-          value={catechumen.phone || 'N/A'}
-        />
-        <View style={styles.coursesContainer}>
-          <Text style={styles.label}>Cursos:</Text>
-          {catechumen.coursesAsCatechumen.length > 0
-            ? catechumen.coursesAsCatechumen.map(renderCourseInfo)
-            : <Text>N/A</Text>
-          }
+    <TouchableOpacity onPress={() => setEditModalVisible(true)}>
+      <Surface style={[styles.container, style]}>
+        <Text style={styles.title}>{currentCatechumen.name} {currentCatechumen.lastName}</Text>
+        <View style={styles.infoContainer}>
+          <InfoItem label="Cédula" value={currentCatechumen.idCard || 'N/A'} />
+          <InfoItem
+            label="Fecha de Nacimiento"
+            value={currentCatechumen.birthDate ? new Date(currentCatechumen.birthDate).toISOString().split('T')[0] : 'N/A'}
+          />
+          <InfoItem
+            label="Email"
+            value={currentCatechumen.email || 'N/A'}
+          />
+          <InfoItem
+            label="Teléfono"
+            value={currentCatechumen.phone || 'N/A'}
+          />
+          <View style={styles.coursesContainer}>
+            <Text style={styles.label}>Cursos:</Text>
+            {currentCatechumen.coursesAsCatechumen.length > 0
+              ? currentCatechumen.coursesAsCatechumen.map(renderCourseInfo)
+              : <Text>N/A</Text>
+            }
+          </View>
+          <InfoItem
+            label="Sacramentos"
+            value={currentCatechumen.sacraments.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
+          />
         </View>
-        <InfoItem
-          label="Sacramentos"
-          value={catechumen.sacraments.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
-        />
-      </View>
-    </Surface>
+      </Surface>
+      <CatechumenEditForm
+        visible={isEditModalVisible}
+        catechumen={currentCatechumen}
+        onClose={(updatedCatechumen) => {
+          setEditModalVisible(false);
+          if (updatedCatechumen) {
+            setCurrentCatechumen(updatedCatechumen);
+          }
+        }}
+      />
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    ...commonStyles.surface,
-    marginBottom: 16,
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+    backgroundColor: theme.colors.surface,
   },
   title: {
     ...commonStyles.title,
@@ -65,10 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   infoContainer: {
-    gap: 8,
-  },
-  coursesContainer: {
-    marginTop: 8,
+    marginTop: 10,
   },
   label: {
     ...commonStyles.bodyText,
@@ -76,9 +94,12 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     marginRight: 8,
   },
+  coursesContainer: {
+
+  },
   courseContainer: {
-    marginLeft: 16,
-    marginBottom: 8,
+    marginTop: 5,
+    paddingLeft: 10,
   },
   courseItem: {
     ...commonStyles.bodyText,
