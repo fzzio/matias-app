@@ -35,6 +35,7 @@ export interface Person {
 export interface Catechumen extends Omit<Person, 'isVolunteer'>{
   coursesAsCatechumen: Course[];
   location: Location;
+  address?: string;
 }
 
 export interface Catechist extends Omit<Person, 'isVolunteer'>{

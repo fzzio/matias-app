@@ -46,6 +46,14 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) =>
             label="Teléfono"
             value={currentCatechumen.phone || 'N/A'}
           />
+          <InfoItem
+            label="Parroquia/Comuna"
+            value={currentCatechumen.location?.name || 'N/A'}
+          />
+          <InfoItem
+            label="Dirección"
+            value={currentCatechumen.address || 'N/A'}
+          />
           <View style={styles.coursesContainer}>
             <Text style={styles.label}>Cursos:</Text>
             {currentCatechumen.coursesAsCatechumen.length > 0

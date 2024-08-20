@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, Surface } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Catechumen } from '@/types';
+import { Catechumen, Sacrament } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { commonStyles, inputStyles, buttonStyles } from '@/styles';
-import moment from 'moment';
+import SacramentsSelector from '@/components/SacramentsSelector';
+import { useSacraments } from '@/hooks/useSacraments';
 
 interface CatechumenEditFormProps {
   visible: boolean;
@@ -14,11 +15,9 @@ interface CatechumenEditFormProps {
 }
 
 const CatechumenEditForm: React.FC<CatechumenEditFormProps> = ({ visible, catechumen, onClose }) => {
-  const [editedCatechumen, setEditedCatechumen] = useState<Catechumen>({
-    ...catechumen,
-    birthDate: catechumen.birthDate ? new Date(catechumen.birthDate) : new Date(),
-  });
+  const [editedCatechumen, setEditedCatechumen] = useState<Catechumen>(catechumen);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { sacraments } = useSacraments();
 
   const handleSave = async () => {
     try {
@@ -38,6 +37,13 @@ const CatechumenEditForm: React.FC<CatechumenEditFormProps> = ({ visible, catech
     if (selectedDate) {
       setEditedCatechumen({ ...editedCatechumen, birthDate: selectedDate });
     }
+  };
+
+  const handleSacramentsChange = (updatedSacramentIds: string[]) => {
+    const updatedSacraments = sacraments.filter(sacrament =>
+      updatedSacramentIds.includes(sacrament.id)
+    );
+    setEditedCatechumen({ ...editedCatechumen, sacraments: updatedSacraments });
   };
 
   return (
@@ -71,17 +77,28 @@ const CatechumenEditForm: React.FC<CatechumenEditFormProps> = ({ visible, catech
           />
           <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePicker}>
             <Text style={styles.datePickerText}>
-              Fecha de Nacimiento: {moment(editedCatechumen.birthDate).format('YYYY-MM-DD')}
+              Fecha de Nacimiento: {editedCatechumen.birthDate?.toISOString().split('T')[0] || ''}
             </Text>
           </TouchableOpacity>
           {showDatePicker && (
             <DateTimePicker
-              value={editedCatechumen.birthDate || new Date()}
+              value={editedCatechumen.birthDate ? new Date(editedCatechumen.birthDate) : new Date()}
               mode="date"
               display="default"
               onChange={handleDateChange}
             />
           )}
+          <TextInput
+            label="Dirección"
+            value={editedCatechumen.address || ''}
+            onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, address: text })}
+            style={[inputStyles.defaultInput, styles.inputForm]}
+          />
+          <SacramentsSelector
+            selectedSacraments={editedCatechumen.sacraments.map(s => s.id) || []}
+            onSelect={handleSacramentsChange}
+            label="Sacramentos:"
+          />
           <View style={styles.buttonContainer}>
             <Button
               mode="outlined"
