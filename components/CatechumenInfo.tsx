@@ -35,10 +35,6 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, style }) =>
           value={catechumen.birthDate ? new Date(catechumen.birthDate).toISOString().split('T')[0] : 'N/A'}
         />
         <InfoItem
-          label="Email"
-          value={catechumen.email || 'N/A'}
-        />
-        <InfoItem
           label="Teléfono"
           value={catechumen.phone || 'N/A'}
         />
