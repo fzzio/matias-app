@@ -24,22 +24,26 @@ export function SearchPeople<T extends Person>({
   const [selectedPeople, setSelectedPeople] = useState<T[]>([]);
 
   useEffect(() => {
-    const filtered = filterAndSortPeople(people, searchQuery, selectedPeople);
-    setFilteredPeople(filtered);
+    const filtered = filterPeople(people, searchQuery, selectedPeople);
+    setFilteredPeople(sortPeople(filtered));
   }, [searchQuery, people, selectedPeople]);
 
-  const filterAndSortPeople = (people: T[], query: string, selected: T[]): T[] => {
+  const filterPeople = (people: T[], query: string, selected: T[]): T[] => {
     if (query.trim() === '') return [];
 
-    return people
-      .filter(person => !selected.some(selectedPerson => selectedPerson.id === person.id))
-      .filter(person => person.name.toLowerCase().includes(query.toLowerCase()) || person.lastName.toLowerCase().includes(query.toLowerCase()))
-      .sort((a, b) => `${a.lastName} ${a.name}`.localeCompare(`${b.lastName} ${b.name}`));
+    return people.filter(person =>
+      !selected.some(selectedPerson => selectedPerson.id === person.id) &&
+      (person.name.toLowerCase().includes(query.toLowerCase()) || person.lastName.toLowerCase().includes(query.toLowerCase()))
+    );
+  };
+
+  const sortPeople = (people: T[]): T[] => {
+    return people.sort((a, b) => `${a.lastName} ${a.name}`.localeCompare(`${b.lastName} ${b.name}`));
   };
 
   const handleSelect = (person: T) => {
-    const newSelectedPeople = [...selectedPeople, person].sort((a, b) => `${a.lastName} ${a.name}`.localeCompare(`${b.lastName} ${b.name}`));
-    setSelectedPeople(newSelectedPeople);
+    const newSelectedPeople = [...selectedPeople, person];
+    setSelectedPeople(sortPeople(newSelectedPeople));
     onSelectionChange(newSelectedPeople);
     setSearchQuery('');
     Keyboard.dismiss();
