@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, Surface } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Catechumen, Sacrament } from '@/types';
+import { Catechumen } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { commonStyles, inputStyles, buttonStyles } from '@/styles';
 import SacramentsSelector from '@/components/SacramentsSelector';
@@ -22,7 +22,7 @@ const CatechumenEditForm: React.FC<CatechumenEditFormProps> = ({ visible, catech
   const handleSave = async () => {
     try {
       const storedCatechumens = await AsyncStorage.getItem('catechumensToUpdate');
-      const catechumensToUpdate = storedCatechumens ? JSON.parse(storedCatechumens) : [];
+      const catechumensToUpdate: [Catechumen] = storedCatechumens ? JSON.parse(storedCatechumens) : [];
       const updatedCatechumens = catechumensToUpdate.filter((c: Catechumen) => c.id !== editedCatechumen.id);
       updatedCatechumens.push(editedCatechumen);
       await AsyncStorage.setItem('catechumensToUpdate', JSON.stringify(updatedCatechumens));

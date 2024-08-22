@@ -59,6 +59,9 @@ export interface PersonInput {
   missingSacraments: string[];
   isVolunteer?: boolean;
 }
+export interface CatechumenUpdateInput extends Omit<PersonInput, 'isVolunteer' | 'missingSacraments'>{
+  id: string;
+}
 
 export interface CatechistInput {
   id?: string;

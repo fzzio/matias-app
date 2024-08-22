@@ -28,12 +28,15 @@ export default function Home() {
 
   const checkInitialData = async () => {
     try {
-      const [catechists, catechumens, locations] = await Promise.all([
+      const [catechists, courses, catechumens, sacraments, catechismLevels, locations] = await Promise.all([
         AsyncStorage.getItem('catechists'),
+        AsyncStorage.getItem('courses'),
         AsyncStorage.getItem('catechumens'),
+        AsyncStorage.getItem('sacraments'),
+        AsyncStorage.getItem('catechismLevels'),
         AsyncStorage.getItem('locations')
       ]);
-      setIsInitialDataSynced(!!catechists && !!catechumens && !!locations);
+      setIsInitialDataSynced(!!catechists && !!courses && !!catechumens && !!sacraments && !!catechismLevels &&!!locations);
     } catch (error) {
       console.error('Error checking initial data:', error);
       setIsInitialDataSynced(false);
@@ -84,7 +87,14 @@ export default function Home() {
                 'surveys',
                 'catechists',
                 'catechumens',
-                'locations'
+                'locations',
+                'catechumensToUpdate',
+                'catechumensTotal',
+                'conductedSurveys',
+                'catechismLevels',
+                'surveys',
+                'courses',
+                'sacraments',
               ]);
               clearSurvey();
               setSurveysPending(0);

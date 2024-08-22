@@ -59,44 +59,60 @@ const GET_CATECHUMENS = gql`
   }
 `;
 
-const UPDATE_CATECHUMEN = gql`
-  mutation UpdateCatechumen($id: String!, $data: CatechumenInput!) {
-    updateCatechumen(id: $id, data: $data) {
+const UPDATE_CATECHUMEN_BULK = gql`
+  mutation UpdateCatechumensBulk($input: [CatechumenUpdateInput!]!) {
+    updateCatechumensBulk(input: $input) {
       id
+      idCard
       name
       lastName
+      phone
+      birthDate
+      email
+      sacraments {
+        id
+      }
+      coursesAsCatechumen {
+        id
+        year
+        catechismLevel {
+          id
+          name
+        }
+        location {
+          id
+          name
+        }
+        description
+        room
+      }
     }
   }
 `;
 
-export const updateCatechumens = async () => {
+export const updateCatechumensBulk = async () => {
   try {
     const storedCatechumens = await AsyncStorage.getItem('catechumensToUpdate');
     const catechumensToUpdate = storedCatechumens ? JSON.parse(storedCatechumens) : [];
 
-    for (const catechumen of catechumensToUpdate) {
-      await client.mutate({
-        mutation: UPDATE_CATECHUMEN,
+    if (catechumensToUpdate.length > 0) {
+      const { data } = await client.mutate({
+        mutation: UPDATE_CATECHUMEN_BULK,
         variables: {
-          id: catechumen.id,
-          data: {
-            name: catechumen.name,
-            lastName: catechumen.lastName,
-            phone: catechumen.phone,
-            birthDate: catechumen.birthDate,
-            email: catechumen.email,
-            sacraments: catechumen.sacraments.map((s: any) => ({ id: s.id })),
-            coursesAsCatechumen: catechumen.coursesAsCatechumen.map((c: any) => ({
-              id: c.id,
-              year: c.year,
-              catechismLevel: { id: c.catechismLevel.id },
-              location: { id: c.location.id },
-              description: c.description,
-              room: c.room,
-            })),
-          },
+          input: catechumensToUpdate.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            lastName: c.lastName,
+            idCard: c.idCard,
+            phone: c.phone,
+            birthDate: c.birthDate,
+            location: c.location,
+            address: c.address,
+          })),
         },
       });
+
+      console.log('Catechumens updated successfully:', data.updateCatechumensBulk);
     }
 
     await AsyncStorage.removeItem('catechumensToUpdate');
@@ -108,7 +124,7 @@ export const updateCatechumens = async () => {
 
 export const syncCatechumens = async (year: string) => {
   try {
-    await updateCatechumens();
+    await updateCatechumensBulk();
     const { data } = await client.query({
       query: GET_CATECHUMENS,
       variables: { year }
