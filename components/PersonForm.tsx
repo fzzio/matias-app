@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ViewStyle, Platform } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text, Button, Checkbox, RadioButton, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { calculateAge, generateBirthDateFromAge } from '@/utils/calculate';
@@ -98,7 +98,6 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
           onChange={handleDateChange}
           locale="es-ES"
           maximumDate={new Date()}
-          firstDayOfWeek={1}
         />
       )}
       <Text style={styles.ageText}>Edad: {person.birthDate ? calculateAge(person.birthDate) : 'N/A'}</Text>

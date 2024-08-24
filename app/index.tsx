@@ -28,12 +28,15 @@ export default function Home() {
 
   const checkInitialData = async () => {
     try {
-      const [catechists, catechumens, locations] = await Promise.all([
+      const [catechists, courses, catechumens, sacraments, catechismLevels, locations] = await Promise.all([
         AsyncStorage.getItem('catechists'),
+        AsyncStorage.getItem('courses'),
         AsyncStorage.getItem('catechumens'),
+        AsyncStorage.getItem('sacraments'),
+        AsyncStorage.getItem('catechismLevels'),
         AsyncStorage.getItem('locations')
       ]);
-      setIsInitialDataSynced(!!catechists && !!catechumens && !!locations);
+      setIsInitialDataSynced(!!catechists && !!courses && !!catechumens && !!sacraments && !!catechismLevels && !!locations);
     } catch (error) {
       console.error('Error checking initial data:', error);
       setIsInitialDataSynced(false);
@@ -84,7 +87,14 @@ export default function Home() {
                 'surveys',
                 'catechists',
                 'catechumens',
-                'locations'
+                'locations',
+                'catechumensToUpdate',
+                'catechumensTotal',
+                'conductedSurveys',
+                'catechismLevels',
+                'surveys',
+                'courses',
+                'sacraments',
               ]);
               clearSurvey();
               setSurveysPending(0);
@@ -139,11 +149,11 @@ export default function Home() {
             icon={() => <Ionicons name="sync-outline" size={24} color={theme.colors.primary} />}
             mode="outlined"
             onPress={syncData}
-            style={!isSyncing ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            style={!isSyncing && isConnected ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
             labelStyle={!isSyncing ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
             disabled={!isConnected || isSyncing}
           >
-            {isSyncing ? 'Sincronizando...' : `Sincronizar (${surveysPending} pendientes)`}
+            {isSyncing ? 'Sincronizando...' : !isConnected ? `Sin conexión (${surveysPending} pendientes)` : `Sincronizar (${surveysPending} pendientes)`}
           </Button>
           <Button
             icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}

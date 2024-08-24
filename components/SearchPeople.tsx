@@ -24,23 +24,26 @@ export function SearchPeople<T extends Person>({
   const [selectedPeople, setSelectedPeople] = useState<T[]>([]);
 
   useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setFilteredPeople([]);
-    } else {
-      const filtered = people
-        .filter(person =>
-          !selectedPeople.some(selected => selected.id === person.id) &&
-          (person.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            person.lastName.toLowerCase().includes(searchQuery.toLowerCase())))
-        .sort((a, b) => `${a.name} ${a.lastName}`.localeCompare(`${b.name} ${b.lastName}`));
-      setFilteredPeople(filtered);
-    }
+    const filtered = filterPeople(people, searchQuery, selectedPeople);
+    setFilteredPeople(sortPeople(filtered));
   }, [searchQuery, people, selectedPeople]);
+
+  const filterPeople = (people: T[], query: string, selected: T[]): T[] => {
+    if (query.trim() === '') return [];
+
+    return people.filter(person =>
+      !selected.some(selectedPerson => selectedPerson.id === person.id) &&
+      (person.name.toLowerCase().includes(query.toLowerCase()) || person.lastName.toLowerCase().includes(query.toLowerCase()))
+    );
+  };
+
+  const sortPeople = (people: T[]): T[] => {
+    return people.sort((a, b) => `${a.lastName} ${a.name}`.localeCompare(`${b.lastName} ${b.name}`));
+  };
 
   const handleSelect = (person: T) => {
     const newSelectedPeople = [...selectedPeople, person];
-    newSelectedPeople.sort((a, b) => `${a.name} ${a.lastName}`.localeCompare(`${b.name} ${b.lastName}`));
-    setSelectedPeople(newSelectedPeople);
+    setSelectedPeople(sortPeople(newSelectedPeople));
     onSelectionChange(newSelectedPeople);
     setSearchQuery('');
     Keyboard.dismiss();
@@ -69,7 +72,7 @@ export function SearchPeople<T extends Person>({
             {filteredPeople.map(person => (
               <List.Item
                 key={person.id}
-                title={`${person.name} ${person.lastName}`}
+                title={`${person.lastName} ${person.name}`}
                 onPress={() => handleSelect(person)}
                 style={searchInputStyles.listItem}
               />
@@ -104,7 +107,7 @@ const styles = StyleSheet.create({
 });
 
 function getChipLabel<T extends Person>(person: T, personType?: 'Person' | 'Catechist' | 'Catechumen'): string {
-  let label = `${person.name} ${person.lastName}`;
+  let label = `${person.lastName} ${person.name}`;
 
   if (personType === 'Catechist' && 'coursesAsCatechist' in person) {
     const courseDetails = (person as Catechist).coursesAsCatechist?.map((course: Course) =>

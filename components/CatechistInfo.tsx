@@ -19,15 +19,15 @@ const CatechistInfo: React.FC<CatechistInfoProps> = ({ catechist, style }) => {
     <Surface style={[styles.container, style]}>
       <Text style={styles.title}>{catechist.name} {catechist.lastName}</Text>
       <View style={styles.infoContainer}>
-        <InfoItem label="Cédula" value={catechist.idCard || 'N/A'} />
-        <InfoItem
-          label="Fecha de Nacimiento"
-          value={catechist.birthDate ? catechist.birthDate.toISOString().split('T')[0] : 'N/A'}
-        />
-        <InfoItem
-          label="Sacramentos"
-          value={catechist?.sacraments?.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
-        />
+        <InfoItem label="Teléfono" value={catechist.phone || 'N/A'} />
+        {catechist.sacraments && (
+          <InfoItem
+            label="Sacramentos"
+            value={catechist?.sacraments?.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
+          />
+        )
+
+        }
       </View>
     </Surface>
   );

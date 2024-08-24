@@ -1,3 +1,4 @@
+import client from '@/services/apollo-client';
 import { syncBaseData } from './syncBaseData';
 import { syncCatechists } from './syncCatechists';
 import { syncCatechumens } from './syncCatechumens';
@@ -7,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const syncManager = async (options = { forceFull: false }) => {
   try {
+    await client.clearStore();
+
     await syncBaseData();
     await syncCatechists();
     await syncCourses();
