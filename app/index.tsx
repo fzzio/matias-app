@@ -28,7 +28,14 @@ export default function Home() {
 
   const checkInitialData = async () => {
     try {
-      const [catechists, courses, catechumens, sacraments, catechismLevels, locations] = await Promise.all([
+      const [
+        catechists,
+        courses,
+        catechumens,
+        sacraments,
+        catechismLevels,
+        locations,
+      ] = await Promise.all([
         AsyncStorage.getItem('catechists'),
         AsyncStorage.getItem('courses'),
         AsyncStorage.getItem('catechumens'),
