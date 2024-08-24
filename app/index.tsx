@@ -36,7 +36,7 @@ export default function Home() {
         AsyncStorage.getItem('catechismLevels'),
         AsyncStorage.getItem('locations')
       ]);
-      setIsInitialDataSynced(!!catechists && !!courses && !!catechumens && !!sacraments && !!catechismLevels &&!!locations);
+      setIsInitialDataSynced(!!catechists && !!courses && !!catechumens && !!sacraments && !!catechismLevels && !!locations);
     } catch (error) {
       console.error('Error checking initial data:', error);
       setIsInitialDataSynced(false);
@@ -149,11 +149,11 @@ export default function Home() {
             icon={() => <Ionicons name="sync-outline" size={24} color={theme.colors.primary} />}
             mode="outlined"
             onPress={syncData}
-            style={!isSyncing ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            style={!isSyncing && isConnected ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
             labelStyle={!isSyncing ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
             disabled={!isConnected || isSyncing}
           >
-            {isSyncing ? 'Sincronizando...' : `Sincronizar (${surveysPending} pendientes)`}
+            {isSyncing ? 'Sincronizando...' : !isConnected ? `Sin conexión (${surveysPending} pendientes)` : `Sincronizar (${surveysPending} pendientes)`}
           </Button>
           <Button
             icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}

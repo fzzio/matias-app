@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, ViewStyle } from 'react-native';
-import { DataTable } from 'react-native-paper';
+import { DataTable, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Catechumen } from '@/types';
 import { format } from 'date-fns';
@@ -63,9 +63,9 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
             <DataTable.Title style={styles.columnText}>Apellidos</DataTable.Title>
             <DataTable.Title style={styles.columnText}>Nombres</DataTable.Title>
             <DataTable.Title style={styles.columnVisit}>Visitado</DataTable.Title>
+            <DataTable.Title style={styles.columnDate}>Fecha</DataTable.Title>
+            <DataTable.Title style={styles.columnNumber}>Hora</DataTable.Title>
             <DataTable.Title style={styles.columnCatechist}>Por</DataTable.Title>
-            <DataTable.Title style={styles.columnText}>Fecha</DataTable.Title>
-            <DataTable.Title style={styles.columnText}>Hora</DataTable.Title>
           </DataTable.Header>
           {filteredCatechumens.map((catechumen, idx) => {
             const survey = conductedSurveys.find(s =>
@@ -82,9 +82,11 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
                 <DataTable.Cell style={styles.columnText}>{catechumen.lastName}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnText}>{catechumen.name}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnVisit}>{isVisited ? '✅' : '-'}</DataTable.Cell>
-                <DataTable.Cell style={styles.columnCatechist}>{catechists}</DataTable.Cell>
-                <DataTable.Cell style={styles.columnText}>{visitDate}</DataTable.Cell>
-                <DataTable.Cell style={styles.columnText}>{visitTime}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnDate}>{visitDate}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnNumber}>{visitTime}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnCatechist}>
+                  <Text style={styles.columnCatechistWrap}>{catechists}</Text>
+                </DataTable.Cell>
               </DataTable.Row>
             );
           })}
@@ -104,8 +106,15 @@ const styles = StyleSheet.create({
   columnText: {
     width: 150,
   },
+  columnDate: {
+    width: 100,
+  },
   columnCatechist: {
-    width: 250,
+    width: 200,
+  },
+  columnCatechistWrap: {
+    flex: 1,
+    flexWrap: 'wrap',
   },
   columnVisit: {
     width: 60,
