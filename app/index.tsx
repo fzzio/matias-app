@@ -28,7 +28,14 @@ export default function Home() {
 
   const checkInitialData = async () => {
     try {
-      const [catechists, courses, catechumens, sacraments, catechismLevels, locations] = await Promise.all([
+      const [
+        catechists,
+        courses,
+        catechumens,
+        sacraments,
+        catechismLevels,
+        locations,
+      ] = await Promise.all([
         AsyncStorage.getItem('catechists'),
         AsyncStorage.getItem('courses'),
         AsyncStorage.getItem('catechumens'),
@@ -57,6 +64,16 @@ export default function Home() {
       return;
     }
     try {
+      await AsyncStorage.multiRemove([
+        'sacraments',
+        'locations',
+        'catechismLevels',
+        'courses',
+        'catechists',
+        'catechumens',
+        'catechumensTotal',
+        'conductedSurveys',
+      ]);
       await syncManager();
       console.log('Surveys and other data synced');
       setSurveysPending(0);
@@ -73,7 +90,7 @@ export default function Home() {
   const clearLocalData = async () => {
     Alert.alert(
       "Confirmar eliminación",
-      "¿Está seguro de que desea eliminar todos los datos locales? Esta acción no se puede deshacer.",
+      "¿Está seguro de que desea eliminar los datos pendientes? Esta acción no se puede deshacer.",
       [
         {
           text: "Cancelar",
@@ -83,26 +100,13 @@ export default function Home() {
           text: "OK",
           onPress: async () => {
             try {
-              await AsyncStorage.multiRemove([
-                'surveys',
-                'catechists',
-                'catechumens',
-                'locations',
-                'catechumensToUpdate',
-                'catechumensTotal',
-                'conductedSurveys',
-                'catechismLevels',
-                'surveys',
-                'courses',
-                'sacraments',
-              ]);
+              await AsyncStorage.multiRemove(['surveys', 'catechumensToUpdate']);
               clearSurvey();
               setSurveysPending(0);
-              setIsInitialDataSynced(false);
-              Alert.alert('Éxito', 'Todos los datos locales han sido eliminados.');
+              Alert.alert('Éxito', 'Los datos pendientes han sido eliminados.');
             } catch (error) {
               console.error('Error clearing local data:', error);
-              Alert.alert('Error', 'No se pudieron eliminar los datos locales. Por favor, intente de nuevo.');
+              Alert.alert('Error', 'No se pudieron eliminar los datos. Por favor, intente de nuevo.');
             }
           }
         }
@@ -159,11 +163,11 @@ export default function Home() {
             icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}
             mode="outlined"
             onPress={clearLocalData}
-            style={isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
-            labelStyle={isInitialDataSynced ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
-            disabled={!isInitialDataSynced}
+            style={surveysPending > 0 ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            labelStyle={surveysPending > 0 ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
+            disabled={surveysPending === 0}
           >
-            Limpiar
+            Borrar pendientes
           </Button>
         </View>
       </View>
