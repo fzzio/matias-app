@@ -8,6 +8,7 @@ const CREATE_PEOPLE_BULK = gql`
       id
       idCard
       name
+      lastName
     }
   }
 `;
@@ -19,7 +20,6 @@ export const syncPeople = async (people: PersonInput[]) => {
       variables: { input: people }
     });
 
-    console.log('*** [2]People data sent:', JSON.stringify(data));
     console.log('People saved successfully');
     return data.createPeopleBulk;
   } catch (error) {

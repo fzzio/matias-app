@@ -61,6 +61,8 @@ export interface PersonInput {
 }
 export interface CatechumenUpdateInput extends Omit<PersonInput, 'isVolunteer' | 'missingSacraments'>{
   id: string;
+  location: string;
+  address?: string;
 }
 
 export interface CatechistInput {
@@ -72,7 +74,7 @@ export interface CatechistInput {
   email?: string;
   phone?: string;
   sacraments: string[];
-  location?: string; // TODO to required
+  location?: string;
 }
 
 export interface Survey {

@@ -1,4 +1,6 @@
 import client from '@/services/apollo-client';
+import { Catechumen } from '@/types';
+import { parseCatechumenToUpdateInput } from '@/utils/parsedInput';
 import { gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,6 +16,10 @@ const GET_CATECHUMENS = gql`
       email
       sacraments {
         id
+      }
+      location {
+        id
+        name
       }
       coursesAsCatechumen {
         id
@@ -40,6 +46,10 @@ const GET_CATECHUMENS = gql`
       email
       sacraments {
         id
+      }
+      location {
+        id
+        name
       }
       coursesAsCatechumen {
         id
@@ -96,19 +106,12 @@ export const updateCatechumensBulk = async () => {
     const catechumensToUpdate = storedCatechumens ? JSON.parse(storedCatechumens) : [];
 
     if (catechumensToUpdate.length > 0) {
+      const inputParsed = catechumensToUpdate.map((catechumen: Catechumen) => parseCatechumenToUpdateInput(catechumen));
+
       const { data } = await client.mutate({
         mutation: UPDATE_CATECHUMEN_BULK,
         variables: {
-          input: catechumensToUpdate.map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            lastName: c.lastName,
-            idCard: c.idCard,
-            phone: c.phone,
-            birthDate: c.birthDate,
-            location: c.location,
-            address: c.address,
-          })),
+          input: inputParsed,
         },
       });
 
