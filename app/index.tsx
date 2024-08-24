@@ -113,6 +113,46 @@ export default function Home() {
       ]
     );
   };
+  
+  const clearAllLocalData = async () => {
+    Alert.alert(
+      "Confirmar eliminación",
+      "¿Está seguro de que desea eliminar los datos pendientes? Esta acción no se puede deshacer.",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            try {
+              await AsyncStorage.multiRemove([
+                'surveys',
+                'catechumensToUpdate',
+                'sacraments',
+                'locations',
+                'catechismLevels',
+                'courses',
+                'catechists',
+                'catechumens',
+                'catechumensTotal',
+                'conductedSurveys',
+              ]);
+              clearSurvey();
+              setSurveysPending(0);
+              setIsInitialDataSynced(false);
+              Alert.alert('Éxito', 'Los datos pendientes han sido eliminados.');
+            } catch (error) {
+              console.error('Error clearing local data:', error);
+              Alert.alert('Error', 'No se pudieron eliminar los datos. Por favor, intente de nuevo.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -133,9 +173,9 @@ export default function Home() {
             icon={() => <Ionicons name="clipboard-outline" size={24} color={theme.colors.onPrimary} />}
             mode="contained"
             onPress={() => router.push('/survey')}
-            style={isInitialDataSynced ? buttonStyles.primaryButton : buttonStyles.disabledButton}
+            style={!isSyncing && isInitialDataSynced ? buttonStyles.primaryButton : buttonStyles.disabledButton}
             labelStyle={isInitialDataSynced ? buttonStyles.primaryButtonLabel : buttonStyles.disabledButtonLabel}
-            disabled={!isInitialDataSynced}
+            disabled={isSyncing || !isInitialDataSynced}
           >
             Encuesta
           </Button>
@@ -143,9 +183,9 @@ export default function Home() {
             icon={() => <Ionicons name="bar-chart-outline" size={24} color={theme.colors.primary} />}
             mode="outlined"
             onPress={() => router.push('/reports')}
-            style={isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            style={!isSyncing && isInitialDataSynced ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
             labelStyle={isInitialDataSynced ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
-            disabled={!isInitialDataSynced}
+            disabled={isSyncing || !isInitialDataSynced}
           >
             Reportes
           </Button>
@@ -165,7 +205,7 @@ export default function Home() {
             onPress={clearLocalData}
             style={surveysPending > 0 ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
             labelStyle={surveysPending > 0 ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
-            disabled={surveysPending === 0}
+            disabled={isSyncing || surveysPending === 0}
           >
             Borrar pendientes
           </Button>
