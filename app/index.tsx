@@ -64,16 +64,6 @@ export default function Home() {
       return;
     }
     try {
-      await AsyncStorage.multiRemove([
-        'sacraments',
-        'locations',
-        'catechismLevels',
-        'courses',
-        'catechists',
-        'catechumens',
-        'catechumensTotal',
-        'conductedSurveys',
-      ]);
       await syncManager();
       console.log('Surveys and other data synced');
       setSurveysPending(0);

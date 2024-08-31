@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, ViewStyle } from 'react-native';
-import { DataTable, Text } from 'react-native-paper';
+import { Button, DataTable, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Catechumen } from '@/types';
+import { Catechumen, Survey } from '@/types';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { buttonStyles } from '@/styles';
+import { theme } from '@/styles/theme';
 
 interface CatechumenListProps {
   courseId: string;
@@ -38,6 +41,10 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
     loadCatechumens();
   }, []);
 
+  const viewSurveyInfo = (survey: Survey) => {
+    console.log(JSON.stringify(survey))
+  }
+
   if (loading) {
     return <DataTable.Row><DataTable.Cell>Cargando...</DataTable.Cell></DataTable.Row>;
   }
@@ -66,6 +73,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
             <DataTable.Title style={styles.columnDate}>Fecha</DataTable.Title>
             <DataTable.Title style={styles.columnNumber}>Hora</DataTable.Title>
             <DataTable.Title style={styles.columnCatechist}>Por</DataTable.Title>
+            <DataTable.Title style={styles.columnText}>Acciones</DataTable.Title>
           </DataTable.Header>
           {filteredCatechumens.map((catechumen, idx) => {
             const survey = conductedSurveys.find(s =>
@@ -86,6 +94,19 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
                 <DataTable.Cell style={styles.columnNumber}>{visitTime}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnCatechist}>
                   <Text style={styles.columnCatechistWrap}>{catechists}</Text>
+                </DataTable.Cell>
+                <DataTable.Cell style={styles.columnText}>
+                  {isVisited && (
+                    <Button
+                      icon={() => <Ionicons name="eye" size={24} color={theme.colors.onBackground} />}
+                      mode="contained"
+                      onPress={() => viewSurveyInfo(survey)}
+                      style={[buttonStyles.secondaryButton, styles.viewButton]}
+                      labelStyle={buttonStyles.secondaryButtonLabel}
+                    >
+                      Ver
+                    </Button>
+                  )}
                 </DataTable.Cell>
               </DataTable.Row>
             );
@@ -119,6 +140,12 @@ const styles = StyleSheet.create({
   columnVisit: {
     width: 60,
   },
+  viewButton: {
+    margin: 5,
+    paddingVertical: 2,
+    paddingHorizontal: 2,
+    minWidth: 100,
+  }
 });
 
 export default CatechumenList;
