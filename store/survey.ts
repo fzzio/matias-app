@@ -54,6 +54,17 @@ export const updateCatechumens = (catechumens: Catechumen[]) => {
   });
 };
 
+export const updateCatechumenData = (updatedCatechumen: Catechumen | null) => {
+  if (!updatedCatechumen) return;
+
+  SurveyStore.update(s => {
+    const index = s.catechumens.findIndex(c => c.id === updatedCatechumen.id);
+    if (index !== -1) {
+      s.catechumens[index] = updatedCatechumen;
+    }
+  });
+};
+
 export const updatePeople = (people: PersonInput[]) => {
   SurveyStore.update(s => { s.people = people; });
 };
@@ -72,6 +83,7 @@ export const updateMissingSacraments = (missingSacraments: Sacrament[]) => {
 export const clearSurvey = () => {
   updateCatechists([]);
   updateSelectedLocation(null);
+  updateCatechumenData(null);
   updateHouseholdSize(0);
   updateCatechumens([]);
   updatePeople([]);

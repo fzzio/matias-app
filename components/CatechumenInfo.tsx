@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text, Surface, Button } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -13,12 +13,20 @@ interface CatechumenInfoProps {
   catechumen: Catechumen;
   editable?: boolean;
   style?: ViewStyle;
+  onUpdate?: (updatedCatechumen: Catechumen) => void;
 }
 
-const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, editable = false, style }) => {
+const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, editable = false, style, onUpdate }) => {
   const { getSacramentNameById } = useSacraments();
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [currentCatechumen, setCurrentCatechumen] = useState<Catechumen>(catechumen);
+
+  const handleSave = (updatedCatechumen: Catechumen) => {
+    setCurrentCatechumen(updatedCatechumen);
+    if (onUpdate) {
+      onUpdate(updatedCatechumen);
+    }
+  };
 
   const renderCourseInfo = (course: Course) => (
     <View key={course.id} style={styles.courseContainer}>
@@ -84,7 +92,7 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, editable = 
             onClose={(updatedCatechumen) => {
               setEditModalVisible(false);
               if (updatedCatechumen) {
-                setCurrentCatechumen(updatedCatechumen);
+                handleSave(updatedCatechumen);
               }
             }}
           />
