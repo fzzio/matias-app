@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { Text, TextInput, Button, Surface } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Catechumen } from '@/types';
@@ -49,75 +49,77 @@ const CatechumenEditForm: React.FC<CatechumenEditFormProps> = ({ visible, catech
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalContainer}>
-        <Surface style={styles.formContainer}>
-          <Text style={commonStyles.title}>Editar Catecúmeno</Text>
-          <TextInput
-            label="Nombre"
-            value={editedCatechumen.name}
-            onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, name: text })}
-            style={[inputStyles.defaultInput, styles.inputForm]}
-          />
-          <TextInput
-            label="Apellido"
-            value={editedCatechumen.lastName}
-            onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, lastName: text })}
-            style={[inputStyles.defaultInput, styles.inputForm]}
-          />
-          <TextInput
-            label="Email"
-            value={editedCatechumen.email || ''}
-            onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, email: text })}
-            style={[inputStyles.defaultInput, styles.inputForm]}
-          />
-          <TextInput
-            label="Teléfono"
-            value={editedCatechumen.phone || ''}
-            onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, phone: text })}
-            style={[inputStyles.defaultInput, styles.inputForm]}
-          />
-          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePicker}>
-            <Text style={styles.datePickerText}>
-              Fecha de Nacimiento: {editedCatechumen.birthDate?.toISOString().split('T')[0] || ''}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={editedCatechumen.birthDate ? new Date(editedCatechumen.birthDate) : new Date()}
-              mode="date"
-              display="default"
-              onChange={handleDateChange}
+        <ScrollView>
+          <Surface style={styles.formContainer}>
+            <Text style={commonStyles.title}>Editar Catecúmeno</Text>
+            <TextInput
+              label="Nombre"
+              value={editedCatechumen.name}
+              onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, name: text })}
+              style={[inputStyles.defaultInput, styles.inputForm]}
             />
-          )}
-          <TextInput
-            label="Dirección"
-            value={editedCatechumen.address || ''}
-            onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, address: text })}
-            style={[inputStyles.defaultInput, styles.inputForm]}
-          />
-          <SacramentsSelector
-            selectedSacraments={editedCatechumen.sacraments.map(s => s.id) || []}
-            onSelect={handleSacramentsChange}
-            label="Sacramentos:"
-          />
-          <View style={styles.buttonContainer}>
-            <Button
-              mode="outlined"
-              onPress={() => onClose()}
-              style={buttonStyles.secondaryButton}
-              labelStyle={buttonStyles.secondaryButtonLabel}
-            >
-              Cancelar
-            </Button>
-            <Button
-              mode="contained"
-              onPress={handleSave}
-              style={buttonStyles.primaryButton}
-              labelStyle={buttonStyles.primaryButtonLabel}
-            >
-              Guardar
-            </Button>
-          </View>
-        </Surface>
+            <TextInput
+              label="Apellido"
+              value={editedCatechumen.lastName}
+              onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, lastName: text })}
+              style={[inputStyles.defaultInput, styles.inputForm]}
+            />
+            <TextInput
+              label="Email"
+              value={editedCatechumen.email || ''}
+              onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, email: text })}
+              style={[inputStyles.defaultInput, styles.inputForm]}
+            />
+            <TextInput
+              label="Teléfono"
+              value={editedCatechumen.phone || ''}
+              onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, phone: text })}
+              style={[inputStyles.defaultInput, styles.inputForm]}
+            />
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePicker}>
+              <Text style={styles.datePickerText}>
+                Fecha de Nacimiento: {editedCatechumen.birthDate?.toISOString().split('T')[0] || ''}
+              </Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={editedCatechumen.birthDate ? new Date(editedCatechumen.birthDate) : new Date()}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+              />
+            )}
+            <TextInput
+              label="Dirección"
+              value={editedCatechumen.address || ''}
+              onChangeText={(text) => setEditedCatechumen({ ...editedCatechumen, address: text })}
+              style={[inputStyles.defaultInput, styles.inputForm]}
+            />
+            <SacramentsSelector
+              selectedSacraments={editedCatechumen.sacraments.map(s => s.id) || []}
+              onSelect={handleSacramentsChange}
+              label="Sacramentos:"
+            />
+            <View style={styles.buttonContainer}>
+              <Button
+                mode="outlined"
+                onPress={() => onClose()}
+                style={buttonStyles.secondaryButton}
+                labelStyle={buttonStyles.secondaryButtonLabel}
+              >
+                Cancelar
+              </Button>
+              <Button
+                mode="contained"
+                onPress={handleSave}
+                style={buttonStyles.primaryButton}
+                labelStyle={buttonStyles.primaryButtonLabel}
+              >
+                Guardar
+              </Button>
+            </View>
+          </Surface>
+        </ScrollView>
       </View>
     </Modal>
   );

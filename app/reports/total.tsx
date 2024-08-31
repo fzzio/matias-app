@@ -1,20 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Button, Text, Surface } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import { Text, Surface, Button } from 'react-native-paper';
+import { useSacraments } from '@/hooks/useSacraments';
+import { useLocations } from '@/hooks/useLocations';
+import { useCatechismLevels } from '@/hooks/useCatechismLevels';
+import { useCatechumens } from '@/hooks/useCatechumens';
 import { commonStyles, buttonStyles } from '@/styles';
+import { Catechumen } from '@/types';
+import { useRouter } from 'expo-router';
 
-export default function ReportsTotal() {
+interface ChartDataItem {
+  name: string;
+  amount: number;
+  total: number;
+}
+
+export default function TotalReports() {
   const router = useRouter();
+  const { catechumens, catechumensTotal } = useCatechumens();
+  const { locations } = useLocations();
+  const { sacraments } = useSacraments();
+  const { loading, error, catechismLevels } = useCatechismLevels();
+
+  if (loading) return <Text style={commonStyles.loadingText}>Cargando...</Text>;
+  if (error) return <Text style={commonStyles.errorText}>Error: {error.message}</Text>;
+
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Surface style={commonStyles.surface}>
         <View style={commonStyles.headerTitle}>
-          <Text style={commonStyles.title}>Reportes Totales</Text>
+          <Text style={commonStyles.title}>Reportes por Curso</Text>
         </View>
         <View style={styles.body}>
-          <Text>Aquí irán los reportes totales.</Text>
           <Button
             mode="outlined"
             onPress={() => router.back()}
@@ -27,7 +45,7 @@ export default function ReportsTotal() {
       </Surface>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollViewContent: {
@@ -38,3 +56,4 @@ const styles = StyleSheet.create({
     gap: 16,
   },
 });
+
