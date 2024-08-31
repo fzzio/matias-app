@@ -113,7 +113,7 @@ export default function Home() {
       ]
     );
   };
-  
+
   const clearAllLocalData = async () => {
     Alert.alert(
       "Confirmar eliminación",
@@ -193,8 +193,8 @@ export default function Home() {
             icon={() => <Ionicons name="sync-outline" size={24} color={theme.colors.primary} />}
             mode="outlined"
             onPress={syncData}
-            style={!isSyncing && isConnected ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
-            labelStyle={!isSyncing ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
+            style={isConnected ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            labelStyle={isConnected ? buttonStyles.secondaryButtonLabel : buttonStyles.disabledButtonLabel}
             disabled={!isConnected || isSyncing}
           >
             {isSyncing ? 'Sincronizando...' : !isConnected ? `Sin conexión (${surveysPending} pendientes)` : `Sincronizar (${surveysPending} pendientes)`}
@@ -208,6 +208,14 @@ export default function Home() {
             disabled={isSyncing || surveysPending === 0}
           >
             Borrar pendientes
+          </Button>
+          <Button
+            icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}
+            mode="outlined"
+            onPress={clearAllLocalData}
+            style={buttonStyles.secondaryButton}
+          >
+            Borrar Todo
           </Button>
         </View>
       </View>

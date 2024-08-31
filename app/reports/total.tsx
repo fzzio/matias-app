@@ -4,24 +4,24 @@ import { Button, Text, Surface } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { commonStyles, buttonStyles } from '@/styles';
 
-export default function Report2() {
+export default function ReportsTotal() {
   const router = useRouter();
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Surface style={commonStyles.surface}>
         <View style={commonStyles.headerTitle}>
-          <Text style={commonStyles.title}>Reporte 2</Text>
+          <Text style={commonStyles.title}>Reportes Totales</Text>
         </View>
         <View style={styles.body}>
-          <Text>Aquí va el contenido del reporte 2.</Text>
+          <Text>Aquí irán los reportes totales.</Text>
           <Button
-            mode="contained"
+            mode="outlined"
             onPress={() => router.back()}
-            style={buttonStyles.primaryButton}
-            labelStyle={buttonStyles.primaryButtonLabel}
+            style={buttonStyles.secondaryButton}
+            labelStyle={buttonStyles.secondaryButtonLabel}
           >
-            Volver
+            Atrás
           </Button>
         </View>
       </Surface>
