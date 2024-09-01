@@ -24,7 +24,8 @@ export default function ReportsLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="byCourse" options={{ headerShown: false }} />
           <Stack.Screen name="total" options={{ headerShown: false }} />
-          <Stack.Screen name="visitedCatechumens/[id]" options={{ headerShown: false }} />
+          <Stack.Screen name="coursesByLevel/[id]" options={{ headerShown: false }} />
+          <Stack.Screen name="surveyDetails/[id]" options={{ headerShown: false }} />
         </Stack>
       </KeyboardAvoidingView>
     </SafeAreaView>

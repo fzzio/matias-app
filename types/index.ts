@@ -77,8 +77,20 @@ export interface CatechistInput {
   location?: string;
 }
 
-export interface Survey {
+export interface SurveyInput {
   name: string;
   contact: string;
   address: string;
+}
+
+export interface Survey extends SurveyInput {
+  id: string;
+  people: Person[];
+  catechumens: Catechumen[];
+  catechists: Catechist[];
+  location: Location;
+  householdSize: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  observations?: string;
 }

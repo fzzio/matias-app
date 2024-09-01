@@ -23,7 +23,7 @@ export default function ReportsByCourse() {
             <Button
               key={level.id}
               mode="contained"
-              onPress={() => router.push(`/reports/visitedCatechumens/${level.id}`)}
+              onPress={() => router.push(`/reports/coursesByLevel/${level.id}`)}
               style={buttonStyles.primaryButton}
               labelStyle={buttonStyles.primaryButtonLabel}
             >

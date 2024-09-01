@@ -26,32 +26,78 @@ const CREATE_SURVEY = gql`
 `;
 
 const CONDUCTED_SURVEYS = gql`
-query GetSurveys {
-  getSurveys {
-    id
-    catechists {
+  query GetSurveys {
+    getSurveys {
       id
-      name
-      lastName
+      location {
+        id
+        name
+      }
+      catechists {
+        id
+        lastName
+        name
+        phone
+      }
+      catechumens {
+        id
+        lastName
+        name
+        idCard
+        birthDate
+        address
+        phone
+        email
+        location {
+          id
+          name
+        }
+        sacraments {
+          id
+          name
+        }
+        coursesAsCatechumen {
+          id
+          catechismLevel {
+            id
+            name
+          }
+          description
+          room
+          year
+          location {
+            id
+            name
+          }
+        }
+      }
+      people {
+        id
+        idCard
+        name
+        lastName
+        birthDate
+        isVolunteer
+        sacraments {
+          id
+          name
+        }
+        missingSacraments {
+          id
+          name
+        }
+      }
+      householdSize
+      observations
+      createdAt
+      updatedAt
     }
-    catechumens {
-      id
-      name
-      lastName
-    }
-    people {
-      id
-      name
-      lastName
-    }
-    createdAt
   }
-}
 `;
 
 export const syncPendingSurveys = async () => {
   try {
-    const storedSurveys = await AsyncStorage.getItem('surveys');
+    const storedSurveys = await AsyncStorage.getItem('pendingSurveys');
     const surveys = storedSurveys ? JSON.parse(storedSurveys) : [];
 
     for (const surveyData of surveys) {
@@ -79,7 +125,7 @@ export const syncPendingSurveys = async () => {
       console.log('Survey synced successfully:', data.createSurvey.id);
     }
 
-    await AsyncStorage.removeItem('surveys');
+    await AsyncStorage.removeItem('pendingSurveys');
   } catch (error) {
     console.error('Error syncing surveys:', error);
     throw new Error('Sync failed');

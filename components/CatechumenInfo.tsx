@@ -72,7 +72,7 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, editable = 
         </View>
         <InfoItem
           label="Sacramentos"
-          value={currentCatechumen.sacraments.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
+          value={currentCatechumen.sacraments?.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}
         />
       </View>
       { editable && (

@@ -51,7 +51,7 @@ export default function Home() {
   };
 
   const loadPendingSurveys = async () => {
-    const surveysString = await AsyncStorage.getItem('surveys');
+    const surveysString = await AsyncStorage.getItem('pendingSurveys');
     const surveys = surveysString ? JSON.parse(surveysString) : [];
     setSurveysPending(surveys.length);
   };
@@ -90,7 +90,7 @@ export default function Home() {
           text: "OK",
           onPress: async () => {
             try {
-              await AsyncStorage.multiRemove(['surveys', 'catechumensToUpdate']);
+              await AsyncStorage.multiRemove(['pendingSurveys', 'catechumensToUpdate']);
               clearSurvey();
               setSurveysPending(0);
               Alert.alert('Éxito', 'Los datos pendientes han sido eliminados.');
@@ -118,7 +118,7 @@ export default function Home() {
           onPress: async () => {
             try {
               await AsyncStorage.multiRemove([
-                'surveys',
+                'pendingSurveys',
                 'catechumensToUpdate',
                 'sacraments',
                 'locations',
@@ -152,6 +152,7 @@ export default function Home() {
           <Image source={require('@/assets/images/icon.png')} style={styles.headerImage} />
           <Text style={styles.subtitle}>Misión Catequética</Text>
           <Text style={styles.year}>2024</Text>
+          <Text style={styles.version}>Version: 1.1.0</Text>
         </View>
         <View style={styles.buttonsContainer}>
           {!isInitialDataSynced && (
@@ -222,8 +223,13 @@ const styles = StyleSheet.create({
     ...commonStyles.header,
     backgroundColor: theme.colors.primary,
     borderRadius: theme.roundness,
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 24,
     marginBottom: 32,
+    justifyContent: 'center',
+    verticalAlign: 'middle',
+    alignItems: 'center',
+    flex: 1
   },
   title: {
     ...commonStyles.title,
@@ -237,10 +243,19 @@ const styles = StyleSheet.create({
   year: {
     ...commonStyles.bodyText,
     color: theme.colors.onPrimary,
+    alignSelf: 'center',
+  },
+  version: {
+    ...commonStyles.bodyText,
+    color: theme.colors.onPrimary,
+    alignSelf: 'center',
   },
   headerImage: {
     ...commonStyles.headerImage,
-    marginVertical: 16,
+    marginVertical: 8,
+    marginHorizontal: 'auto',
+    alignSelf: 'center',
+    verticalAlign: 'middle'
   },
   buttonsContainer: {
     ...commonStyles.buttonsContainer,

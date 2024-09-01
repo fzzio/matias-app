@@ -2,12 +2,12 @@ import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { useSacraments } from '@/hooks/useSacraments';
-import { PersonInput } from '@/types';
+import { Person } from '@/types';
 import { commonStyles } from '@/styles';
 import InfoItem from '@/components/InfoItem';
 
 interface PersonInfoProps {
-  person: PersonInput;
+  person: Person;
   style?: ViewStyle;
 }
 
@@ -25,11 +25,11 @@ const PersonInfo: React.FC<PersonInfoProps> = ({ person, style }) => {
         />
         <InfoItem
           label="Sacramentos"
-          value={person.sacraments.map(getSacramentNameById).join(', ') || 'N/A'}
+          value={person.sacraments?.map((s => getSacramentNameById(s.id))).join(', ') || 'N/A'}
         />
         <InfoItem
           label="Sacramentos Pendientes"
-          value={person.missingSacraments.map(getSacramentNameById).join(', ') || 'N/A'}
+          value={person.missingSacraments?.map((s => getSacramentNameById(s.id))).join(', ') || 'N/A'}
         />
         <InfoItem label="Voluntario" value={person.isVolunteer ? 'Sí' : 'No'} />
       </View>

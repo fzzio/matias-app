@@ -35,11 +35,11 @@ export default function Step5() {
       observations
     };
 
-    const storedSurveys = await AsyncStorage.getItem('surveys');
+    const storedSurveys = await AsyncStorage.getItem('pendingSurveys');
     const surveys = storedSurveys ? JSON.parse(storedSurveys) : [];
 
     surveys.push(newSurvey);
-    await AsyncStorage.setItem('surveys', JSON.stringify(surveys));
+    await AsyncStorage.setItem('pendingSurveys', JSON.stringify(surveys));
 
     setShowModal(true);
   };

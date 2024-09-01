@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, ViewStyle } from 'react-native';
 import { Button, DataTable, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Catechumen, Survey } from '@/types';
+import { Catechumen } from '@/types';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { buttonStyles } from '@/styles';
 import { theme } from '@/styles/theme';
+import { useRouter } from 'expo-router';
 
 interface CatechumenListProps {
   courseId: string;
@@ -15,6 +16,7 @@ interface CatechumenListProps {
 }
 
 const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
+  const router = useRouter();
   const [catechumens, setCatechumens] = useState<Catechumen[]>([]);
   const [catechumensTotal, setCatechumensTotal] = useState<Catechumen[]>([]);
   const [conductedSurveys, setConductedSurveys] = useState<any[]>([]);
@@ -41,10 +43,6 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
     loadCatechumens();
   }, []);
 
-  const viewSurveyInfo = (survey: Survey) => {
-    console.log(JSON.stringify(survey))
-  }
-
   if (loading) {
     return <DataTable.Row><DataTable.Cell>Cargando...</DataTable.Cell></DataTable.Row>;
   }
@@ -66,7 +64,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
       <ScrollView>
         <DataTable style={styles.dataTable}>
           <DataTable.Header>
-            <DataTable.Title style={styles.columnNumber}>Numero</DataTable.Title>
+            <DataTable.Title style={styles.columnIndex}>No.</DataTable.Title>
             <DataTable.Title style={styles.columnText}>Apellidos</DataTable.Title>
             <DataTable.Title style={styles.columnText}>Nombres</DataTable.Title>
             <DataTable.Title style={styles.columnVisit}>Visitado</DataTable.Title>
@@ -86,7 +84,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
 
             return (
               <DataTable.Row key={idx}>
-                <DataTable.Cell style={styles.columnNumber}>{idx + 1}</DataTable.Cell>
+                <DataTable.Cell style={styles.columnIndex}>{idx + 1}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnText}>{catechumen.lastName}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnText}>{catechumen.name}</DataTable.Cell>
                 <DataTable.Cell style={styles.columnVisit}>{isVisited ? '✅' : '-'}</DataTable.Cell>
@@ -100,7 +98,7 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
                     <Button
                       icon={() => <Ionicons name="eye" size={24} color={theme.colors.onBackground} />}
                       mode="contained"
-                      onPress={() => viewSurveyInfo(survey)}
+                      onPress={() => router.push(`/reports/surveyDetails/${survey.id}`)}
                       style={[buttonStyles.secondaryButton, styles.viewButton]}
                       labelStyle={buttonStyles.secondaryButtonLabel}
                     >
@@ -120,6 +118,9 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
 const styles = StyleSheet.create({
   dataTable: {
     width: 'auto',
+  },
+  columnIndex: {
+    width: 30,
   },
   columnNumber: {
     width: 60,

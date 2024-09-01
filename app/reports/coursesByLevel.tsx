@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { commonStyles, buttonStyles } from '@/styles';
 import { useCatechismLevels } from '@/hooks/useCatechismLevels';
 
-export default function VisitedCatechumens() {
+export default function CoursesByLevel() {
   const router = useRouter();
   const { loading, error, catechismLevels } = useCatechismLevels();
 
@@ -23,7 +23,7 @@ export default function VisitedCatechumens() {
             <Button
               key={level.id}
               mode="contained"
-              onPress={() => router.push(`/reports/visitedCatechumens/${level.id}`)}
+              onPress={() => router.push(`/reports/coursesByLevel/${level.id}`)}
               style={buttonStyles.primaryButton}
               labelStyle={buttonStyles.primaryButtonLabel}
             >

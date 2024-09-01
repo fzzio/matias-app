@@ -14,7 +14,7 @@ export const syncManager = async (options = { forceFull: false }) => {
     await syncCatechists();
     await syncCourses();
 
-    const surveys = await AsyncStorage.getItem('surveys');
+    const surveys = await AsyncStorage.getItem('pendingSurveys');
     const pendingSurveys = surveys ? JSON.parse(surveys) : [];
 
     if (pendingSurveys.length > 0 || options.forceFull) {
