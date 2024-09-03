@@ -8,7 +8,7 @@ import { useSacraments } from '@/hooks/useSacraments';
 import InfoItem from '@/components/InfoItem';
 import { theme } from '@/styles/theme';
 import CatechumenEditForm from './CatechumenEditForm';
-import { formatDateToString } from '@/utils/dateUtils';
+import { calculateAge, formatDateToString } from '@/utils/dateUtils';
 
 interface CatechumenInfoProps {
   catechumen: Catechumen;
@@ -46,7 +46,7 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, editable = 
         <InfoItem label="Cédula" value={currentCatechumen.idCard || 'N/A'} />
         <InfoItem
           label="Fecha de Nacimiento"
-          value={currentCatechumen.birthDate ? formatDateToString(currentCatechumen.birthDate) : 'N/A'}
+          value={currentCatechumen.birthDate ? `${formatDateToString(currentCatechumen.birthDate)} (${calculateAge(currentCatechumen.birthDate)} años)`  : 'N/A'}
         />
         {currentCatechumen.email && (
           <InfoItem

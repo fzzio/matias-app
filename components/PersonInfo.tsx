@@ -5,7 +5,7 @@ import { useSacraments } from '@/hooks/useSacraments';
 import { Person } from '@/types';
 import { commonStyles } from '@/styles';
 import InfoItem from '@/components/InfoItem';
-import { formatDateToString } from '@/utils/dateUtils';
+import { calculateAge, formatDateToString } from '@/utils/dateUtils';
 
 interface PersonInfoProps {
   person: Person;
@@ -22,7 +22,7 @@ const PersonInfo: React.FC<PersonInfoProps> = ({ person, style }) => {
         <InfoItem label="Cédula" value={person.idCard || 'N/A'} />
         <InfoItem
           label="Fecha de Nacimiento"
-          value={person.birthDate ? formatDateToString(person.birthDate) : 'N/A'}
+          value={person.birthDate ? `${formatDateToString(person.birthDate)} (${calculateAge(person.birthDate)} años)`  : 'N/A'}
         />
         <InfoItem
           label="Sacramentos"

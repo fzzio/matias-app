@@ -2,10 +2,11 @@ import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
 export function calculateAge(birthDate: Date): number {
+  const baseDate = new Date(birthDate);
   const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+  let age = today.getFullYear() - baseDate.getFullYear();
+  const m = today.getMonth() - baseDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < baseDate.getDate())) {
     age--;
   }
   return age;
