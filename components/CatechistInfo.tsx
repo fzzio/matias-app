@@ -20,7 +20,7 @@ const CatechistInfo: React.FC<CatechistInfoProps> = ({ catechist, style }) => {
       <Text style={styles.title}>{catechist.name} {catechist.lastName}</Text>
       <View style={styles.infoContainer}>
         <InfoItem label="Teléfono" value={catechist.phone || 'N/A'} />
-        {catechist.sacraments && (
+        {(catechist.sacraments && catechist.sacraments.length > 0) && (
           <InfoItem
             label="Sacramentos"
             value={catechist?.sacraments?.map(s => getSacramentNameById(s.id)).join(', ') || 'N/A'}

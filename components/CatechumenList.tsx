@@ -3,12 +3,11 @@ import { ScrollView, StyleSheet, ViewStyle } from 'react-native';
 import { Button, DataTable, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Catechumen } from '@/types';
-import { format } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { buttonStyles } from '@/styles';
 import { theme } from '@/styles/theme';
 import { useRouter } from 'expo-router';
+import { formatDateToString, formatHourToString } from '@/utils/dateUtils';
 
 interface CatechumenListProps {
   courseId: string;
@@ -79,8 +78,8 @@ const CatechumenList: React.FC<CatechumenListProps> = ({ courseId, style }) => {
             );
             const isVisited = !!survey;
             const catechists = isVisited ? survey.catechists.map((c: { name: string, lastName: string }) => `${c.name} ${c.lastName}`).join(', ') : '-';
-            const visitDate = isVisited ? format(toZonedTime(parseInt(survey.createdAt, 10), 'America/Bogota'), 'yyyy-MM-dd') : '-';
-            const visitTime = isVisited ? format(toZonedTime(parseInt(survey.createdAt, 10), 'America/Bogota'), 'HH:mm') : '-';
+            const visitDate = isVisited ? formatDateToString(survey.createdAt) : '-';
+            const visitTime = isVisited ? formatHourToString(survey.createdAt) : '-';
 
             return (
               <DataTable.Row key={idx}>

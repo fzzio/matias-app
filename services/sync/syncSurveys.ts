@@ -2,6 +2,7 @@ import client from '@/services/apollo-client';
 import { gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { syncPeople } from './syncPeople';
+import { jsonToSurvey } from '@/utils/surveyUtils';
 
 const CREATE_SURVEY = gql`
   mutation CreateSurvey($input: SurveyInput!) {
@@ -135,7 +136,7 @@ export const syncPendingSurveys = async () => {
 export const syncConductedSurveys = async () => {
   try {
     const { data } = await client.query({ query: CONDUCTED_SURVEYS });
-    await AsyncStorage.setItem('conductedSurveys', JSON.stringify(data.getSurveys));
+    await AsyncStorage.setItem('conductedSurveys', JSON.stringify(data.getSurveys.map(jsonToSurvey)));
   } catch (error) {
     console.error('Error syncing conductedSurveys:', error);
   }

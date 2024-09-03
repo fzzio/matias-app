@@ -8,6 +8,7 @@ import InfoItem from '@/components/InfoItem';
 import PersonInfo from '@/components/PersonInfo';
 import CatechumenInfo from '@/components/CatechumenInfo';
 import CatechistInfo from '@/components/CatechistInfo';
+import { formatDateToString, formatHourToString } from '@/utils/dateUtils';
 
 export default function SurveyDetails() {
   const router = useRouter();
@@ -31,7 +32,11 @@ export default function SurveyDetails() {
         <View style={styles.infoContainer}>
           <InfoItem
             label="Fecha"
-            value={survey.createdAt ? survey.createdAt.toString() : 'N/A'}
+            value={survey.createdAt ? formatDateToString(survey.createdAt) : 'N/A'}
+          />
+          <InfoItem
+            label="Hora"
+            value={survey.createdAt ? formatHourToString(survey.createdAt) : 'N/A'}
           />
           <InfoItem
             label="Localidad"
@@ -63,8 +68,8 @@ export default function SurveyDetails() {
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Visitados por: </Text>
             {survey.catechists?.map((catechist, index) => (
-            <CatechistInfo catechist={catechist} key={`catechist_${index}`} />
-          ))}
+              <CatechistInfo catechist={catechist} key={`catechist_${index}`} />
+            ))}
           </View>
         </View>
       </Surface>

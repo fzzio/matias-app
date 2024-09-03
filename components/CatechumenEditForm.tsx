@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { commonStyles, inputStyles, buttonStyles } from '@/styles';
 import SacramentsSelector from '@/components/SacramentsSelector';
 import { useSacraments } from '@/hooks/useSacraments';
+import { formatDateToString } from '@/utils/dateUtils';
 
 interface CatechumenEditFormProps {
   visible: boolean;
@@ -78,14 +79,14 @@ const CatechumenEditForm: React.FC<CatechumenEditFormProps> = ({ visible, catech
             />
             <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePicker}>
               <Text style={styles.datePickerText}>
-                Fecha de Nacimiento: {editedCatechumen.birthDate?.toISOString().split('T')[0] || ''}
+                Fecha de Nacimiento: {editedCatechumen.birthDate ? formatDateToString(editedCatechumen.birthDate) : 'N/A'}
               </Text>
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
-                value={editedCatechumen.birthDate ? new Date(editedCatechumen.birthDate) : new Date()}
+                value={editedCatechumen.birthDate || new Date()}
                 mode="date"
-                display="default"
+                display="calendar"
                 onChange={handleDateChange}
               />
             )}

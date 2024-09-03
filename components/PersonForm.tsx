@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text, Button, Checkbox, RadioButton, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { calculateAge, generateBirthDateFromAge } from '@/utils/calculate';
+import { calculateAge, formatDateToString, generateBirthDateFromAge,  } from '@/utils/dateUtils';
 import { PersonInput, Sacrament } from '@/types';
 import { theme } from '@/styles/theme';
 import { buttonStyles, commonStyles, inputStyles } from '@/styles';
@@ -86,7 +86,7 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
         </Button>
         {person.birthDate && (
           <Text style={styles.dateText}>
-            Fecha de Nacimiento: {person.birthDate.toISOString().split('T')[0]}
+            Fecha de Nacimiento: {formatDateToString(person.birthDate)}
           </Text>
         )}
       </View>
@@ -97,7 +97,6 @@ export const PersonForm: React.FC<PersonFormProps> = ({ person, index, sacrament
           display="default"
           onChange={handleDateChange}
           locale="es-ES"
-          maximumDate={new Date()}
         />
       )}
       <Text style={styles.ageText}>Edad: {person.birthDate ? calculateAge(person.birthDate) : 'N/A'}</Text>

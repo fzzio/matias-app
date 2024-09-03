@@ -1,6 +1,7 @@
 import { registerInDevtools, Store } from "pullstate";
 import { Location, Catechist, Sacrament, PersonInput, Catechumen } from "@/types";
-import { parseDate } from "@/utils/calculate";
+import { parseDateString } from "@/utils/dateUtils";
+import { jsonToCatechumen } from "@/utils/catechumenUtils";
 
 export interface SurveyState {
   catechists: Catechist[];
@@ -30,7 +31,7 @@ export const updateCatechists = (catechists: Catechist[]) => {
   SurveyStore.update(s => {
     s.catechists = catechists.map(catechist => ({
       ...catechist,
-      birthDate: parseDate(catechist.birthDate as unknown as string)
+      birthDate: parseDateString(catechist.birthDate as unknown as string) || new Date()
     }));
   });
 };
@@ -47,7 +48,7 @@ export const updateCatechumens = (catechumens: Catechumen[]) => {
   SurveyStore.update(s => {
     s.catechumens = catechumens.map(catechumen => ({
       ...catechumen,
-      birthDate: parseDate(catechumen.birthDate as unknown as string)
+      birthDate: parseDateString(catechumen.birthDate as unknown as string)
     }));
   });
 };

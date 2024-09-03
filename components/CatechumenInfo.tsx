@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { Text, Surface, Button } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -8,6 +8,7 @@ import { useSacraments } from '@/hooks/useSacraments';
 import InfoItem from '@/components/InfoItem';
 import { theme } from '@/styles/theme';
 import CatechumenEditForm from './CatechumenEditForm';
+import { formatDateToString } from '@/utils/dateUtils';
 
 interface CatechumenInfoProps {
   catechumen: Catechumen;
@@ -45,12 +46,14 @@ const CatechumenInfo: React.FC<CatechumenInfoProps> = ({ catechumen, editable = 
         <InfoItem label="Cédula" value={currentCatechumen.idCard || 'N/A'} />
         <InfoItem
           label="Fecha de Nacimiento"
-          value={currentCatechumen.birthDate ? new Date(currentCatechumen.birthDate).toISOString().split('T')[0] : 'N/A'}
+          value={currentCatechumen.birthDate ? formatDateToString(currentCatechumen.birthDate) : 'N/A'}
         />
-        <InfoItem
-          label="Email"
-          value={currentCatechumen.email || 'N/A'}
-        />
+        {currentCatechumen.email && (
+          <InfoItem
+            label="Email"
+            value={currentCatechumen.email || 'N/A'}
+          />
+        )}
         <InfoItem
           label="Teléfono"
           value={currentCatechumen.phone || 'N/A'}
