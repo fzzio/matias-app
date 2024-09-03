@@ -68,6 +68,7 @@ export default function Step3() {
           <CatechumenInfo
             key={indexC}
             catechumen={catechumen}
+            editable={true}
           />
         ))}
         {people.map((person, indexP) => (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, Surface } from 'react-native-paper';
-import { clearSurvey, SurveyStore } from '@/store/survey';
+import { clearSurvey, SurveyStore, updateCatechumenData } from '@/store/survey';
 import { Pagination } from '@/components/Pagination';
 import { commonStyles, buttonStyles } from '@/styles';
 import { theme } from '@/styles/theme';
@@ -11,6 +11,7 @@ import CatechumenInfo from '@/components/CatechumenInfo';
 import PersonInfo from '@/components/PersonInfo';
 import CatechistInfo from '@/components/CatechistInfo';
 import InfoItem from '@/components/InfoItem';
+import { Catechumen } from '@/types';
 
 export default function Step5() {
   const router = useRouter();
@@ -34,11 +35,11 @@ export default function Step5() {
       observations
     };
 
-    const storedSurveys = await AsyncStorage.getItem('surveys');
+    const storedSurveys = await AsyncStorage.getItem('pendingSurveys');
     const surveys = storedSurveys ? JSON.parse(storedSurveys) : [];
 
     surveys.push(newSurvey);
-    await AsyncStorage.setItem('surveys', JSON.stringify(surveys));
+    await AsyncStorage.setItem('pendingSurveys', JSON.stringify(surveys));
 
     setShowModal(true);
   };
@@ -93,7 +94,13 @@ export default function Step5() {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Catequizandos</Text>
           {catechumens.map((person, index) => (
-            <CatechumenInfo catechumen={person} key={`catechumen_${index}`} />
+            <CatechumenInfo
+              catechumen={person}
+              key={`catechumen_${index}`}
+              onUpdate={(updatedCatechumen: Catechumen) => {
+                updateCatechumenData(updatedCatechumen);
+              }}
+            />
           ))}
         </View>
 

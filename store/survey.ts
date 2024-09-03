@@ -1,6 +1,7 @@
 import { registerInDevtools, Store } from "pullstate";
 import { Location, Catechist, Sacrament, PersonInput, Catechumen } from "@/types";
-import { parseDate } from "@/utils/calculate";
+import { parseDateString } from "@/utils/dateUtils";
+import { jsonToCatechumen } from "@/utils/catechumenUtils";
 
 export interface SurveyState {
   catechists: Catechist[];
@@ -10,7 +11,6 @@ export interface SurveyState {
   people: PersonInput[];
   observations: string;
   sacraments: Sacrament[];
-  missingSacraments: Sacrament[];
 }
 
 export const SurveyStore = new Store<SurveyState>({
@@ -21,7 +21,6 @@ export const SurveyStore = new Store<SurveyState>({
   people: [],
   observations: "",
   sacraments: [],
-  missingSacraments: [],
 });
 
 registerInDevtools({
@@ -32,7 +31,7 @@ export const updateCatechists = (catechists: Catechist[]) => {
   SurveyStore.update(s => {
     s.catechists = catechists.map(catechist => ({
       ...catechist,
-      birthDate: parseDate(catechist.birthDate as unknown as string)
+      birthDate: parseDateString(catechist.birthDate as unknown as string) || new Date()
     }));
   });
 };
@@ -49,8 +48,19 @@ export const updateCatechumens = (catechumens: Catechumen[]) => {
   SurveyStore.update(s => {
     s.catechumens = catechumens.map(catechumen => ({
       ...catechumen,
-      birthDate: parseDate(catechumen.birthDate as unknown as string)
+      birthDate: parseDateString(catechumen.birthDate as unknown as string)
     }));
+  });
+};
+
+export const updateCatechumenData = (updatedCatechumen: Catechumen | null) => {
+  if (!updatedCatechumen) return;
+
+  SurveyStore.update(s => {
+    const index = s.catechumens.findIndex(c => c.id === updatedCatechumen.id);
+    if (index !== -1) {
+      s.catechumens[index] = updatedCatechumen;
+    }
   });
 };
 
@@ -65,17 +75,14 @@ export const updateObservations = (observations: string) => {
 export const updateSacraments = (sacraments: Sacrament[]) => {
   SurveyStore.update(s => { s.sacraments = sacraments; });
 };
-export const updateMissingSacraments = (missingSacraments: Sacrament[]) => {
-  SurveyStore.update(s => { s.missingSacraments = missingSacraments; });
-};
 
 export const clearSurvey = () => {
   updateCatechists([]);
   updateSelectedLocation(null);
+  updateCatechumenData(null);
   updateHouseholdSize(0);
   updateCatechumens([]);
   updatePeople([]);
   updateObservations("");
   updateSacraments([]);
-  updateMissingSacraments([]);
 };

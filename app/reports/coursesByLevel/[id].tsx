@@ -9,7 +9,7 @@ import CourseInfo from '@/components/CourseInfo';
 import { Course } from '@/types';
 import InfoItem from '@/components/InfoItem';
 
-export default function CatechismLevelDetail() {
+export default function CoursesByLevel() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const { catechismLevels, getCatechismLevelNameById } = useCatechismLevels();

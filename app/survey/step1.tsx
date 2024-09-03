@@ -5,11 +5,12 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, Surface } from 'react-native-paper';
 import { updateCatechists, updateSelectedLocation } from "@/store/survey";
 import { SearchPeople } from '@/components/SearchPeople';
-import { Location, Catechist } from '@/types';
+import { Location, Catechist} from '@/types';
 import { theme } from '@/styles/theme';
 import { commonStyles, buttonStyles } from '@/styles';
 import { Pagination } from '@/components/Pagination';
 import { SearchLocation } from '@/components/SearchLocation';
+import { jsonToCatechist } from '@/utils/catechistUtils';
 
 export default function Step1() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function Step1() {
         }
 
         if (storedCatechists) {
-          setCatechists(JSON.parse(storedCatechists));
+          setCatechists(JSON.parse(storedCatechists).map(jsonToCatechist));
         } else {
           throw new Error('No catechists found in local storage');
         }

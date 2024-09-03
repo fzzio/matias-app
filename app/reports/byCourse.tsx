@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { commonStyles, buttonStyles } from '@/styles';
 import { useCatechismLevels } from '@/hooks/useCatechismLevels';
 
-export default function VisitedCatechumens() {
+export default function ReportsByCourse() {
   const router = useRouter();
   const { loading, error, catechismLevels } = useCatechismLevels();
 
@@ -16,14 +16,14 @@ export default function VisitedCatechumens() {
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Surface style={commonStyles.surface}>
         <View style={commonStyles.headerTitle}>
-          <Text style={commonStyles.title}>Catequizandos Visitados</Text>
+          <Text style={commonStyles.title}>Reportes por Curso</Text>
         </View>
         <View style={styles.body}>
           {catechismLevels.map((level) => (
             <Button
               key={level.id}
               mode="contained"
-              onPress={() => router.push(`/reports/visitedCatechumens/${level.id}`)}
+              onPress={() => router.push(`/reports/coursesByLevel/${level.id}`)}
               style={buttonStyles.primaryButton}
               labelStyle={buttonStyles.primaryButtonLabel}
             >

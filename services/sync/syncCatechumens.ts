@@ -1,6 +1,6 @@
 import client from '@/services/apollo-client';
 import { Catechumen } from '@/types';
-import { parseCatechumenToUpdateInput } from '@/utils/parsedInput';
+import { catechumenToUpdateInput, jsonToCatechumen } from '@/utils/catechumenUtils';
 import { gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -106,7 +106,7 @@ export const updateCatechumensBulk = async () => {
     const catechumensToUpdate = storedCatechumens ? JSON.parse(storedCatechumens) : [];
 
     if (catechumensToUpdate.length > 0) {
-      const inputParsed = catechumensToUpdate.map((catechumen: Catechumen) => parseCatechumenToUpdateInput(catechumen));
+      const inputParsed = catechumensToUpdate.map((catechumen: Catechumen) => catechumenToUpdateInput(catechumen));
 
       const { data } = await client.mutate({
         mutation: UPDATE_CATECHUMEN_BULK,
@@ -132,8 +132,8 @@ export const syncCatechumens = async (year: string) => {
       query: GET_CATECHUMENS,
       variables: { year }
     });
-    await AsyncStorage.setItem('catechumensTotal', JSON.stringify(data.getCatechumensByYear));
-    await AsyncStorage.setItem('catechumens', JSON.stringify(data.getCatechumensWithoutVisitByYear));
+    await AsyncStorage.setItem('catechumensTotal', JSON.stringify(data.getCatechumensByYear.map(jsonToCatechumen)));
+    await AsyncStorage.setItem('catechumens', JSON.stringify(data.getCatechumensWithoutVisitByYear.map(jsonToCatechumen)));
   } catch (error) {
     console.error('Error syncing catechumensTotal, catechumens:', error);
   }

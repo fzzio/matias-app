@@ -1,48 +1,50 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Button, Text, Surface } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import { Text, Surface, Button } from 'react-native-paper';
 import { commonStyles, buttonStyles } from '@/styles';
+import { useRouter } from 'expo-router';
+import { useSurveys } from '@/hooks/useSurveys';
 
-export default function ReportsIndex() {
+export default function TotalReports() {
   const router = useRouter();
+  const { surveys } = useSurveys();
+
+
+  const downloadAllSurveysAsExcel = () => {
+    // TODO
+  }
+
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Surface style={commonStyles.surface}>
         <View style={commonStyles.headerTitle}>
-          <Text style={commonStyles.title}>Menú de Reportes</Text>
+          <Text style={commonStyles.title}>Reportes Totales</Text>
         </View>
         <View style={styles.body}>
           <Button
-            mode="contained"
-            onPress={() => router.push('/reports/byCourse')}
+            mode="outlined"
+            onPress={() => downloadAllSurveysAsExcel}
             style={buttonStyles.primaryButton}
             labelStyle={buttonStyles.primaryButtonLabel}
           >
-            Reportes por curso
+            Descargar Excel
           </Button>
-          <Button
-            mode="contained"
-            onPress={() => router.push('/reports/total')}
-            style={buttonStyles.primaryButton}
-            labelStyle={buttonStyles.primaryButtonLabel}
-          >
-            Reportes totales
-          </Button>
+        </View>
+        <View style={styles.footer}>
           <Button
             mode="outlined"
-            onPress={() => router.push('/')}
+            onPress={() => router.back()}
             style={buttonStyles.secondaryButton}
             labelStyle={buttonStyles.secondaryButtonLabel}
           >
-            Volver al Menú Principal
+            Atrás
           </Button>
         </View>
       </Surface>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollViewContent: {
@@ -51,5 +53,10 @@ const styles = StyleSheet.create({
   },
   body: {
     gap: 16,
+    marginBottom: 5
+  },
+  footer: {
+    gap: 16,
   },
 });
+

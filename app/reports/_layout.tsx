@@ -22,9 +22,10 @@ export default function ReportsLayout() {
         </View>
         <Stack initialRouteName='index'>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="visitedCatechumens" options={{ headerShown: false }} />
-          <Stack.Screen name="visitedCatechumens/[id]" options={{ headerShown: false }} />
-          <Stack.Screen name="report2" options={{ headerShown: false }} />
+          <Stack.Screen name="byCourse" options={{ headerShown: false }} />
+          <Stack.Screen name="total" options={{ headerShown: false }} />
+          <Stack.Screen name="coursesByLevel/[id]" options={{ headerShown: false }} />
+          <Stack.Screen name="surveyDetails/[id]" options={{ headerShown: false }} />
         </Stack>
       </KeyboardAvoidingView>
     </SafeAreaView>
