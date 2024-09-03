@@ -6,7 +6,7 @@ export function jsonToCatechist(json: any): Catechist {
     ...json,
     birthDate: json.birthDate ? parseDateString(json.birthDate) : undefined,
     sacraments: json.sacraments || [],
-    coursesAsCatechumen: json.coursesAsCatechumen || [],
+    coursesAsCatechist: json.coursesAsCatechist || [],
   };
 }
 
