@@ -1,15 +1,8 @@
-import { format } from "date-fns";
+import { differenceInYears, format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
 export function calculateAge(birthDate: Date): number {
-  const baseDate = new Date(birthDate);
-  const today = new Date();
-  let age = today.getFullYear() - baseDate.getFullYear();
-  const m = today.getMonth() - baseDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < baseDate.getDate())) {
-    age--;
-  }
-  return age;
+  return differenceInYears(new Date(), birthDate);
 }
 
 export function generateBirthDateFromAge(age: number): Date {
