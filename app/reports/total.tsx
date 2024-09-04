@@ -122,19 +122,22 @@ export default function TotalReports() {
                 ...Object.fromEntries(
                   sacraments.map((sacrament) => [
                     sacrament.name,
-                    person.sacraments.some(personSacrament => personSacrament.id === sacrament.id) ? 1 : 0
+                    person.sacraments.some(personSacrament => personSacrament.id === sacrament.id) ? 'Si' : 'No'
                   ])
                 ),
                 ...Object.fromEntries(
                   sacraments.map((sacrament) => [
                     `Falta ${sacrament.name}`,
-                    person.missingSacraments.some(personMissingSacrament => personMissingSacrament.id === sacrament.id) ? 1 : 0
+                    person.missingSacraments.some(personMissingSacrament => personMissingSacrament.id === sacrament.id) ? 'Si' : 'No'
                   ])
                 ),
-                'Teléfono contacto': person.phone || 'N/A',
+                'Teléfonos contacto': [
+                  person.phone,
+                  ...survey.catechumens
+                    .map(c => c.phone)
+                  ].filter(Boolean).join(' - ') || 'N/A',
                 'Observaciones en la entrevista': survey.observations || 'N/A',
                 'Catequizando(s)': survey.catechumens
-                  .filter(c => c.coursesAsCatechumen.some(course => course.location.name === survey.location.name))
                   .map(c => `${c.lastName} ${c.name} - ${c.coursesAsCatechumen[0]?.catechismLevel.name} - ${c.coursesAsCatechumen[0]?.location.name}`)
                   .join('; '),
               }
