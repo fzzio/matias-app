@@ -9,3 +9,13 @@ export interface NamedEntity extends BaseEntity {
 export interface CatechismLevel extends NamedEntity {}
 export interface Sacrament extends NamedEntity {}
 export interface Location extends NamedEntity {}
+
+export interface SacramentReport {
+  sacrament: Sacrament,
+  missingCount: number
+}
+
+export interface ReportLocation {
+  location: Location;
+  sacramentsReport: SacramentReport[];
+}

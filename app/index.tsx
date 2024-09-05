@@ -128,6 +128,8 @@ export default function Home() {
                 'catechumens',
                 'catechumensTotal',
                 'conductedSurveys',
+                'missingSacramentsByLocation',
+                'totalMissingSacraments',
               ]);
               clearSurvey();
               setSurveysPending(0);

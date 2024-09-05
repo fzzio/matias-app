@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { syncPeople } from './syncPeople';
 import { jsonToSurvey } from '@/utils/surveyUtils';
+import { Location, ReportLocation, Sacrament, SacramentReport, Survey } from '@/types';
 
 const CREATE_SURVEY = gql`
   mutation CreateSurvey($input: SurveyInput!) {
@@ -139,5 +140,86 @@ export const syncConductedSurveys = async () => {
     await AsyncStorage.setItem('conductedSurveys', JSON.stringify(data.getSurveys.map(jsonToSurvey)));
   } catch (error) {
     console.error('Error syncing conductedSurveys:', error);
+  }
+};
+
+export const calculateSacramentMissingByLocation = async (): Promise<ReportLocation[]> => {
+  try {
+    const storedLocations = await AsyncStorage.getItem('locations');
+    const storedSacraments = await AsyncStorage.getItem('sacraments');
+    const storedSurveys = await AsyncStorage.getItem('conductedSurveys');
+
+    if (!storedLocations || !storedSacraments || !storedSurveys) {
+      throw new Error('No se encontraron datos necesarios en AsyncStorage.');
+    }
+
+    const locations: Location[] = JSON.parse(storedLocations);
+    const sacraments: Sacrament[] = JSON.parse(storedSacraments);
+    const surveys: Survey[] = JSON.parse(storedSurveys).map(jsonToSurvey);
+
+    const calculateMissingSacramentsForLocation = (locationSurveys: Survey[]): SacramentReport[] => {
+      const allPeople = locationSurveys.flatMap(survey => survey.people);
+      return sacraments.map(sacrament => ({
+        sacrament,
+        missingCount: allPeople.filter(person =>
+          person.missingSacraments.some(missingSacrament => missingSacrament.id === sacrament.id)
+        ).length
+      }));
+    };
+
+    const reportLocations: ReportLocation[] = locations.map(location => {
+      const locationSurveys = surveys.filter(survey => survey.location.id === location.id);
+      const sacramentsReport = calculateMissingSacramentsForLocation(locationSurveys);
+      return {
+        location,
+        sacramentsReport
+      };
+    });
+
+    await AsyncStorage.setItem('missingSacramentsByLocation', JSON.stringify(reportLocations));
+
+    return reportLocations;
+  } catch (error) {
+    console.error('Error calculando sacramentos faltantes por ubicación:', error);
+    throw error;
+  }
+};
+
+export const calculateTotalMissingSacraments = async (): Promise<SacramentReport[]> => {
+  try {
+    const storedMissingByLocation = await AsyncStorage.getItem('missingSacramentsByLocation');
+
+    if (!storedMissingByLocation) {
+      throw new Error('No se encontraron datos de missingSacramentsByLocation en AsyncStorage.');
+    }
+
+    const missingSacramentsByLocation: ReportLocation[] = JSON.parse(storedMissingByLocation);
+
+    const totalMissing: SacramentReport[] = missingSacramentsByLocation
+      .flatMap(reportLocation => reportLocation.sacramentsReport)
+      .reduce((acc, sacramentReport) => {
+        const existingSacramentReport = acc.find(
+          report => report.sacrament.id === sacramentReport.sacrament.id
+        );
+
+        if (existingSacramentReport) {
+          existingSacramentReport.missingCount += sacramentReport.missingCount;
+        } else {
+          acc.push({
+            sacrament: sacramentReport.sacrament,
+            missingCount: sacramentReport.missingCount
+          });
+        }
+
+        return acc;
+      }, [] as SacramentReport[])
+      .sort((a, b) => b.missingCount - a.missingCount);
+
+    await AsyncStorage.setItem('totalMissingSacraments', JSON.stringify(totalMissing));
+
+    return totalMissing;
+  } catch (error) {
+    console.error('Error calculando el total de sacramentos faltantes:', error);
+    throw error;
   }
 };

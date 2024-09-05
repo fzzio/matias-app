@@ -14,16 +14,21 @@ import { sanitizeSheetName } from '@/utils/excelUtils';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { theme } from '@/styles/theme';
 import { useSacraments } from '@/hooks/useSacraments';
+import useSacramentMissingReport from '@/hooks/useSacramentMissingReport';
+import SacramentMissingReportCard from '@/components/SacramentMissingReportCard';
 
 export default function TotalReports() {
   const router = useRouter();
   const { surveys } = useSurveys();
   const { sacraments } = useSacraments();
   const { catechismLevels } = useCatechismLevels();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isDownloadingByLocation, setIsDownloadingByLocation] = useState(false);
+  const [isDownloadingBySurvey, setIsDownloadingBySurvey] = useState(false);
+  const { sacramentReportsByLocation, totalMissingSacraments, loading: loadingReport, error: errorReport } = useSacramentMissingReport();
+
 
   const downloadAllBySurvey = async () => {
-    setIsLoading(true);
+    setIsDownloadingBySurvey(true);
     try {
       const workbook = XLSX.utils.book_new();
 
@@ -86,12 +91,12 @@ export default function TotalReports() {
       console.error('Error al generar el archivo Excel:', error);
       Alert.alert('Error', 'Error al generar el archivo Excel para encuestas totales');
     } finally {
-      setIsLoading(false);
+      setIsDownloadingBySurvey(false);
     }
   };
 
   const downloadExcelByLocations = async () => {
-    setIsLoading(true);
+    setIsDownloadingByLocation(true);
 
     try {
       const workbook = XLSX.utils.book_new();
@@ -135,7 +140,7 @@ export default function TotalReports() {
                   person.phone,
                   ...survey.catechumens
                     .map(c => c.phone)
-                  ].filter(Boolean).join(' - ') || 'N/A',
+                ].filter(Boolean).join(' - ') || 'N/A',
                 'Observaciones en la entrevista': survey.observations || 'N/A',
                 'Catequizando(s)': survey.catechumens
                   .map(c => `${c.lastName} ${c.name} - ${c.coursesAsCatechumen[0]?.catechismLevel.name} - ${c.coursesAsCatechumen[0]?.location.name}`)
@@ -146,7 +151,6 @@ export default function TotalReports() {
         );
         XLSX.utils.book_append_sheet(workbook, worksheet, safeSheetName);
       });
-
 
       // Generar nombre de archivo con fecha y hora
       const fileName = `encuestas-por_persona-${formatDateToTimestamp(new Date())}.xlsx`;
@@ -160,7 +164,7 @@ export default function TotalReports() {
       console.error('Error al generar el archivo Excel:', error);
       Alert.alert('Error', 'Error al generar el archivo Excel para encuestas por persona');
     } finally {
-      setIsLoading(false);
+      setIsDownloadingByLocation(false);
     }
   };
 
@@ -171,15 +175,43 @@ export default function TotalReports() {
           <Text style={commonStyles.title}>Reportes Totales</Text>
         </View>
         <View style={styles.body}>
+          { errorReport && (
+            <Text style={commonStyles.errorText}>Error: {errorReport}</Text>
+          )}
+          {loadingReport ?
+            (
+              <ActivityIndicator animating={true} />
+            ) : (
+              <View>
+                <View>
+                  {totalMissingSacraments && (
+                    <SacramentMissingReportCard
+                      label='Total'
+                      sacramentReportData={totalMissingSacraments}
+                    />
+                  )}
+                </View>
+                <View>
+                  <Text style={commonStyles.subtitle}>Resumen por ubicación</Text>
+                  {sacramentReportsByLocation && sacramentReportsByLocation.map(item => (
+                    <SacramentMissingReportCard
+                      key={item.location.id}
+                      label={item.location.name}
+                      sacramentReportData={item.sacramentsReport}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
           <Button
             icon={() => <Ionicons name="cloud-download" size={24} color={theme.colors.onPrimary} />}
             mode="outlined"
             onPress={downloadExcelByLocations}
             style={buttonStyles.primaryButton}
             labelStyle={buttonStyles.primaryButtonLabel}
-            disabled={isLoading}
+            disabled={isDownloadingByLocation || isDownloadingBySurvey}
           >
-            {isLoading ? 'Descargando...' : 'Por persona'}
+            {isDownloadingByLocation ? 'Descargando...' : 'Por persona'}
           </Button>
           <Button
             icon={() => <Ionicons name="cloud-download" size={24} color={theme.colors.onPrimary} />}
@@ -187,11 +219,11 @@ export default function TotalReports() {
             onPress={downloadAllBySurvey}
             style={buttonStyles.primaryButton}
             labelStyle={buttonStyles.primaryButtonLabel}
-            disabled={isLoading}
+            disabled={isDownloadingByLocation || isDownloadingBySurvey}
           >
-            {isLoading ? 'Descargando...' : 'Por Encuesta'}
+            {isDownloadingBySurvey ? 'Descargando...' : 'Por Encuesta'}
           </Button>
-          {isLoading && <ActivityIndicator animating={true} />}
+          {isDownloadingByLocation || isDownloadingBySurvey && <ActivityIndicator animating={true} />}
         </View>
         <View style={styles.footer}>
           <Button
@@ -213,12 +245,30 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 8,
   },
+  cardContainer: {
+    padding: 10,
+    gap: 10,
+  },
+  card: {
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    elevation: 2,
+  },
+  totalCard: {
+    backgroundColor: '#f5f5f5',
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
   body: {
     gap: 16,
     marginBottom: 5,
-    alignItems: 'center',
+    flexDirection: 'column',
   },
   footer: {
-    gap: 16,
+    marginTop: 20,
   },
 });
