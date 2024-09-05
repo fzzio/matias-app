@@ -40,6 +40,10 @@ const CONDUCTED_SURVEYS = gql`
         lastName
         name
         phone
+        sacraments {
+          id
+          name
+        }
       }
       catechumens {
         id

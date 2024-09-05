@@ -1,7 +1,6 @@
 import { registerInDevtools, Store } from "pullstate";
 import { Location, Catechist, Sacrament, PersonInput, Catechumen } from "@/types";
 import { parseDateString } from "@/utils/dateUtils";
-import { jsonToCatechumen } from "@/utils/catechumenUtils";
 
 export interface SurveyState {
   catechists: Catechist[];

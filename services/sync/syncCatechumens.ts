@@ -82,6 +82,10 @@ const UPDATE_CATECHUMEN_BULK = gql`
       sacraments {
         id
       }
+      location {
+        id
+      }
+      address
       coursesAsCatechumen {
         id
         year

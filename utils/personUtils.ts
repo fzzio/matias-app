@@ -1,5 +1,6 @@
 import { Person, PersonInput, PersonUpdateInput } from '@/types/person';
 import { parseDateString } from './dateUtils';
+import { Sacrament, Location } from '@/types';
 
 export function jsonToPerson(json: any): Person {
   return {
@@ -22,6 +23,16 @@ export function personToInput(person: Person): PersonInput {
     missingSacraments: person.missingSacraments.map(s => s.id),
     isVolunteer: person.isVolunteer,
     location: person.location?.id
+  };
+}
+
+export function inputToPerson(personInput: PersonInput, sacraments: Sacrament[], locations: Location[]): Person {
+  return {
+    id: '',
+    ...personInput,
+    sacraments: sacraments.filter(s => personInput.sacraments.includes(s.id)),
+    missingSacraments: sacraments.filter(s => personInput.missingSacraments.includes(s.id)),
+    location: locations.find(l => l.id === personInput.location)
   };
 }
 
