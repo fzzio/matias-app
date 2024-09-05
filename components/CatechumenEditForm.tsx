@@ -8,6 +8,7 @@ import { commonStyles, inputStyles, buttonStyles } from '@/styles';
 import SacramentsSelector from '@/components/SacramentsSelector';
 import { useSacraments } from '@/hooks/useSacraments';
 import { formatDateToString } from '@/utils/dateUtils';
+import { jsonToCatechumen } from '@/utils/catechumenUtils';
 
 interface CatechumenEditFormProps {
   visible: boolean;
@@ -23,7 +24,7 @@ const CatechumenEditForm: React.FC<CatechumenEditFormProps> = ({ visible, catech
   const handleSave = async () => {
     try {
       const storedCatechumens = await AsyncStorage.getItem('catechumensToUpdate');
-      const catechumensToUpdate: [Catechumen] = storedCatechumens ? JSON.parse(storedCatechumens) : [];
+      const catechumensToUpdate: Catechumen[] = storedCatechumens ? JSON.parse(storedCatechumens).map(jsonToCatechumen) : [];
       const updatedCatechumens = catechumensToUpdate.filter((c: Catechumen) => c.id !== editedCatechumen.id);
       updatedCatechumens.push(editedCatechumen);
       await AsyncStorage.setItem('catechumensToUpdate', JSON.stringify(updatedCatechumens));

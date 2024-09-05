@@ -3,7 +3,7 @@ import { syncBaseData } from './syncBaseData';
 import { syncCatechists } from './syncCatechists';
 import { syncCatechumens } from './syncCatechumens';
 import { syncCourses } from './syncCourses';
-import { syncConductedSurveys, syncPendingSurveys } from './syncSurveys';
+import { calculateSacramentMissingByLocation, calculateTotalMissingSacraments, syncConductedSurveys, syncPendingSurveys } from './syncSurveys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const syncManager = async (options = { forceFull: false }) => {
@@ -23,6 +23,9 @@ export const syncManager = async (options = { forceFull: false }) => {
 
     await syncCatechumens("2024");
     await syncConductedSurveys();
+
+    await calculateSacramentMissingByLocation();
+    await calculateTotalMissingSacraments();
 
     console.log('All data synced successfully');
   } catch (error) {

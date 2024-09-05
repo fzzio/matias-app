@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Catechumen } from '@/types';
+import { jsonToCatechumen } from '@/utils/catechumenUtils';
 
 
 export const useCatechumens = () => {
@@ -16,13 +17,13 @@ export const useCatechumens = () => {
         const storedCatechumensTotal = await AsyncStorage.getItem('catechumensTotal');
 
         if (storedCatechumens) {
-          setCatechumens(JSON.parse(storedCatechumens));
+          setCatechumens(JSON.parse(storedCatechumens).map(jsonToCatechumen));
         } else {
           throw new Error('No storedCatechumens found in local storage');
         }
 
         if (storedCatechumensTotal) {
-          setCatechumensTotal(JSON.parse(storedCatechumensTotal));
+          setCatechumensTotal(JSON.parse(storedCatechumensTotal).map(jsonToCatechumen));
         } else {
           throw new Error('No storedCatechumensTotal found in local storage');
         }

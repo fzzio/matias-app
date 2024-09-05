@@ -82,6 +82,10 @@ const UPDATE_CATECHUMEN_BULK = gql`
       sacraments {
         id
       }
+      location {
+        id
+      }
+      address
       coursesAsCatechumen {
         id
         year
@@ -115,7 +119,7 @@ export const updateCatechumensBulk = async () => {
         },
       });
 
-      console.log('Catechumens updated successfully:', data.updateCatechumensBulk);
+      console.log('Catechumens updated successfully: ', data.updateCatechumensBulk.length);
     }
 
     await AsyncStorage.removeItem('catechumensToUpdate');

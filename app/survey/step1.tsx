@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, Surface } from 'react-native-paper';
 import { updateCatechists, updateSelectedLocation } from "@/store/survey";
@@ -10,47 +9,30 @@ import { theme } from '@/styles/theme';
 import { commonStyles, buttonStyles } from '@/styles';
 import { Pagination } from '@/components/Pagination';
 import { SearchLocation } from '@/components/SearchLocation';
-import { jsonToCatechist } from '@/utils/catechistUtils';
+import { useLocations } from '@/hooks/useLocations';
+import { useCatechists } from '@/hooks/useCatechists';
 
 export default function Step1() {
   const router = useRouter();
-  const [locations, setLocations] = useState<Location[]>([]);
+  const { locations, error: errorLocations, loading: loadingLocations } = useLocations()
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-  const [catechists, setCatechists] = useState<Catechist[]>([]);
+  const { catechists, error: errorCatechists, loading: loadingCatechists } = useCatechists();
   const [selectedCatechists, setSelectedCatechists] = useState<Catechist[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadCatechists = async () => {
-      try {
-        const storedLocations = await AsyncStorage.getItem('locations');
-        const storedCatechists = await AsyncStorage.getItem('catechists');
+    setLoading(loadingLocations && loadingCatechists)
+  }, [loadingLocations, loadingCatechists]);
 
-        if (storedLocations) {
-          setLocations(JSON.parse(storedLocations));
-        } else {
-          throw new Error('No locations found in local storage');
-        }
-
-        if (storedCatechists) {
-          setCatechists(JSON.parse(storedCatechists).map(jsonToCatechist));
-        } else {
-          throw new Error('No catechists found in local storage');
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setError('Failed to load catechists: ' + err.message);
-        } else {
-          setError('Failed to load catechists due to an unexpected error');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCatechists();
-  }, []);
+  useEffect(() => {
+    if (errorLocations) {
+      setError(errorLocations.message);
+    }
+    if (errorCatechists) {
+      setError(errorCatechists.message);
+    }
+  }, [errorLocations, errorCatechists]);
 
   const handleNext = () => {
     console.log('Step 1... Done!: ');

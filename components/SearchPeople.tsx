@@ -5,14 +5,14 @@ import { Person, Catechist, Catechumen, Course } from '@/types';
 import { searchInputStyles } from '@/styles';
 import { theme } from '@/styles/theme';
 
-interface SearchPeopleProps<T extends Person> extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
+interface SearchPeopleProps<T extends Partial<Person>> extends Omit<SearchbarProps, 'onChangeText' | 'value' | 'onSelectionChange'> {
   people: T[];
   onSelectionChange: (selectedPeople: T[]) => void;
   personType?: 'Person' | 'Catechist' | 'Catechumen';
   style?: ViewStyle;
 }
 
-export function SearchPeople<T extends Person>({
+export function SearchPeople<T extends Partial<Person>>({
   people,
   onSelectionChange,
   personType,
@@ -33,7 +33,7 @@ export function SearchPeople<T extends Person>({
 
     return people.filter(person =>
       !selected.some(selectedPerson => selectedPerson.id === person.id) &&
-      (person.name.toLowerCase().includes(query.toLowerCase()) || person.lastName.toLowerCase().includes(query.toLowerCase()))
+      (person.name?.toLowerCase().includes(query.toLowerCase()) || person.lastName?.toLowerCase().includes(query.toLowerCase()))
     );
   };
 
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function getChipLabel<T extends Person>(person: T, personType?: 'Person' | 'Catechist' | 'Catechumen'): string {
+function getChipLabel<T extends Partial<Person>>(person: T, personType?: 'Person' | 'Catechist' | 'Catechumen'): string {
   let label = `${person.lastName} ${person.name}`;
 
   if (personType === 'Catechist' && 'coursesAsCatechist' in person) {
@@ -115,7 +115,7 @@ function getChipLabel<T extends Person>(person: T, personType?: 'Person' | 'Cate
     ).filter(detail => detail.includes("undefined") === false).join(', ');
     label += courseDetails ? ` (${courseDetails})` : '';
   } else if (personType === 'Catechumen' && 'coursesAsCatechumen' in person) {
-    const courseDetails = (person as unknown as Catechumen).coursesAsCatechumen?.map((course: Course) =>
+    const courseDetails = (person as Catechumen).coursesAsCatechumen?.map((course: Course) =>
       `${course.catechismLevel?.name} - ${course.year} - ${course.location?.name}`
     ).filter(detail => detail.includes("undefined") === false).join(', ');
     label += courseDetails ? ` (${courseDetails})` : '';

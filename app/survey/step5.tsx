@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, Surface } from 'react-native-paper';
-import { clearSurvey, SurveyStore, updateCatechumenData } from '@/store/survey';
+import { clearSurvey, SurveyStore } from '@/store/survey';
 import { Pagination } from '@/components/Pagination';
 import { commonStyles, buttonStyles } from '@/styles';
 import { theme } from '@/styles/theme';
@@ -11,7 +11,9 @@ import CatechumenInfo from '@/components/CatechumenInfo';
 import PersonInfo from '@/components/PersonInfo';
 import CatechistInfo from '@/components/CatechistInfo';
 import InfoItem from '@/components/InfoItem';
-import { Catechumen } from '@/types';
+import { inputToPerson } from '@/utils/personUtils';
+import { useSacraments } from '@/hooks/useSacraments';
+import { useLocations } from '@/hooks/useLocations';
 
 export default function Step5() {
   const router = useRouter();
@@ -24,6 +26,8 @@ export default function Step5() {
     observations
   } = SurveyStore.useState();
   const [showModal, setShowModal] = useState(false);
+  const { sacraments } = useSacraments();
+  const { locations } = useLocations()
 
   const handleFinish = async () => {
     const newSurvey = {
@@ -93,21 +97,18 @@ export default function Step5() {
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Catequizandos</Text>
-          {catechumens.map((person, index) => (
+          {catechumens.map((catechumen, index) => (
             <CatechumenInfo
-              catechumen={person}
+              catechumen={catechumen}
               key={`catechumen_${index}`}
-              onUpdate={(updatedCatechumen: Catechumen) => {
-                updateCatechumenData(updatedCatechumen);
-              }}
             />
           ))}
         </View>
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Otras Personas</Text>
-          {people.map((person, index) => (
-            <PersonInfo person={person} key={`person_${index}`} />
+          {people.map((personInput, index) => (
+            <PersonInfo person={inputToPerson(personInput, sacraments, locations)} key={`person_${index}`} />
           ))}
         </View>
 
