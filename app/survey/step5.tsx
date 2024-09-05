@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, Surface } from 'react-native-paper';
-import { clearSurvey, SurveyStore, updateCatechumenData } from '@/store/survey';
+import { clearSurvey, SurveyStore } from '@/store/survey';
 import { Pagination } from '@/components/Pagination';
 import { commonStyles, buttonStyles } from '@/styles';
 import { theme } from '@/styles/theme';
@@ -11,7 +11,6 @@ import CatechumenInfo from '@/components/CatechumenInfo';
 import PersonInfo from '@/components/PersonInfo';
 import CatechistInfo from '@/components/CatechistInfo';
 import InfoItem from '@/components/InfoItem';
-import { Catechumen } from '@/types';
 import { inputToPerson } from '@/utils/personUtils';
 import { useSacraments } from '@/hooks/useSacraments';
 import { useLocations } from '@/hooks/useLocations';
@@ -102,9 +101,6 @@ export default function Step5() {
             <CatechumenInfo
               catechumen={catechumen}
               key={`catechumen_${index}`}
-              onUpdate={(updatedCatechumen: Catechumen) => {
-                updateCatechumenData(updatedCatechumen);
-              }}
             />
           ))}
         </View>

@@ -5,8 +5,8 @@ import { Button, Text } from 'react-native-paper';
 import { Pagination } from '@/components/Pagination';
 import { PersonForm } from '@/components/PersonForm';
 import CatechumenInfo from '@/components/CatechumenInfo';
-import { PersonInput } from '@/types';
-import { SurveyStore, updatePeople } from "@/store/survey";
+import { Catechumen, PersonInput } from '@/types';
+import { SurveyStore, updateCatechumenData, updatePeople } from "@/store/survey";
 import { useSacraments } from '@/hooks/useSacraments';
 import { commonStyles, buttonStyles } from '@/styles';
 
@@ -45,10 +45,9 @@ export default function Step3() {
     setIsFormValid(isValid);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log('Step 3... Done!: ');
-    const newOtherPeople = people.filter(person => person.id === undefined);
-    updatePeople(newOtherPeople);
+    updatePeople(people);
     router.push('/survey/step4');
   };
 
@@ -69,6 +68,9 @@ export default function Step3() {
             key={indexC}
             catechumen={catechumen}
             editable={true}
+            onUpdate={(updatedCatechumen: Catechumen) => {
+              updateCatechumenData(updatedCatechumen);
+            }}
           />
         ))}
         {people.map((person, indexP) => (

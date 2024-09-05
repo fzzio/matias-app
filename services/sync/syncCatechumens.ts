@@ -119,7 +119,7 @@ export const updateCatechumensBulk = async () => {
         },
       });
 
-      console.log('Catechumens updated successfully:', data.updateCatechumensBulk);
+      console.log('Catechumens updated successfully: ', data.updateCatechumensBulk.length);
     }
 
     await AsyncStorage.removeItem('catechumensToUpdate');

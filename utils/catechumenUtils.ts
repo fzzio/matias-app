@@ -21,7 +21,7 @@ export function catechumenToInput(catechumen: Catechumen): CatechumenInput {
     birthDate: catechumen.birthDate,
     sacraments: catechumen.sacraments.map(s => s.id),
     location: catechumen.location?.id,
-    coursesAsCatechumen: catechumen.coursesAsCatechumen.map(c => c.id),
+    coursesAsCatechumen: catechumen.coursesAsCatechumen.map(c => c.id) || [],
   };
 }
 
