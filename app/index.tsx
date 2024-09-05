@@ -196,20 +196,20 @@ export default function Home() {
             icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}
             mode="outlined"
             onPress={clearLocalData}
-            style={surveysPending > 0 ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
-            labelStyle={surveysPending > 0 ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
+            style={(surveysPending > 0) && !isSyncing ? buttonStyles.secondaryButton : buttonStyles.disabledButton}
+            labelStyle={(surveysPending > 0) && !isSyncing ? [buttonStyles.secondaryButtonLabel, { color: theme.colors.error }] : buttonStyles.disabledButtonLabel}
             disabled={isSyncing || surveysPending === 0}
           >
             Borrar pendientes
           </Button>
-          <Button
+          {/* <Button
             icon={() => <Ionicons name="trash-outline" size={24} color={theme.colors.error} />}
             mode="outlined"
             onPress={clearAllLocalData}
             style={buttonStyles.secondaryButton}
           >
             Borrar Todo
-          </Button>
+          </Button> */}
         </View>
       </View>
     </ScrollView>
