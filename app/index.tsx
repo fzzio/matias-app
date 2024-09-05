@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { syncManager } from '@/services/sync/syncManager';
 import { clearSurvey } from '@/store/survey';
+import Header from '@/components/Header';
 
 export default function Home() {
   const router = useRouter();
@@ -149,13 +150,7 @@ export default function Home() {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Parroquia "San José de Ancón"</Text>
-          <Image source={require('@/assets/images/icon.png')} style={styles.headerImage} />
-          <Text style={styles.subtitle}>Misión Catequética</Text>
-          <Text style={styles.year}>2024</Text>
-          <Text style={styles.version}>Version: 1.1.0</Text>
-        </View>
+        <Header />
         <View style={styles.buttonsContainer}>
           {!isInitialDataSynced && (
             <Text style={styles.syncMessage}>
@@ -218,46 +213,10 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    ...commonStyles.container,
-    justifyContent: 'center',
-  },
-  header: {
-    ...commonStyles.header,
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.roundness,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    marginBottom: 32,
-    justifyContent: 'center',
-    verticalAlign: 'middle',
+    flex: 1,
     alignItems: 'center',
-    flex: 1
-  },
-  title: {
-    ...commonStyles.title,
-    color: theme.colors.onPrimary,
-    textAlign: 'center',
-  },
-  subtitle: {
-    ...commonStyles.subtitle,
-    color: theme.colors.onPrimary,
-  },
-  year: {
-    ...commonStyles.bodyText,
-    color: theme.colors.onPrimary,
-    alignSelf: 'center',
-  },
-  version: {
-    ...commonStyles.bodyText,
-    color: theme.colors.onPrimary,
-    alignSelf: 'center',
-  },
-  headerImage: {
-    ...commonStyles.headerImage,
-    marginVertical: 8,
-    marginHorizontal: 'auto',
-    alignSelf: 'center',
-    verticalAlign: 'middle'
+    justifyContent: 'flex-start',
+    width: '100%',
   },
   buttonsContainer: {
     ...commonStyles.buttonsContainer,
@@ -271,6 +230,5 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    justifyContent: 'center',
   },
 });
