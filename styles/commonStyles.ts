@@ -24,15 +24,6 @@ export const commonStyles = StyleSheet.create({
     paddingVertical: 15,
     color: theme.colors.secondary,
   },
-  header: {
-    alignItems: 'center',
-    flexDirection: "column",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 24,
-    backgroundColor: theme.colors.primary,
-    padding: 20,
-  },
   footerButtons: {
     gap: 8,
     flexDirection: 'column',
@@ -60,12 +51,6 @@ export const commonStyles = StyleSheet.create({
     borderRadius: theme.roundness,
     backgroundColor: theme.colors.background,
     elevation: 4,
-  },
-  headerImage: {
-    height: 120,
-    width: 120,
-    borderRadius: 60,
-    marginBottom: 16,
   },
   loadingText: {
     color: theme.colors.onBackground,
